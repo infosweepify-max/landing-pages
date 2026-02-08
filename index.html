@@ -1,27 +1,50 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-    <title>Sweepify Landing Pages</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sweepify — Landing Page Tests</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <style>
+    :root{--bg:#0b1220;--card:#111b32;--text:#eaf0ff;--muted:#a7b3d6;--accent:#4f7cff}
+    body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial; background:radial-gradient(1200px 600px at 20% 0%,#152852 0%,var(--bg) 60%); color:var(--text)}
+    .wrap{max-width:980px;margin:0 auto;padding:48px 20px}
+    h1{font-size:34px;letter-spacing:-0.02em;margin:0 0 8px}
+    p{color:var(--muted);margin:0 0 24px;line-height:1.5}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+    a.card{display:block;text-decoration:none;color:inherit;border:1px solid rgba(255,255,255,.08);background:rgba(17,27,50,.75);backdrop-filter: blur(8px);padding:18px;border-radius:14px}
+    a.card:hover{border-color:rgba(79,124,255,.55);box-shadow:0 10px 30px rgba(0,0,0,.35)}
+    .tag{display:inline-block;font-size:12px;padding:3px 8px;border-radius:999px;background:rgba(79,124,255,.18);color:#cfe0ff;margin-bottom:10px}
+    .title{font-weight:700;margin-bottom:6px}
+    .desc{font-size:14px;color:var(--muted);line-height:1.4}
+    .foot{margin-top:26px;font-size:12px;color:rgba(167,179,214,.85)}
+    code{background:rgba(255,255,255,.08);padding:2px 6px;border-radius:6px}
+  </style>
 </head>
 <body>
-    <h1>Welcome to Sweepify</h1>
-    <p>Landing pages coming soon...</p>
+  <div class="wrap">
+    <h1>Sweepify landing page tests</h1>
+    <p>Variants will live here while we iterate. Root (<code>/</code>) is currently reserved for the <b>Find</b> variant since <code>find.sweepify.io</code> points here.</p>
+
+    <div class="grid">
+      <a class="card" href="/find/">
+        <div class="tag">Variant A</div>
+        <div class="title">Find (broad)</div>
+        <div class="desc">General “find anyone” positioning. Optimized for low-friction quiz starts + email capture.</div>
+      </a>
+      <a class="card" href="/dating/">
+        <div class="tag">Variant B</div>
+        <div class="title">Dating safety</div>
+        <div class="desc">High-intent hook for dating verification + safety checks. Stronger urgency, still compliant copy.</div>
+      </a>
+      <a class="card" href="/business/">
+        <div class="tag">Variant C</div>
+        <div class="title">Professional / due diligence</div>
+        <div class="desc">Legit “research before you hire / partner” angle. Higher trust, more deliberate tone.</div>
+      </a>
+    </div>
+
+    <div class="foot">Deployed via GitHub Pages. Next: wire tracking events + connect to the existing Bubble flow.</div>
+  </div>
 </body>
 </html>
-```
-
-5. Click **"Commit changes"** (green button at bottom)
-
-## Step 2: Enable GitHub Pages
-
-1. **Go back to Settings → Pages** (where you are now)
-2. Under **"Source"**, change the dropdown from **"None"** to **"Deploy from a branch"**
-3. Select branch: **"main"** (or "master" if that's your default branch)
-4. Leave folder as **"/ (root)"**
-5. Click **"Save"**
-
-## Step 3: Add Custom Domain
-
-After you save, the page will refresh and you'll see a new section called **"Custom domain"** appear. That's where you'll enter:
-```
-find.sweepify.io
