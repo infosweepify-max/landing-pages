@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sweepify — Professional Background Reports</title>
+  <meta name="description" content="Trusted background verification service. Fast, accurate, comprehensive reports." />
+  
+  <style>
+    :root{
+      --bg:#f8fafc;
+      --card:#ffffff;
+      --muted:#64748b;
+      --text:#0f172a;
+      --accent:#3b82f6;
+      --accent2:#8b5cf6;
+      --ok:#10b981;
+      --warn:#f59e0b;
+      --border:#e2e8f0;
+      --shadow:0 4px 20px rgba(0,0,0,.08);
+      --shadow-lg:0 20px 60px rgba(0,0,0,.12);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      color:var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(1200px 600px at 85% 15%, rgba(59,130,246,.04) 0%, transparent 60%),
+        var(--bg);
+      line-height:1.6;min-height:100vh;
+    }
+    .container{max-width:1200px;margin:0 auto;padding:20px}
+    
+    header{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:20px 0 30px;border-bottom:1px solid var(--border);
+    }
+    .logo-area{display:flex;align-items:center;gap:12px}
+    .logo{
+      width:40px;height:40px;border-radius:12px;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      box-shadow:0 4px 15px rgba(59,130,246,.25);
+      display:flex;align-items:center;justify-content:center;
+      font-weight:900;font-size:20px;color:#fff;
+    }
+    .brand-name{font-size:22px;font-weight:700}
+    .trust-badge{
+      padding:6px 14px;border-radius:20px;font-size:12px;
+      background:#10b98108;border:1px solid #10b98130;
+      color:var(--ok);font-weight:600;
+    }
+
+    .hero{text-align:center;padding:60px 0 40px}
+    h1{
+      font-size:52px;line-height:1.1;letter-spacing:-0.03em;margin-bottom:16px;
+      background:linear-gradient(135deg,#0f172a,#64748b);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    }
+    @media(max-width:640px){h1{font-size:38px}}
+    .subtitle{font-size:19px;color:var(--muted);max-width:650px;margin:0 auto 30px}
+
+    .social-proof{
+      display:flex;justify-content:center;gap:30px;flex-wrap:wrap;
+      margin-top:30px;padding:25px;background:#fff;border-radius:16px;
+      border:1px solid var(--border);max-width:600px;margin-left:auto;margin-right:auto;
+    }
+    .stat{text-align:center}
+    .stat-number{font-size:28px;font-weight:900;color:var(--accent)}
+    .stat-label{font-size:13px;color:var(--muted);margin-top:4px}
+
+    .form-card{
+      background:var(--card);border-radius:24px;border:1px solid var(--border);
+      box-shadow:var(--shadow-lg);padding:45px;max-width:750px;margin:40px auto;
+    }
+    .form-header{margin-bottom:35px;text-align:center}
+    .form-header h2{font-size:24px;margin-bottom:10px}
+    .form-header p{color:var(--muted);font-size:15px}
+
+    .form-grid{display:grid;gap:22px}
+    .field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    @media(max-width:640px){.field-row{grid-template-columns:1fr}}
+    
+    .field{display:flex;flex-direction:column;gap:8px}
+    label{font-size:13px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:6px}
+    label .required{color:#ef4444;font-size:16px}
+    label .optional{font-size:11px;font-weight:400;opacity:.6}
+    
+    input,select{
+      width:100%;padding:14px 16px;border-radius:12px;
+      border:1px solid var(--border);background:var(--bg);
+      color:var(--text);font-size:15px;transition:all .2s;outline:none;
+    }
+    input:focus,select:focus{
+      border-color:var(--accent);
+      box-shadow:0 0 0 3px rgba(59,130,246,.1);
+      background:#fff;
+    }
+    
+    .helper{font-size:12px;color:var(--muted);margin-top:-14px}
+
+    .section-title{
+      font-size:15px;font-weight:800;color:var(--accent);
+      margin:30px 0 18px;padding-top:25px;border-top:1px solid var(--border);
+      display:flex;align-items:center;gap:8px;
+    }
+    .section-title::before{
+      content:'';width:4px;height:18px;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      border-radius:2px;
+    }
+
+    .pricing{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:25px 0}
+    @media(max-width:640px){.pricing{grid-template-columns:1fr}}
+    .tier{
+      padding:20px;border-radius:18px;border:2px solid var(--border);
+      background:#fff;cursor:pointer;transition:all .3s;position:relative;
+    }
+    .tier:hover{
+      border-color:var(--accent);transform:translateY(-4px);
+      box-shadow:0 12px 30px rgba(59,130,246,.15);
+    }
+    .tier.active{
+      border-color:var(--accent);background:rgba(59,130,246,.03);
+      box-shadow:0 8px 25px rgba(59,130,246,.2);
+    }
+    .tier .badge{
+      position:absolute;top:-10px;right:14px;padding:5px 12px;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      border-radius:14px;font-size:11px;font-weight:900;color:#fff;
+      text-transform:uppercase;letter-spacing:.5px;
+    }
+    .tier .tier-name{font-size:16px;font-weight:800;margin-bottom:8px}
+    .tier .price{font-size:32px;font-weight:900;margin-bottom:12px;letter-spacing:-1px}
+    .tier ul{list-style:none;font-size:13px;color:var(--muted)}
+    .tier ul li{padding:5px 0;display:flex;gap:8px}
+    .tier ul li::before{content:'✓';color:var(--ok);font-weight:900}
+
+    .submit-btn{
+      width:100%;padding:18px;margin-top:30px;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      color:#fff;font-size:17px;font-weight:700;border:none;
+      border-radius:14px;cursor:pointer;transition:all .3s;
+      box-shadow:0 8px 20px rgba(59,130,246,.3);
+    }
+    .submit-btn:hover{
+      transform:translateY(-2px);
+      box-shadow:0 12px 30px rgba(59,130,246,.4);
+    }
+    .submit-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+    
+    .spinner{
+      display:none;width:20px;height:20px;
+      border:3px solid rgba(255,255,255,.3);
+      border-top-color:#fff;border-radius:50%;
+      animation:spin 0.8s linear infinite;margin:0 auto;
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .submit-btn.loading .btn-text{display:none}
+    .submit-btn.loading .spinner{display:block}
+
+    .disclaimer{
+      margin-top:25px;padding:18px;border-radius:14px;
+      background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);
+      font-size:12px;color:#92400e;line-height:1.6;
+    }
+    .disclaimer strong{color:#78350f}
+
+    footer{
+      text-align:center;padding:40px 20px;
+      color:var(--muted);font-size:13px;
+      border-top:1px solid var(--border);margin-top:60px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo-area">
+        <div class="logo">S</div>
+        <span class="brand-name">Sweepify</span>
+      </div>
+      <div class="trust-badge">✓ Verified & Secure</div>
+    </header>
+
+    <div class="hero">
+      <h1>Professional Background Reports</h1>
+      <p class="subtitle">AI-powered research delivering comprehensive background checks in minutes. Trusted by thousands for accurate, thorough results.</p>
+      
+      <div class="social-proof">
+        <div class="stat">
+          <div class="stat-number">15,000+</div>
+          <div class="stat-label">Reports Generated</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number">4.8/5</div>
+          <div class="stat-label">Customer Rating</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number">< 12hr</div>
+          <div class="stat-label">Avg. Delivery</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-header">
+        <h2>Get Your Report</h2>
+        <p>Provide as much detail as possible for the most accurate results</p>
+      </div>
+
+      <form id="reportForm">
+        <div class="form-grid">
+          <div class="field-row">
+            <div class="field">
+              <label>First Name <span class="required">*</span></label>
+              <input type="text" id="firstname" placeholder="John" required />
+            </div>
+            <div class="field">
+              <label>Last Name <span class="required">*</span></label>
+              <input type="text" id="lastname" placeholder="Doe" required />
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Your Email <span class="required">*</span></label>
+            <input type="email" id="email" placeholder="your-email@example.com" required />
+            <p class="helper">Report will be delivered to this address</p>
+          </div>
+
+          <div class="section-title">Location & Demographics</div>
+
+          <div class="field-row">
+            <div class="field">
+              <label>City <span class="required">*</span></label>
+              <input type="text" id="city" placeholder="e.g., New York" required />
+            </div>
+            <div class="field">
+              <label>Age Range <span class="required">*</span></label>
+              <select id="age_range" required>
+                <option value="">Select range</option>
+                <option value="18-24">18-24</option>
+                <option value="25-34">25-34</option>
+                <option value="35-44">35-44</option>
+                <option value="45-54">45-54</option>
+                <option value="55-64">55-64</option>
+                <option value="65+">65+</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="section-title">Additional Details (Optional)</div>
+
+          <div class="field">
+            <label>Nicknames or Aliases</label>
+            <input type="text" id="alias" placeholder="e.g., Johnny, JD" />
+            <p class="helper">Any alternative names they might use</p>
+          </div>
+
+          <div class="field">
+            <label>Social Media Handles</label>
+            <input type="text" id="social_media" placeholder="@username or profile URL" />
+            <p class="helper">Instagram, Facebook, Twitter, LinkedIn, etc.</p>
+          </div>
+
+          <div class="field">
+            <label>Known Email Address</label>
+            <input type="email" id="email_cheater" placeholder="their-email@example.com" />
+            <p class="helper">Email address of the person being researched</p>
+          </div>
+
+          <div class="section-title">Select Report Type</div>
+
+          <div class="pricing">
+            <div class="tier" data-tier="basic" data-price="4.99">
+              <div class="tier-name">Basic</div>
+              <div class="price">€4.99</div>
+              <ul>
+                <li>Profile discovery</li>
+                <li>Public records</li>
+                <li>24h delivery</li>
+              </ul>
+            </div>
+            
+            <div class="tier active" data-tier="standard" data-price="14.99">
+              <div class="badge">Popular</div>
+              <div class="tier-name">Standard</div>
+              <div class="price">€14.99</div>
+              <ul>
+                <li>Deep search</li>
+                <li>Social links</li>
+                <li>Enhanced data</li>
+                <li>12h delivery</li>
+              </ul>
+            </div>
+
+            <div class="tier" data-tier="premium" data-price="17.99">
+              <div class="badge">Max</div>
+              <div class="tier-name">Premium</div>
+              <div class="price">€17.99</div>
+              <ul>
+                <li>Maximum depth</li>
+                <li>All sources</li>
+                <li>Timeline</li>
+                <li>6h priority</li>
+              </ul>
+            </div>
+          </div>
+
+          <button type="submit" class="submit-btn" id="submitBtn">
+            <span class="btn-text">Proceed to Secure Checkout</span>
+            <div class="spinner"></div>
+          </button>
+
+          <div class="disclaimer">
+            <strong>Legal Disclaimer:</strong> Sweepify compiles publicly available information for research purposes only. This is not a consumer reporting agency (CRA) as defined by the Fair Credit Reporting Act (FCRA). Reports cannot be used for employment, credit, insurance, housing decisions, or any FCRA-regulated purpose. By proceeding, you agree to use this information lawfully and responsibly.
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <footer>
+      © 2026 Sweepify. All rights reserved. · Privacy Policy · Terms of Service
+    </footer>
+  </div>
+
+  <script>
+    function safeFbq(action, event, params) {
+      if (typeof fbq !== 'undefined') fbq(action, event, params);
+    }
+  </script>
+
+  <script>
+    const WHICH_LP = 'find_v4';
+    
+    const qs = new URLSearchParams(location.search);
+    const get = (k) => qs.get(k) || '';
+    
+    const attribution = {
+      from: get('from') || '',
+      which_lp: WHICH_LP,
+      fbclid: get('fbclid'),
+      gclid: get('gclid'),
+      utm_source: get('utm_source'),
+      utm_campaign: get('utm_campaign'),
+      utm_content: get('utm_content'),
+    };
+
+    try {
+      localStorage.setItem('sweepify_attrib', JSON.stringify(attribution));
+    } catch {}
+
+    setTimeout(() => {
+      safeFbq('track', 'ViewContent', {
+        content_name: 'lp_light_v4',
+        which_lp: WHICH_LP,
+        from: attribution.from,
+        currency: 'EUR'
+      });
+    }, 1000);
+
+    let selectedTier = 'standard';
+    let selectedPrice = 14.99;
+    
+    document.querySelectorAll('.tier').forEach(tier => {
+      tier.addEventListener('click', () => {
+        document.querySelectorAll('.tier').forEach(t => t.classList.remove('active'));
+        tier.classList.add('active');
+        selectedTier = tier.dataset.tier;
+        selectedPrice = parseFloat(tier.dataset.price);
+        
+        safeFbq('track', 'AddToCart', {
+          content_name: selectedTier,
+          value: selectedPrice,
+          currency: 'EUR',
+          which_lp: WHICH_LP,
+          from: attribution.from,
+        });
+      });
+    });
+
+    document.getElementById('reportForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const btn = document.getElementById('submitBtn');
+      const formData = new FormData(e.target);
+      
+      safeFbq('track', 'InitiateCheckout', {
+        content_name: selectedTier,
+        value: selectedPrice,
+        currency: 'EUR',
+        which_lp: WHICH_LP,
+        from: attribution.from,
+      });
+
+      btn.classList.add('loading');
+      btn.disabled = true;
+
+      const payload = {
+        email: formData.get('email'),
+        firstname: formData.get('firstname'),
+        lastname: formData.get('lastname'),
+        city: formData.get('city'),
+        age_range: formData.get('age_range'),
+        alias: formData.get('alias') || '',
+        social_media: formData.get('social_media') || '',
+        email_cheater: formData.get('email_cheater') || '',
+        report_type: selectedTier,
+        tier: selectedTier,
+        which_lp: WHICH_LP,
+        from: attribution.from,
+        fbclid: attribution.fbclid,
+        gclid: attribution.gclid,
+        utm_source: attribution.utm_source,
+        utm_campaign: attribution.utm_campaign,
+        source_url: location.href,
+      };
+
+      try {
+        const res = await fetch('https://sweepify-session.sherymadodomy.workers.dev/create-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        
+        const data = await res.json().catch(() => null);
+        
+        if (!res.ok || !data?.checkout_url) {
+          throw new Error('checkout-failed');
+        }
+        
+        window.location.href = data.checkout_url;
+      } catch (err) {
+        btn.classList.remove('loading');
+        btn.disabled = false;
+        alert('Unable to process checkout. Please try again.');
+      }
+    });
+  </script>
+</body>
+</html>
