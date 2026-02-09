@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sweepify — Quick Background Check</title>
+  <meta name="description" content="Answer a few quick questions to get your comprehensive background report." />
+  
+  <style>
+    :root{
+      --bg:#f8fafc;
+      --card:#ffffff;
+      --muted:#64748b;
+      --text:#0f172a;
+      --accent:#3b82f6;
+      --accent2:#8b5cf6;
+      --ok:#10b981;
+      --border:#e2e8f0;
+      --shadow:0 4px 25px rgba(0,0,0,.08);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      color:var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(1000px 500px at 80% 10%, rgba(59,130,246,.05) 0%, transparent 65%),
+        var(--bg);
+      min-height:100vh;display:flex;align-items:center;justify-content:center;
+      padding:20px;
+    }
+    
+    .quiz-container{
+      max-width:680px;width:100%;
+      background:var(--card);border-radius:28px;
+      border:1px solid var(--border);box-shadow:var(--shadow);
+      padding:55px 45px;text-align:center;
+    }
+    @media(max-width:640px){.quiz-container{padding:40px 24px}}
+
+    .logo{
+      width:56px;height:56px;margin:0 auto 20px;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      border-radius:16px;display:flex;align-items:center;justify-content:center;
+      font-weight:900;font-size:28px;color:#fff;
+      box-shadow:0 6px 20px rgba(59,130,246,.3);
+    }
+
+    .progress-bar{
+      height:8px;background:#e2e8f0;border-radius:12px;
+      margin-bottom:30px;overflow:hidden;
+    }
+    .progress-fill{
+      height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));
+      width:0%;transition:width .5s ease;border-radius:12px;
+    }
+    .step-count{font-size:14px;color:var(--muted);margin-bottom:20px;font-weight:600}
+
+    .step{display:none;animation:fadeIn .4s}
+    .step.active{display:block}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+    
+    .step h2{font-size:30px;margin-bottom:14px;line-height:1.2;font-weight:800}
+    @media(max-width:640px){.step h2{font-size:26px}}
+    .step p{color:var(--muted);font-size:16px;margin-bottom:32px;line-height:1.6}
+
+    input,select{
+      width:100%;padding:16px 18px;border-radius:14px;
+      border:1px solid var(--border);background:var(--bg);
+      color:var(--text);font-size:16px;transition:all .2s;outline:none;
+      text-align:center;
+    }
+    input:focus,select:focus{
+      border-color:var(--accent);
+      box-shadow:0 0 0 4px rgba(59,130,246,.1);
+      background:#fff;
+    }
+
+    .btn{
+      padding:16px 34px;border-radius:14px;font-size:16px;font-weight:700;
+      border:none;cursor:pointer;transition:all .3s;
+    }
+    .btn-primary{
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      color:#fff;box-shadow:0 6px 20px rgba(59,130,246,.3);
+      width:100%;margin-top:25px;
+    }
+    .btn-primary:hover{
+      transform:translateY(-2px);
+      box-shadow:0 10px 30px rgba(59,130,246,.4);
+    }
+    .btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none}
+    
+    .btn-secondary{
+      background:#fff;color:var(--muted);
+      border:1px solid var(--border);padding:12px 26px;font-size:14px;
+      margin-top:15px;
+    }
+    .btn-secondary:hover{background:var(--bg)}
+
+    .tiers{display:grid;gap:16px;margin-top:28px}
+    .tier{
+      padding:22px;border-radius:18px;border:2px solid var(--border);
+      background:#fff;cursor:pointer;transition:all .3s;
+      text-align:left;position:relative;
+    }
+    .tier:hover{
+      border-color:var(--accent);transform:translateY(-3px);
+      box-shadow:0 10px 25px rgba(59,130,246,.15);
+    }
+    .tier.selected{
+      border-color:var(--accent);background:rgba(59,130,246,.03);
+      box-shadow:0 8px 20px rgba(59,130,246,.2);
+    }
+    .tier .badge{
+      position:absolute;top:-10px;right:16px;padding:5px 14px;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      border-radius:14px;font-size:11px;font-weight:900;color:#fff;
+      text-transform:uppercase;letter-spacing:.6px;
+    }
+    .tier .tier-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+    .tier .tier-name{font-weight:800;font-size:18px}
+    .tier .price{font-size:34px;font-weight:900;letter-spacing:-1px}
+    .tier ul{list-style:none;font-size:14px;color:var(--muted);margin-top:10px}
+    .tier ul li{padding:6px 0;display:flex;gap:10px;align-items:flex-start}
+    .tier ul li::before{content:'✓';color:var(--ok);font-weight:900;flex-shrink:0;font-size:16px}
+
+    .loading-screen{display:none;text-align:center;padding:45px 0}
+    .loading-screen.active{display:block}
+    .spinner-big{
+      width:64px;height:64px;border:4px solid #e2e8f0;
+      border-top-color:var(--accent);border-radius:50%;
+      animation:spin 1s linear infinite;margin:0 auto 28px;
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .loading-text{font-size:19px;font-weight:700;margin-bottom:12px}
+    .loading-subtext{color:var(--muted);font-size:15px}
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <div class="logo">S</div>
+    
+    <div class="step-count">Step <span id="currentStep">1</span> of <span id="totalSteps">7</span></div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <!-- Step 1: Name -->
+    <div class="step active" data-step="1">
+      <h2>Let's get started</h2>
+      <p>What's the full name of the person you're researching?</p>
+      <input type="text" id="firstname" placeholder="First name" required />
+      <input type="text" id="lastname" placeholder="Last name" style="margin-top:14px" required />
+      <button class="btn btn-primary" onclick="nextStep()">Next →</button>
+    </div>
+
+    <!-- Step 2: Location -->
+    <div class="step" data-step="2">
+      <h2>Location details</h2>
+      <p>Where are they based? This significantly improves accuracy</p>
+      <input type="text" id="city" placeholder="City (e.g., Miami)" required />
+      <select id="age_range" style="margin-top:14px" required>
+        <option value="">Age range</option>
+        <option value="18-24">18-24 years</option>
+        <option value="25-34">25-34 years</option>
+        <option value="35-44">35-44 years</option>
+        <option value="45-54">45-54 years</option>
+        <option value="55-64">55-64 years</option>
+        <option value="65+">65+ years</option>
+      </select>
+      <button class="btn btn-primary" onclick="nextStep()">Continue →</button>
+      <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
+    </div>
+
+    <!-- Step 3: Social handles -->
+    <div class="step" data-step="3">
+      <h2>Social media presence</h2>
+      <p>Any social media usernames or profile links? (Optional but helpful)</p>
+      <input type="text" id="social_media" placeholder="@username or profile URL" />
+      <button class="btn btn-primary" onclick="nextStep()">Next →</button>
+      <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
+    </div>
+
+    <!-- Step 4: Aliases -->
+    <div class="step" data-step="4">
+      <h2>Nicknames or aliases?</h2>
+      <p>Do they go by any alternative names or nicknames?</p>
+      <input type="text" id="alias" placeholder="e.g., Bob, Bobby (optional)" />
+      <button class="btn btn-primary" onclick="nextStep()">Next →</button>
+      <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
+    </div>
+
+    <!-- Step 5: Email -->
+    <div class="step" data-step="5">
+      <h2>Email address</h2>
+      <p>Know any email they use? This can unlock more records</p>
+      <input type="email" id="email_cheater" placeholder="their@email.com (optional)" />
+      <button class="btn btn-primary" onclick="nextStep()">Next →</button>
+      <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
+    </div>
+
+    <!-- Step 6: Your email -->
+    <div class="step" data-step="6">
+      <h2>Your email</h2>
+      <p>Where should we send your completed report?</p>
+      <input type="email" id="email" placeholder="your@email.com" required />
+      <button class="btn btn-primary" onclick="nextStep()">Next →</button>
+      <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
+    </div>
+
+    <!-- Step 7: Pricing -->
+    <div class="step" data-step="7">
+      <h2>Choose your report level</h2>
+      <p>Select the depth of information you need</p>
+      
+      <div class="tiers">
+        <div class="tier" data-tier="basic" data-price="4.99" onclick="selectTier(this)">
+          <div class="tier-header">
+            <div class="tier-name">Basic</div>
+            <div class="price">€4.99</div>
+          </div>
+          <ul>
+            <li>Profile discovery</li>
+            <li>Public records summary</li>
+            <li>Delivered in 24 hours</li>
+          </ul>
+        </div>
+
+        <div class="tier selected" data-tier="standard" data-price="14.99" onclick="selectTier(this)">
+          <div class="badge">Recommended</div>
+          <div class="tier-header">
+            <div class="tier-name">Standard</div>
+            <div class="price">€14.99</div>
+          </div>
+          <ul>
+            <li>Deep profile search</li>
+            <li>Social media connections</li>
+            <li>Enhanced public records</li>
+            <li>Delivered in 12 hours</li>
+          </ul>
+        </div>
+
+        <div class="tier" data-tier="premium" data-price="17.99" onclick="selectTier(this)">
+          <div class="badge">Complete</div>
+          <div class="tier-header">
+            <div class="tier-name">Premium</div>
+            <div class="price">€17.99</div>
+          </div>
+          <ul>
+            <li>Maximum depth analysis</li>
+            <li>All available sources</li>
+            <li>Detailed activity timeline</li>
+            <li>Priority delivery (6 hours)</li>
+          </ul>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" onclick="submitForm()">Get Report Now →</button>
+      <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
+    </div>
+
+    <!-- Loading -->
+    <div class="loading-screen" id="loadingScreen">
+      <div class="spinner-big"></div>
+      <div class="loading-text">Processing your request...</div>
+      <div class="loading-subtext">Redirecting to secure checkout</div>
+    </div>
+  </div>
+
+  <script>
+    function safeFbq(action, event, params) {
+      if (typeof fbq !== 'undefined') fbq(action, event, params);
+    }
+  </script>
+
+  <script>
+    const WHICH_LP = 'find_v5';
+    const TOTAL_STEPS = 7;
+    
+    let currentStep = 1;
+    let selectedTier = 'standard';
+    let selectedPrice = 14.99;
+
+    const qs = new URLSearchParams(location.search);
+    const get = (k) => qs.get(k) || '';
+    const attribution = {
+      from: get('from') || '',
+      which_lp: WHICH_LP,
+      fbclid: get('fbclid'),
+      gclid: get('gclid'),
+      utm_source: get('utm_source'),
+      utm_campaign: get('utm_campaign'),
+      utm_content: get('utm_content'),
+    };
+
+    try {
+      localStorage.setItem('sweepify_attrib', JSON.stringify(attribution));
+    } catch {}
+
+    setTimeout(() => {
+      safeFbq('track', 'ViewContent', {
+        content_name: 'lp_light_quiz_v5',
+        which_lp: WHICH_LP,
+        from: attribution.from,
+        currency: 'EUR'
+      });
+    }, 1000);
+
+    function updateProgress() {
+      const progress = (currentStep / TOTAL_STEPS) * 100;
+      document.getElementById('progressFill').style.width = progress + '%';
+      document.getElementById('currentStep').textContent = currentStep;
+      document.getElementById('totalSteps').textContent = TOTAL_STEPS;
+    }
+
+    function nextStep() {
+      const step = document.querySelector(`.step[data-step="${currentStep}"]`);
+      const inputs = step.querySelectorAll('input[required], select[required]');
+      
+      for (let input of inputs) {
+        if (!input.value.trim()) {
+          input.focus();
+          return;
+        }
+      }
+
+      if (currentStep < TOTAL_STEPS) {
+        document.querySelector(`.step[data-step="${currentStep}"]`).classList.remove('active');
+        currentStep++;
+        document.querySelector(`.step[data-step="${currentStep}"]`).classList.add('active');
+        updateProgress();
+      }
+    }
+
+    function prevStep() {
+      if (currentStep > 1) {
+        document.querySelector(`.step[data-step="${currentStep}"]`).classList.remove('active');
+        currentStep--;
+        document.querySelector(`.step[data-step="${currentStep}"]`).classList.add('active');
+        updateProgress();
+      }
+    }
+
+    function selectTier(element) {
+      document.querySelectorAll('.tier').forEach(t => t.classList.remove('selected'));
+      element.classList.add('selected');
+      selectedTier = element.dataset.tier;
+      selectedPrice = parseFloat(element.dataset.price);
+      
+      safeFbq('track', 'AddToCart', {
+        content_name: selectedTier,
+        value: selectedPrice,
+        currency: 'EUR',
+        which_lp: WHICH_LP,
+        from: attribution.from,
+      });
+    }
+
+    async function submitForm() {
+      safeFbq('track', 'InitiateCheckout', {
+        content_name: selectedTier,
+        value: selectedPrice,
+        currency: 'EUR',
+        which_lp: WHICH_LP,
+        from: attribution.from,
+      });
+
+      document.querySelector(`.step[data-step="${currentStep}"]`).classList.remove('active');
+      document.getElementById('loadingScreen').classList.add('active');
+
+      const payload = {
+        email: document.getElementById('email').value.trim(),
+        firstname: document.getElementById('firstname').value.trim(),
+        lastname: document.getElementById('lastname').value.trim(),
+        city: document.getElementById('city').value.trim(),
+        age_range: document.getElementById('age_range').value,
+        alias: document.getElementById('alias').value.trim(),
+        social_media: document.getElementById('social_media').value.trim(),
+        email_cheater: document.getElementById('email_cheater').value.trim(),
+        report_type: selectedTier,
+        tier: selectedTier,
+        which_lp: WHICH_LP,
+        from: attribution.from,
+        fbclid: attribution.fbclid,
+        gclid: attribution.gclid,
+        utm_source: attribution.utm_source,
+        utm_campaign: attribution.utm_campaign,
+        source_url: location.href,
+      };
+
+      try {
+        const res = await fetch('https://sweepify-session.sherymadodomy.workers.dev/create-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        
+        const data = await res.json().catch(() => null);
+        
+        if (!res.ok || !data?.checkout_url) {
+          throw new Error('checkout-failed');
+        }
+        
+        window.location.href = data.checkout_url;
+      } catch (err) {
+        document.getElementById('loadingScreen').classList.remove('active');
+        document.querySelector(`.step[data-step="${currentStep}"]`).classList.add('active');
+        alert('Unable to process. Please try again.');
+      }
+    }
+
+    updateProgress();
+  </script>
+</body>
+</html>
