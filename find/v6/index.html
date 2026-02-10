@@ -312,6 +312,15 @@
         </div>
       </div>
 
+      <select id="age_range" style="margin-top:12px">
+        <option value="">Age range (optional)</option>
+        <option value="18-24">18-24 years</option>
+        <option value="25-34" selected>25-34 years</option>
+        <option value="35-44">35-44 years</option>
+        <option value="45-54">45-54 years</option>
+        <option value="55-64">55-64 years</option>
+        <option value="65+">65+ years</option>
+      </select>
       <button class="btn btn-primary" onclick="nextStep()">Next →</button>
       <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
     </div>
@@ -372,20 +381,11 @@
 
     <!-- Step 7: Location -->
     <div class="step" data-step="7">
-      <h2>Location details</h2>
-      <p>Where are they based? This improves accuracy</p>
+      <h2>Location</h2>
+      <p>What city are they in? (Optional)</p>
       
       <div class="input-group">
         <input type="text" id="city" placeholder="Start typing city name..." />
-        <select id="age_range">
-          <option value="">Age range (optional)</option>
-          <option value="18-24">18-24 years</option>
-          <option value="25-34" selected>25-34 years</option>
-          <option value="35-44">35-44 years</option>
-          <option value="45-54">45-54 years</option>
-          <option value="55-64">55-64 years</option>
-          <option value="65+">65+ years</option>
-        </select>
       </div>
 
       <button class="btn btn-primary" onclick="nextStep()">Next →</button>
