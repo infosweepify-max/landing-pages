@@ -370,6 +370,15 @@
             <input type="text" class="input-field" id="lastname" placeholder="Last name" />
           </div>
 
+      <select class="input-field" id="age_range" style="margin-top:12px">
+        <option value="">Age range (optional)</option>
+        <option value="18-24">18-24 years</option>
+        <option value="25-34" selected>25-34 years</option>
+        <option value="35-44">35-44 years</option>
+        <option value="45-54">45-54 years</option>
+        <option value="55-64">55-64 years</option>
+        <option value="65+">65+ years</option>
+      </select>
           <button class="btn btn-primary" onclick="nextStep()">Continue →</button>
           <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
         </div>
@@ -435,7 +444,7 @@
         <!-- Step 7: Location -->
         <div class="step" data-step="7">
           <div class="step-header">
-            <div class="step-title">Where are they based?</div>
+            <div class="step-title">What city are they in? (Optional)</div>
             <div class="step-subtitle">Location helps improve accuracy</div>
           </div>
           
