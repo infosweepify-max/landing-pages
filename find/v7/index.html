@@ -1,0 +1,603 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sweepify — Professional Background Reports</title>
+  <meta name="description" content="Comprehensive background verification trusted by thousands. Get detailed reports in hours." />
+  
+  <style>
+    :root{
+      --bg:#f8fafc;
+      --card:#ffffff;
+      --muted:#64748b;
+      --text:#0f172a;
+      --accent:#3b82f6;
+      --accent2:#8b5cf6;
+      --ok:#10b981;
+      --border:#e2e8f0;
+      --shadow:0 4px 30px rgba(0,0,0,.08);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      color:var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(1200px 600px at 50% 0%, rgba(59,130,246,.04) 0%, transparent 65%),
+        var(--bg);
+      min-height:100vh;padding:40px 20px;
+    }
+    
+    .container{max-width:900px;margin:0 auto}
+    
+    .header{text-align:center;margin-bottom:40px}
+    .logo{
+      width:56px;height:56px;margin:0 auto 20px;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      border-radius:16px;display:flex;align-items:center;justify-content:center;
+      font-weight:900;font-size:28px;color:#fff;
+      box-shadow:0 8px 24px rgba(59,130,246,.3);
+    }
+    .header h1{font-size:36px;margin-bottom:12px;font-weight:900}
+    .header p{font-size:18px;color:var(--muted);max-width:600px;margin:0 auto}
+
+    .trust-bar{
+      display:flex;gap:30px;justify-content:center;align-items:center;
+      margin:30px 0;padding:20px;background:var(--card);border-radius:16px;
+      box-shadow:var(--shadow);border:1px solid var(--border);flex-wrap:wrap;
+    }
+    .trust-item{text-align:center}
+    .trust-value{font-size:24px;font-weight:900;color:var(--accent)}
+    .trust-label{font-size:12px;color:var(--muted);margin-top:4px}
+
+    .form-card{
+      background:var(--card);border-radius:20px;
+      border:1px solid var(--border);box-shadow:var(--shadow);
+      padding:40px;margin-bottom:30px;
+    }
+    @media(max-width:640px){.form-card{padding:28px 20px}}
+
+    .section{margin-bottom:36px}
+    .section:last-child{margin-bottom:0}
+    .section-title{
+      font-size:20px;font-weight:800;margin-bottom:8px;
+      display:flex;align-items:center;gap:10px;
+    }
+    .section-title .icon{font-size:24px}
+    .section-desc{font-size:14px;color:var(--muted);margin-bottom:20px}
+
+    input,select,textarea{
+      width:100%;padding:14px 16px;border-radius:12px;
+      border:1px solid var(--border);background:var(--bg);
+      color:var(--text);font-size:15px;transition:all .2s;outline:none;
+      font-family:inherit;
+    }
+    input:focus,select:focus,textarea:focus{
+      border-color:var(--accent);
+      box-shadow:0 0 0 3px rgba(59,130,246,.1);
+      background:#fff;
+    }
+    input::placeholder,textarea::placeholder{color:var(--muted);opacity:.6}
+
+    .input-grid{display:grid;gap:14px}
+    .input-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    @media(max-width:640px){.input-row{grid-template-columns:1fr}}
+
+    .social-grid{display:grid;gap:12px}
+    .social-input{
+      display:flex;align-items:center;gap:12px;
+      background:var(--bg);border:1px solid var(--border);border-radius:12px;
+      padding:4px 4px 4px 14px;transition:all .2s;
+    }
+    .social-input:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,.1)}
+    .social-icon{
+      width:36px;height:36px;border-radius:8px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:18px;flex-shrink:0;color:#fff;font-weight:700;
+    }
+    .social-icon.instagram{background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)}
+    .social-icon.facebook{background:#1877f2}
+    .social-icon.twitter{background:#1da1f2}
+    .social-icon.linkedin{background:#0a66c2}
+    .social-icon.tiktok{background:linear-gradient(45deg,#ff0050,#00f2ea)}
+    .social-input input{border:none;background:transparent;padding:10px 12px}
+
+    .radio-group{display:grid;gap:12px;margin-top:14px}
+    .radio-option{
+      padding:16px 18px;border-radius:12px;border:2px solid var(--border);
+      background:var(--bg);cursor:pointer;transition:all .25s;
+      display:flex;align-items:center;gap:14px;
+    }
+    .radio-option:hover{border-color:var(--accent);background:#fff}
+    .radio-option.selected{
+      border-color:var(--accent);background:rgba(59,130,246,.05);
+      box-shadow:0 4px 16px rgba(59,130,246,.15);
+    }
+    .radio-icon{
+      width:44px;height:44px;border-radius:10px;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      display:flex;align-items:center;justify-content:center;
+      font-size:20px;flex-shrink:0;
+    }
+    .radio-content h4{font-size:15px;margin-bottom:2px}
+    .radio-content p{font-size:12px;color:var(--muted);margin:0}
+
+    .tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px}
+    @media(max-width:768px){.tiers{grid-template-columns:1fr}}
+    .tier{
+      padding:22px;border-radius:16px;border:2px solid var(--border);
+      background:var(--bg);cursor:pointer;transition:all .3s;
+      text-align:left;position:relative;
+    }
+    .tier:hover{
+      border-color:var(--accent);transform:translateY(-3px);
+      box-shadow:0 10px 25px rgba(59,130,246,.15);
+    }
+    .tier.selected{
+      border-color:var(--accent);background:rgba(59,130,246,.04);
+      box-shadow:0 8px 20px rgba(59,130,246,.2);
+    }
+    .tier .badge{
+      position:absolute;top:-10px;right:14px;padding:5px 12px;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      border-radius:12px;font-size:10px;font-weight:900;color:#fff;
+      text-transform:uppercase;letter-spacing:.5px;
+    }
+    .tier .tier-name{font-weight:800;font-size:16px;margin-bottom:8px}
+    .tier .price{font-size:30px;font-weight:900;letter-spacing:-1px;margin-bottom:12px}
+    .tier ul{list-style:none;font-size:13px;color:var(--muted)}
+    .tier ul li{padding:5px 0;display:flex;gap:8px;align-items:flex-start}
+    .tier ul li::before{content:'✓';color:var(--ok);font-weight:900;flex-shrink:0;font-size:15px}
+
+    .btn{
+      padding:16px 34px;border-radius:14px;font-size:16px;font-weight:700;
+      border:none;cursor:pointer;transition:all .3s;
+    }
+    .btn-primary{
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      color:#fff;box-shadow:0 6px 20px rgba(59,130,246,.3);
+      width:100%;margin-top:24px;
+    }
+    .btn-primary:hover:not(:disabled){
+      transform:translateY(-2px);
+      box-shadow:0 10px 30px rgba(59,130,246,.4);
+    }
+    .btn-primary:disabled{opacity:.5;cursor:not-allowed}
+
+    .validation-error{
+      color:#ef4444;font-size:13px;margin-top:8px;
+      display:none;
+    }
+    .validation-error.show{display:block}
+
+    .loading-overlay{
+      display:none;position:fixed;top:0;left:0;right:0;bottom:0;
+      background:rgba(15,23,42,.95);z-index:1000;
+      align-items:center;justify-content:center;
+    }
+    .loading-overlay.active{display:flex}
+    .loading-content{text-align:center;color:#fff}
+    .spinner-big{
+      width:60px;height:60px;border:4px solid rgba(255,255,255,.2);
+      border-top-color:#fff;border-radius:50%;
+      animation:spin 1s linear infinite;margin:0 auto 24px;
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .loading-text{font-size:20px;font-weight:700;margin-bottom:10px}
+    .loading-subtext{color:rgba(255,255,255,.7);font-size:15px}
+
+    .pac-container{
+      background:#fff;
+      border:1px solid var(--border);
+      border-radius:12px;
+      margin-top:4px;
+      box-shadow:var(--shadow);
+    }
+    .pac-item{
+      border-top:1px solid var(--border);
+      padding:8px 12px;
+      cursor:pointer;
+    }
+    .pac-item:hover{background:var(--bg)}
+    .pac-matched{color:var(--accent);font-weight:600}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">S</div>
+      <h1>Professional Background Reports</h1>
+      <p>Comprehensive verification trusted by thousands. Get detailed reports in hours.</p>
+    </div>
+
+    <div class="trust-bar">
+      <div class="trust-item">
+        <div class="trust-value">15K+</div>
+        <div class="trust-label">Reports delivered</div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-value">4.8/5</div>
+        <div class="trust-label">Customer rating</div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-value">12h</div>
+        <div class="trust-label">Average delivery</div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-value">100%</div>
+        <div class="trust-label">Confidential</div>
+      </div>
+    </div>
+
+    <form class="form-card" id="mainForm">
+      <!-- Section 1: What & Why -->
+      <div class="section">
+        <div class="section-title">
+          <span class="icon">🎯</span>
+          <span>Search Purpose</span>
+        </div>
+        <div class="section-desc">What information are you looking for?</div>
+        
+        <div class="radio-group">
+          <div class="radio-option" data-value="name" onclick="selectSearchType(this)">
+            <div class="radio-icon">👤</div>
+            <div class="radio-content">
+              <h4>Name</h4>
+              <p>Find by their name</p>
+            </div>
+          </div>
+          <div class="radio-option" data-value="phone" onclick="selectSearchType(this)">
+            <div class="radio-icon">📞</div>
+            <div class="radio-content">
+              <h4>Phone Number</h4>
+              <p>Reverse phone lookup</p>
+            </div>
+          </div>
+          <div class="radio-option" data-value="email" onclick="selectSearchType(this)">
+            <div class="radio-icon">✉️</div>
+            <div class="radio-content">
+              <h4>Email Address</h4>
+              <p>Email verification</p>
+            </div>
+          </div>
+          <div class="radio-option" data-value="photo" onclick="selectSearchType(this)">
+            <div class="radio-icon">📷</div>
+            <div class="radio-content">
+              <h4>Photo</h4>
+              <p>Image-based search</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-desc" style="margin-top:24px;margin-bottom:14px">Why are you searching?</div>
+        <select id="looking_for" required style="margin-top:0">
+          <option value="">Select a reason...</option>
+          <option value="Personal safety or dating verification">Personal safety or dating verification</option>
+          <option value="Checking on a family member or child's safety">Checking on a family member or child's safety</option>
+          <option value="Background check (hiring, business partnerships)">Background check (hiring, business partnerships)</option>
+          <option value="Tenant or roommate screening">Tenant or roommate screening</option>
+          <option value="Reconnecting with old friend or classmate">Reconnecting with old friend or classmate</option>
+          <option value="Checking my own digital footprint">Checking my own digital footprint</option>
+        </select>
+      </div>
+
+      <!-- Section 2: About Them -->
+      <div class="section">
+        <div class="section-title">
+          <span class="icon">👤</span>
+          <span>Person Details</span>
+        </div>
+        <div class="section-desc">Provide what you know (all optional, but more info = better results)</div>
+        
+        <div class="input-grid">
+          <div class="input-row">
+            <input type="text" id="firstname" placeholder="First name" />
+            <input type="text" id="lastname" placeholder="Last name" />
+          </div>
+          <input type="email" id="email_cheater" placeholder="Their email address" />
+          <input type="text" id="alias" placeholder="Nicknames or aliases" />
+        </div>
+      </div>
+
+      <!-- Section 3: Social Media -->
+      <div class="section">
+        <div class="section-title">
+          <span class="icon">📱</span>
+          <span>Social Media</span>
+        </div>
+        <div class="section-desc">Any social profiles you know?</div>
+        
+        <div class="social-grid">
+          <div class="social-input">
+            <div class="social-icon instagram">📷</div>
+            <input type="text" id="social_instagram" placeholder="Instagram username" />
+          </div>
+          <div class="social-input">
+            <div class="social-icon facebook">f</div>
+            <input type="text" id="social_facebook" placeholder="Facebook profile" />
+          </div>
+          <div class="social-input">
+            <div class="social-icon linkedin">in</div>
+            <input type="text" id="social_linkedin" placeholder="LinkedIn URL" />
+          </div>
+          <div class="social-input">
+            <div class="social-icon twitter">𝕏</div>
+            <input type="text" id="social_twitter" placeholder="Twitter/X handle" />
+          </div>
+          <div class="social-input">
+            <div class="social-icon tiktok">🎵</div>
+            <input type="text" id="social_tiktok" placeholder="TikTok username" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 4: Location -->
+      <div class="section">
+        <div class="section-title">
+          <span class="icon">📍</span>
+          <span>Location</span>
+        </div>
+        <div class="section-desc">Where are they based?</div>
+        
+        <div class="input-row">
+          <input type="text" id="city" placeholder="City" />
+          <select id="age_range">
+            <option value="">Age range</option>
+            <option value="18-24">18-24 years</option>
+            <option value="25-34" selected>25-34 years</option>
+            <option value="35-44">35-44 years</option>
+            <option value="45-54">45-54 years</option>
+            <option value="55-64">55-64 years</option>
+            <option value="65+">65+ years</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Section 5: Your Email -->
+      <div class="section">
+        <div class="section-title">
+          <span class="icon">📧</span>
+          <span>Your Contact</span>
+        </div>
+        <div class="section-desc">Where should we send your report? *Required</div>
+        
+        <input type="email" id="email" placeholder="your@email.com" required />
+        <div class="validation-error" id="emailError">Please enter your email address</div>
+        <div class="validation-error" id="dataError">Please provide at least one detail about the person above</div>
+      </div>
+
+      <!-- Section 6: Pricing -->
+      <div class="section">
+        <div class="section-title">
+          <span class="icon">💳</span>
+          <span>Choose Report Level</span>
+        </div>
+        <div class="section-desc">Select the depth of information you need</div>
+        
+        <div class="tiers">
+          <div class="tier" data-tier="basic" data-price="4.99" onclick="selectTier(this)">
+            <div class="tier-name">Basic</div>
+            <div class="price">€4.99</div>
+            <ul>
+              <li>Profile discovery</li>
+              <li>Public records</li>
+              <li>24h delivery</li>
+            </ul>
+          </div>
+
+          <div class="tier selected" data-tier="standard" data-price="14.99" onclick="selectTier(this)">
+            <div class="badge">Popular</div>
+            <div class="tier-name">Standard</div>
+            <div class="price">€14.99</div>
+            <ul>
+              <li>Deep search</li>
+              <li>Social connections</li>
+              <li>12h delivery</li>
+            </ul>
+          </div>
+
+          <div class="tier" data-tier="premium" data-price="17.99" onclick="selectTier(this)">
+            <div class="badge">Complete</div>
+            <div class="tier-name">Premium</div>
+            <div class="price">€17.99</div>
+            <ul>
+              <li>Maximum depth</li>
+              <li>All sources</li>
+              <li>6h priority</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary" onclick="submitForm(event)">Get Report Now →</button>
+    </form>
+  </div>
+
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-content">
+      <div class="spinner-big"></div>
+      <div class="loading-text">Processing your request...</div>
+      <div class="loading-subtext">Redirecting to secure checkout</div>
+    </div>
+  </div>
+
+  <!-- Google Places API -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBfb9lKLdHd_SWZZmePOj8RV_yKqRp-MPA&libraries=places"></script>
+
+  <script>
+    function safeFbq(action, event, params) {
+      if (typeof fbq !== 'undefined') fbq(action, event, params);
+    }
+  </script>
+
+  <script>
+    const WHICH_LP = 'find_v7';
+    
+    let selectedSearchType = '';
+    let selectedTier = 'standard';
+    let selectedPrice = 14.99;
+    let cityAutocomplete = null;
+
+    const qs = new URLSearchParams(location.search);
+    const get = (k) => qs.get(k) || '';
+    const attribution = {
+      from: get('from') || 'meta_ads',
+      which_lp: WHICH_LP,
+      fbclid: get('fbclid'),
+      gclid: get('gclid'),
+      utm_source: get('utm_source'),
+      utm_campaign: get('utm_campaign'),
+      utm_content: get('utm_content'),
+    };
+
+    try {
+      localStorage.setItem('sweepify_attrib', JSON.stringify(attribution));
+    } catch {}
+
+    setTimeout(() => {
+      safeFbq('track', 'ViewContent', {
+        content_name: 'lp_onepage_v7',
+        which_lp: WHICH_LP,
+        from: attribution.from,
+        currency: 'EUR'
+      });
+    }, 1000);
+
+    // Initialize Google Places Autocomplete
+    window.addEventListener('load', () => {
+      const cityInput = document.getElementById('city');
+      if (cityInput && google && google.maps && google.maps.places) {
+        cityAutocomplete = new google.maps.places.Autocomplete(cityInput, {
+          types: ['(cities)'],
+        });
+      }
+    });
+
+    function selectSearchType(element) {
+      document.querySelectorAll('.radio-option').forEach(c => c.classList.remove('selected'));
+      element.classList.add('selected');
+      selectedSearchType = element.dataset.value;
+    }
+
+    function selectTier(element) {
+      document.querySelectorAll('.tier').forEach(t => t.classList.remove('selected'));
+      element.classList.add('selected');
+      selectedTier = element.dataset.tier;
+      selectedPrice = parseFloat(element.dataset.price);
+      
+      safeFbq('track', 'AddToCart', {
+        content_name: selectedTier,
+        value: selectedPrice,
+        currency: 'EUR',
+        which_lp: WHICH_LP,
+        from: attribution.from,
+      });
+    }
+
+    async function submitForm(event) {
+      event.preventDefault();
+      
+      const email = document.getElementById('email').value.trim();
+      const emailError = document.getElementById('emailError');
+      const dataError = document.getElementById('dataError');
+      
+      emailError.classList.remove('show');
+      dataError.classList.remove('show');
+      
+      if (!email) {
+        emailError.classList.add('show');
+        return;
+      }
+      
+      // Check if at least one field about the person is filled
+      const hasData = 
+        document.getElementById('firstname').value.trim() ||
+        document.getElementById('lastname').value.trim() ||
+        document.getElementById('email_cheater').value.trim() ||
+        document.getElementById('alias').value.trim() ||
+        document.getElementById('social_instagram').value.trim() ||
+        document.getElementById('social_facebook').value.trim() ||
+        document.getElementById('social_linkedin').value.trim() ||
+        document.getElementById('social_twitter').value.trim() ||
+        document.getElementById('social_tiktok').value.trim();
+      
+      if (!hasData) {
+        dataError.classList.add('show');
+        document.getElementById('email').scrollIntoView({behavior: 'smooth', block: 'center'});
+        return;
+      }
+
+      safeFbq('track', 'InitiateCheckout', {
+        content_name: selectedTier,
+        value: selectedPrice,
+        currency: 'EUR',
+        which_lp: WHICH_LP,
+        from: attribution.from,
+      });
+
+      document.getElementById('loadingOverlay').classList.add('active');
+
+      // Build social_media string
+      const socialParts = [];
+      const insta = document.getElementById('social_instagram').value.trim();
+      const fb = document.getElementById('social_facebook').value.trim();
+      const li = document.getElementById('social_linkedin').value.trim();
+      const tw = document.getElementById('social_twitter').value.trim();
+      const tk = document.getElementById('social_tiktok').value.trim();
+      
+      if (insta) socialParts.push(`Insta : ${insta}`);
+      if (fb) socialParts.push(`Facebook : ${fb}`);
+      if (li) socialParts.push(`Linkdein: ${li}`);
+      if (tw) socialParts.push(`Twitter : ${tw}`);
+      if (tk) socialParts.push(`TikTok : ${tk}`);
+      
+      const socialMedia = socialParts.length > 0 ? socialParts.join(' , ') : '';
+
+      const lookingFor = document.getElementById('looking_for').value;
+
+      const payload = {
+        firstname: document.getElementById('firstname').value.trim(),
+        lastname: document.getElementById('lastname').value.trim(),
+        email: email,
+        email_cheater: document.getElementById('email_cheater').value.trim(),
+        alias: document.getElementById('alias').value.trim(),
+        city: document.getElementById('city').value.trim(),
+        age_range: document.getElementById('age_range').value,
+        social_media: socialMedia,
+        looking_for: lookingFor ? `${lookingFor} : yes` : '',
+        report_type: selectedTier,
+        which_lp: WHICH_LP,
+        from: attribution.from,
+        fbclid: attribution.fbclid,
+        gclid: attribution.gclid,
+        utm_source: attribution.utm_source,
+        utm_campaign: attribution.utm_campaign,
+        source_url: location.href,
+      };
+
+      try {
+        const res = await fetch('https://sweepify.io/api/1.1/wf/create_tracker_asterix', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer 580f1f779c897eb03829488edae0d629'
+          },
+          body: JSON.stringify(payload),
+        });
+        
+        const data = await res.json().catch(() => null);
+        
+        if (!res.ok || !data?.response?.checkout_url) {
+          throw new Error('checkout-failed');
+        }
+        
+        window.location.href = data.response.checkout_url;
+      } catch (err) {
+        console.error('Submit error:', err);
+        document.getElementById('loadingOverlay').classList.remove('active');
+        alert('Unable to process. Please try again or contact support.');
+      }
+    }
+  </script>
+</body>
+</html>
