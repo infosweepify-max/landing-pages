@@ -718,18 +718,17 @@
       };
 
       try {
-        const res = await fetch('https://sweepify.io/api/1.1/wf/create_tracker_asterix', {
+        const res = await fetch('https://sweepify-session.sherymadodomy.workers.dev/create-session', {
           method: 'POST',
           headers: { 
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer 580f1f779c897eb03829488edae0d629'
           },
           body: JSON.stringify(payload),
         });
         
         const data = await res.json().catch(() => null);
         
-        if (!res.ok || !data?.response?.checkout_url) {
+        if (!res.ok || !data?.checkout_url) {
           throw new Error('checkout-failed');
         }
         
