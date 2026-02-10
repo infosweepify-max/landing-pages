@@ -98,6 +98,8 @@
     .price-name{font-size:11px;font-weight:700;margin-bottom:6px;text-transform:uppercase;color:var(--muted)}
     .price-amount{font-size:26px;font-weight:900;letter-spacing:-.5px}
     .price-badge{
+.price-features{list-style:none;font-size:11px;color:var(--muted);margin-top:8px;padding:0}
+.price-features li{padding:3px 0;text-align:left}
       font-size:9px;background:linear-gradient(135deg,var(--accent),var(--accent2));
       color:#fff;padding:3px 8px;border-radius:8px;font-weight:800;
       display:inline-block;margin-top:4px;text-transform:uppercase;
@@ -279,20 +281,31 @@
             <div class="price-box" data-tier="basic" data-price="4.99" onclick="selectPrice(this)">
               <div class="price-name">Basic</div>
               <div class="price-amount">€5</div>
+              <ul class="price-features">
+                <li>• Background check</li>
+                <li>• 24h delivery</li>
+              </ul>
             </div>
             <div class="price-box selected" data-tier="standard" data-price="14.99" onclick="selectPrice(this)">
               <div class="price-name">Standard</div>
               <div class="price-amount">€15</div>
               <div class="price-badge">Best</div>
+              <ul class="price-features">
+                <li>• Deep background</li>
+                <li>• Hidden profiles</li>
+                <li>• 12h delivery</li>
+              </ul>
             </div>
             <div class="price-box" data-tier="premium" data-price="17.99" onclick="selectPrice(this)">
               <div class="price-name">Premium</div>
               <div class="price-amount">€18</div>
+              <ul class="price-features">
+                <li>• Maximum depth</li>
+                <li>• All sources</li>
+                <li>• Rush 6h</li>
+              </ul>
             </div>
           </div>
-        </div>
-
-        <button type="submit" class="btn btn-submit" onclick="submitFast(event)">Get Report →</button>
       </form>
     </div>
 
