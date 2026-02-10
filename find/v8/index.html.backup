@@ -1,0 +1,747 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sweepify — Find Anyone, Anywhere</title>
+  <meta name="description" content="Interactive background search. Build your search profile and get comprehensive results." />
+  
+  <style>
+    :root{
+      --bg:#0a0e1a;
+      --card:#141927;
+      --muted:#8b92ab;
+      --text:#e8ebf7;
+      --accent:#6366f1;
+      --accent2:#a855f7;
+      --ok:#22c55e;
+      --border:#1e2332;
+      --shadow:0 20px 60px rgba(0,0,0,.5);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      color:var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(1400px 700px at 30% 20%, rgba(99,102,241,.12) 0%, transparent 60%),
+        radial-gradient(1200px 600px at 70% 80%, rgba(168,85,247,.08) 0%, transparent 60%),
+        var(--bg);
+      min-height:100vh;display:flex;align-items:center;justify-content:center;
+      padding:20px;overflow:hidden;
+    }
+    
+    .app-container{
+      max-width:580px;width:100%;position:relative;
+    }
+
+    .brand{
+      text-align:center;margin-bottom:30px;
+    }
+    .brand-logo{
+      width:64px;height:64px;margin:0 auto 16px;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      border-radius:18px;display:flex;align-items:center;justify-content:center;
+      font-weight:900;font-size:32px;color:#fff;
+      box-shadow:0 12px 32px rgba(99,102,241,.4);
+      animation:float 3s ease-in-out infinite;
+    }
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+    .brand-name{font-size:24px;font-weight:900;letter-spacing:-.5px}
+
+    .progress-dots{
+      display:flex;gap:8px;justify-content:center;margin-bottom:28px;
+    }
+    .progress-dot{
+      width:32px;height:6px;background:var(--border);border-radius:8px;
+      transition:all .4s;
+    }
+    .progress-dot.active{background:linear-gradient(90deg,var(--accent),var(--accent2));width:48px}
+
+    .card-wrapper{
+      perspective:1000px;min-height:520px;
+    }
+    .card{
+      background:var(--card);border-radius:28px;
+      border:1px solid var(--border);box-shadow:var(--shadow);
+      padding:44px 36px;
+      position:relative;
+      transform-style:preserve-3d;
+      animation:cardEntry .6s ease-out;
+    }
+    @keyframes cardEntry{from{opacity:0;transform:scale(.92) rotateX(8deg)}to{opacity:1;transform:scale(1) rotateX(0)}}
+    @media(max-width:640px){.card{padding:36px 24px}}
+
+    .step{display:none}
+    .step.active{display:block}
+
+    .step-header{text-align:center;margin-bottom:32px}
+    .step-title{font-size:26px;font-weight:900;margin-bottom:10px;line-height:1.2}
+    .step-subtitle{color:var(--muted);font-size:14px;line-height:1.5}
+
+    .choice-grid{display:grid;gap:12px}
+    .choice-card{
+      padding:20px;border-radius:18px;border:2px solid var(--border);
+      background:linear-gradient(135deg,rgba(99,102,241,.03),transparent);
+      cursor:pointer;transition:all .3s cubic-bezier(.4,0,.2,1);
+      display:flex;align-items:center;gap:16px;position:relative;overflow:hidden;
+    }
+    .choice-card::before{
+      content:'';position:absolute;top:0;left:0;right:0;bottom:0;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      opacity:0;transition:opacity .3s;z-index:0;
+    }
+    .choice-card:hover{
+      border-color:var(--accent);
+      transform:translateX(4px);
+    }
+    .choice-card.selected{
+      border-color:var(--accent);
+      box-shadow:0 8px 24px rgba(99,102,241,.3);
+    }
+    .choice-card.selected::before{opacity:.08}
+    .choice-icon{
+      width:52px;height:52px;border-radius:14px;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      display:flex;align-items:center;justify-content:center;
+      font-size:24px;flex-shrink:0;z-index:1;
+      box-shadow:0 6px 16px rgba(99,102,241,.25);
+    }
+    .choice-content{flex:1;z-index:1}
+    .choice-content h3{font-size:16px;margin-bottom:4px}
+    .choice-content p{font-size:13px;color:var(--muted);margin:0}
+
+    .input-field{
+      width:100%;padding:16px 18px;border-radius:14px;
+      border:2px solid var(--border);background:rgba(20,25,39,.6);
+      color:var(--text);font-size:15px;transition:all .3s;outline:none;
+      font-family:inherit;margin-bottom:12px;
+    }
+    .input-field:focus{
+      border-color:var(--accent);
+      background:var(--card);
+      box-shadow:0 0 0 4px rgba(99,102,241,.12);
+    }
+    .input-field::placeholder{color:var(--muted);opacity:.5}
+
+    .input-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media(max-width:640px){.input-row{grid-template-columns:1fr}}
+
+    .social-input{
+      display:flex;align-items:center;gap:12px;
+      background:rgba(20,25,39,.6);border:2px solid var(--border);border-radius:14px;
+      padding:4px 4px 4px 16px;transition:all .3s;margin-bottom:12px;
+    }
+    .social-input:focus-within{
+      border-color:var(--accent);
+      background:var(--card);
+      box-shadow:0 0 0 4px rgba(99,102,241,.12);
+    }
+    .social-icon{
+      width:40px;height:40px;border-radius:10px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:20px;flex-shrink:0;color:#fff;font-weight:700;
+    }
+    .social-icon.instagram{background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)}
+    .social-icon.facebook{background:#1877f2}
+    .social-icon.twitter{background:#1da1f2}
+    .social-icon.linkedin{background:#0a66c2}
+    .social-icon.tiktok{background:linear-gradient(45deg,#ff0050,#00f2ea)}
+    .social-input input{border:none;background:transparent;padding:12px;color:var(--text);outline:none;flex:1}
+
+    .btn{
+      padding:16px 32px;border-radius:14px;font-size:16px;font-weight:700;
+      border:none;cursor:pointer;transition:all .3s;
+    }
+    .btn-primary{
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      color:#fff;width:100%;margin-top:20px;
+      box-shadow:0 8px 24px rgba(99,102,241,.35);
+      position:relative;overflow:hidden;
+    }
+    .btn-primary::before{
+      content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);
+      transition:left .6s;
+    }
+    .btn-primary:hover:not(:disabled)::before{left:100%}
+    .btn-primary:hover:not(:disabled){
+      transform:translateY(-2px);
+      box-shadow:0 12px 32px rgba(99,102,241,.45);
+    }
+    .btn-primary:disabled{opacity:.5;cursor:not-allowed}
+
+    .btn-secondary{
+      background:transparent;color:var(--muted);
+      border:2px solid var(--border);padding:14px 28px;font-size:15px;
+      width:100%;margin-top:12px;
+    }
+    .btn-secondary:hover{background:var(--border);color:var(--text)}
+
+    .tier-select{display:grid;gap:14px;margin-top:20px}
+    .tier-card{
+      padding:24px;border-radius:18px;border:2px solid var(--border);
+      background:rgba(20,25,39,.6);cursor:pointer;transition:all .3s;
+      position:relative;
+    }
+    .tier-card:hover{
+      border-color:var(--accent);
+      transform:scale(1.02);
+    }
+    .tier-card.selected{
+      border-color:var(--accent);
+      background:rgba(99,102,241,.08);
+      box-shadow:0 8px 24px rgba(99,102,241,.3);
+    }
+    .tier-badge{
+      position:absolute;top:-10px;right:16px;padding:6px 14px;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      border-radius:14px;font-size:11px;font-weight:900;color:#fff;
+      text-transform:uppercase;letter-spacing:.6px;
+    }
+    .tier-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+    .tier-name{font-weight:900;font-size:18px}
+    .tier-price{font-size:34px;font-weight:900;letter-spacing:-1px}
+    .tier-features{list-style:none;font-size:13px;color:var(--muted)}
+    .tier-features li{padding:6px 0;display:flex;gap:10px;align-items:flex-start}
+    .tier-features li::before{content:'✓';color:var(--ok);font-weight:900;flex-shrink:0;font-size:16px}
+
+    .loading-state{display:none;text-align:center;padding:50px 0}
+    .loading-state.active{display:block}
+    .spinner{
+      width:64px;height:64px;border:5px solid var(--border);
+      border-top-color:var(--accent);border-radius:50%;
+      animation:spin 1s linear infinite;margin:0 auto 28px;
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .loading-title{font-size:20px;font-weight:800;margin-bottom:12px}
+    .loading-desc{color:var(--muted);font-size:15px}
+
+    .validation-msg{
+      color:#f87171;font-size:13px;margin-top:8px;
+      display:none;
+    }
+    .validation-msg.show{display:block}
+
+    .pac-container{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:14px;
+      margin-top:4px;
+      box-shadow:var(--shadow);
+    }
+    .pac-item{
+      border-top:1px solid var(--border);
+      padding:10px 14px;
+      color:var(--text);
+      cursor:pointer;
+    }
+    .pac-item:hover{background:var(--bg)}
+    .pac-item-query{color:var(--text)}
+    .pac-matched{color:var(--accent);font-weight:600}
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <div class="brand">
+      <div class="brand-logo">S</div>
+      <div class="brand-name">Sweepify</div>
+    </div>
+
+    <div class="progress-dots" id="progressDots">
+      <div class="progress-dot active"></div>
+      <div class="progress-dot"></div>
+      <div class="progress-dot"></div>
+      <div class="progress-dot"></div>
+      <div class="progress-dot"></div>
+      <div class="progress-dot"></div>
+      <div class="progress-dot"></div>
+      <div class="progress-dot"></div>
+      <div class="progress-dot"></div>
+    </div>
+
+    <div class="card-wrapper">
+      <div class="card">
+        <!-- Step 1: What -->
+        <div class="step active" data-step="1">
+          <div class="step-header">
+            <div class="step-title">What are you searching for?</div>
+            <div class="step-subtitle">Choose what you want to find</div>
+          </div>
+          
+          <div class="choice-grid">
+            <div class="choice-card" data-value="name" onclick="selectChoice(this,'search')">
+              <div class="choice-icon">👤</div>
+              <div class="choice-content">
+                <h3>Name</h3>
+                <p>Find by their name</p>
+              </div>
+            </div>
+            <div class="choice-card" data-value="phone" onclick="selectChoice(this,'search')">
+              <div class="choice-icon">📞</div>
+              <div class="choice-content">
+                <h3>Phone Number</h3>
+                <p>Reverse phone lookup</p>
+              </div>
+            </div>
+            <div class="choice-card" data-value="email" onclick="selectChoice(this,'search')">
+              <div class="choice-icon">✉️</div>
+              <div class="choice-content">
+                <h3>Email Address</h3>
+                <p>Email verification</p>
+              </div>
+            </div>
+            <div class="choice-card" data-value="photo" onclick="selectChoice(this,'search')">
+              <div class="choice-icon">📷</div>
+              <div class="choice-content">
+                <h3>Photo</h3>
+                <p>Image-based search</p>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn btn-primary" onclick="nextStep()" disabled id="step1Btn">Continue →</button>
+        </div>
+
+        <!-- Step 2: Why -->
+        <div class="step" data-step="2">
+          <div class="step-header">
+            <div class="step-title">Why are you searching?</div>
+            <div class="step-subtitle">This helps us tailor your results</div>
+          </div>
+          
+          <div class="choice-grid">
+            <div class="choice-card" data-value="Personal safety or dating verification" onclick="selectChoice(this,'reason')">
+              <div class="choice-icon">🛡️</div>
+              <div class="choice-content">
+                <h3>Personal safety</h3>
+                <p>Dating verification</p>
+              </div>
+            </div>
+            <div class="choice-card" data-value="Checking on a family member or child's safety" onclick="selectChoice(this,'reason')">
+              <div class="choice-icon">👨‍👩‍👧</div>
+              <div class="choice-content">
+                <h3>Family safety</h3>
+                <p>Child protection</p>
+              </div>
+            </div>
+            <div class="choice-card" data-value="Background check (hiring, business partnerships)" onclick="selectChoice(this,'reason')">
+              <div class="choice-icon">💼</div>
+              <div class="choice-content">
+                <h3>Background check</h3>
+                <p>Hiring, business</p>
+              </div>
+            </div>
+            <div class="choice-card" data-value="Tenant or roommate screening" onclick="selectChoice(this,'reason')">
+              <div class="choice-icon">🏠</div>
+              <div class="choice-content">
+                <h3>Tenant screening</h3>
+                <p>Roommate verification</p>
+              </div>
+            </div>
+            <div class="choice-card" data-value="Reconnecting with old friend or classmate" onclick="selectChoice(this,'reason')">
+              <div class="choice-icon">💬</div>
+              <div class="choice-content">
+                <h3>Reconnecting</h3>
+                <p>Old friends, classmates</p>
+              </div>
+            </div>
+            <div class="choice-card" data-value="Checking my own digital footprint" onclick="selectChoice(this,'reason')">
+              <div class="choice-icon">ℹ️</div>
+              <div class="choice-content">
+                <h3>My footprint</h3>
+                <p>Personal audit</p>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn btn-primary" onclick="nextStep()" disabled id="step2Btn">Continue →</button>
+          <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
+        </div>
+
+        <!-- Step 3: Name -->
+        <div class="step" data-step="3">
+          <div class="step-header">
+            <div class="step-title">What's their name?</div>
+            <div class="step-subtitle">Provide what you know (optional)</div>
+          </div>
+          
+          <div class="input-row">
+            <input type="text" class="input-field" id="firstname" placeholder="First name" />
+            <input type="text" class="input-field" id="lastname" placeholder="Last name" />
+          </div>
+
+          <button class="btn btn-primary" onclick="nextStep()">Continue →</button>
+          <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
+        </div>
+
+        <!-- Step 4: Social -->
+        <div class="step" data-step="4">
+          <div class="step-header">
+            <div class="step-title">Social media profiles?</div>
+            <div class="step-subtitle">Any usernames or links you know</div>
+          </div>
+          
+          <div class="social-input">
+            <div class="social-icon instagram">📷</div>
+            <input type="text" id="social_instagram" placeholder="Instagram" />
+          </div>
+          <div class="social-input">
+            <div class="social-icon facebook">f</div>
+            <input type="text" id="social_facebook" placeholder="Facebook" />
+          </div>
+          <div class="social-input">
+            <div class="social-icon linkedin">in</div>
+            <input type="text" id="social_linkedin" placeholder="LinkedIn" />
+          </div>
+          <div class="social-input">
+            <div class="social-icon twitter">𝕏</div>
+            <input type="text" id="social_twitter" placeholder="Twitter/X" />
+          </div>
+          <div class="social-input">
+            <div class="social-icon tiktok">🎵</div>
+            <input type="text" id="social_tiktok" placeholder="TikTok" />
+          </div>
+
+          <button class="btn btn-primary" onclick="nextStep()">Continue →</button>
+          <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
+        </div>
+
+        <!-- Step 5: Their Email -->
+        <div class="step" data-step="5">
+          <div class="step-header">
+            <div class="step-title">Their email address?</div>
+            <div class="step-subtitle">If you know it (optional)</div>
+          </div>
+          
+          <input type="email" class="input-field" id="email_cheater" placeholder="their@email.com" />
+
+          <button class="btn btn-primary" onclick="nextStep()">Continue →</button>
+          <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
+        </div>
+
+        <!-- Step 6: Aliases -->
+        <div class="step" data-step="6">
+          <div class="step-header">
+            <div class="step-title">Any nicknames or aliases?</div>
+            <div class="step-subtitle">Alternative names they use</div>
+          </div>
+          
+          <input type="text" class="input-field" id="alias" placeholder="e.g., Bob, Bobby, @username" />
+
+          <button class="btn btn-primary" onclick="nextStep()">Continue →</button>
+          <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
+        </div>
+
+        <!-- Step 7: Location -->
+        <div class="step" data-step="7">
+          <div class="step-header">
+            <div class="step-title">Where are they based?</div>
+            <div class="step-subtitle">Location helps improve accuracy</div>
+          </div>
+          
+          <input type="text" class="input-field" id="city" placeholder="City" />
+          <select class="input-field" id="age_range">
+            <option value="">Age range</option>
+            <option value="18-24">18-24 years</option>
+            <option value="25-34" selected>25-34 years</option>
+            <option value="35-44">35-44 years</option>
+            <option value="45-54">45-54 years</option>
+            <option value="55-64">55-64 years</option>
+            <option value="65+">65+ years</option>
+          </select>
+
+          <button class="btn btn-primary" onclick="nextStep()">Continue →</button>
+          <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
+        </div>
+
+        <!-- Step 8: Your Email -->
+        <div class="step" data-step="8">
+          <div class="step-header">
+            <div class="step-title">Your email address</div>
+            <div class="step-subtitle">Where should we send your report?</div>
+          </div>
+          
+          <input type="email" class="input-field" id="email" placeholder="your@email.com" required />
+          <div class="validation-msg" id="emailError">Please enter your email</div>
+          <div class="validation-msg" id="dataError">Please provide at least one detail about the person</div>
+
+          <button class="btn btn-primary" onclick="nextStep()">Continue →</button>
+          <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
+        </div>
+
+        <!-- Step 9: Pricing -->
+        <div class="step" data-step="9">
+          <div class="step-header">
+            <div class="step-title">Choose your report level</div>
+            <div class="step-subtitle">Select the depth you need</div>
+          </div>
+          
+          <div class="tier-select">
+            <div class="tier-card" data-tier="basic" data-price="4.99" onclick="selectTier(this)">
+              <div class="tier-header">
+                <div class="tier-name">Basic</div>
+                <div class="tier-price">€4.99</div>
+              </div>
+              <ul class="tier-features">
+                <li>Profile discovery</li>
+                <li>Public records</li>
+                <li>24h delivery</li>
+              </ul>
+            </div>
+
+            <div class="tier-card selected" data-tier="standard" data-price="14.99" onclick="selectTier(this)">
+              <div class="tier-badge">Popular</div>
+              <div class="tier-header">
+                <div class="tier-name">Standard</div>
+                <div class="tier-price">€14.99</div>
+              </div>
+              <ul class="tier-features">
+                <li>Deep search</li>
+                <li>Social connections</li>
+                <li>12h delivery</li>
+              </ul>
+            </div>
+
+            <div class="tier-card" data-tier="premium" data-price="17.99" onclick="selectTier(this)">
+              <div class="tier-badge">Complete</div>
+              <div class="tier-header">
+                <div class="tier-name">Premium</div>
+                <div class="tier-price">€17.99</div>
+              </div>
+              <ul class="tier-features">
+                <li>Maximum depth</li>
+                <li>All sources</li>
+                <li>6h priority</li>
+              </ul>
+            </div>
+          </div>
+
+          <button class="btn btn-primary" onclick="submitForm()">Get Report Now →</button>
+          <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
+        </div>
+
+        <!-- Loading -->
+        <div class="loading-state" id="loadingState">
+          <div class="spinner"></div>
+          <div class="loading-title">Processing your request...</div>
+          <div class="loading-desc">Redirecting to secure checkout</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Google Places API -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBfb9lKLdHd_SWZZmePOj8RV_yKqRp-MPA&libraries=places"></script>
+
+  <script>
+    function safeFbq(action, event, params) {
+      if (typeof fbq !== 'undefined') fbq(action, event, params);
+    }
+  </script>
+
+  <script>
+    const WHICH_LP = 'find_v8';
+    const TOTAL_STEPS = 9;
+    
+    let currentStep = 1;
+    let selectedSearchType = '';
+    let selectedReason = '';
+    let selectedTier = 'standard';
+    let selectedPrice = 14.99;
+    let cityAutocomplete = null;
+
+    const qs = new URLSearchParams(location.search);
+    const get = (k) => qs.get(k) || '';
+    const attribution = {
+      from: get('from') || 'meta_ads',
+      which_lp: WHICH_LP,
+      fbclid: get('fbclid'),
+      gclid: get('gclid'),
+      utm_source: get('utm_source'),
+      utm_campaign: get('utm_campaign'),
+      utm_content: get('utm_content'),
+    };
+
+    try {
+      localStorage.setItem('sweepify_attrib', JSON.stringify(attribution));
+    } catch {}
+
+    setTimeout(() => {
+      safeFbq('track', 'ViewContent', {
+        content_name: 'lp_interactive_v8',
+        which_lp: WHICH_LP,
+        from: attribution.from,
+        currency: 'EUR'
+      });
+    }, 1000);
+
+    // Initialize Google Places Autocomplete
+    window.addEventListener('load', () => {
+      const cityInput = document.getElementById('city');
+      if (cityInput && google && google.maps && google.maps.places) {
+        cityAutocomplete = new google.maps.places.Autocomplete(cityInput, {
+          types: ['(cities)'],
+        });
+      }
+    });
+
+    function updateProgressDots() {
+      const dots = document.querySelectorAll('.progress-dot');
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('active', i + 1 === currentStep);
+      });
+    }
+
+    function selectChoice(element, type) {
+      const parent = element.closest('.step');
+      parent.querySelectorAll('.choice-card').forEach(c => c.classList.remove('selected'));
+      element.classList.add('selected');
+      
+      if (type === 'search') {
+        selectedSearchType = element.dataset.value;
+        document.getElementById('step1Btn').disabled = false;
+      } else if (type === 'reason') {
+        selectedReason = element.dataset.value;
+        document.getElementById('step2Btn').disabled = false;
+      }
+    }
+
+    function nextStep() {
+      // Validation for step 8
+      if (currentStep === 8) {
+        const email = document.getElementById('email').value.trim();
+        const emailError = document.getElementById('emailError');
+        const dataError = document.getElementById('dataError');
+        
+        emailError.classList.remove('show');
+        dataError.classList.remove('show');
+        
+        if (!email) {
+          emailError.classList.add('show');
+          return;
+        }
+        
+        const hasData = 
+          document.getElementById('firstname').value.trim() ||
+          document.getElementById('lastname').value.trim() ||
+          document.getElementById('email_cheater').value.trim() ||
+          document.getElementById('alias').value.trim() ||
+          document.getElementById('social_instagram').value.trim() ||
+          document.getElementById('social_facebook').value.trim() ||
+          document.getElementById('social_linkedin').value.trim() ||
+          document.getElementById('social_twitter').value.trim() ||
+          document.getElementById('social_tiktok').value.trim();
+        
+        if (!hasData) {
+          dataError.classList.add('show');
+          return;
+        }
+      }
+
+      if (currentStep < TOTAL_STEPS) {
+        document.querySelector(`.step[data-step="${currentStep}"]`).classList.remove('active');
+        currentStep++;
+        document.querySelector(`.step[data-step="${currentStep}"]`).classList.add('active');
+        updateProgressDots();
+      }
+    }
+
+    function prevStep() {
+      if (currentStep > 1) {
+        document.querySelector(`.step[data-step="${currentStep}"]`).classList.remove('active');
+        currentStep--;
+        document.querySelector(`.step[data-step="${currentStep}"]`).classList.add('active');
+        updateProgressDots();
+      }
+    }
+
+    function selectTier(element) {
+      document.querySelectorAll('.tier-card').forEach(t => t.classList.remove('selected'));
+      element.classList.add('selected');
+      selectedTier = element.dataset.tier;
+      selectedPrice = parseFloat(element.dataset.price);
+      
+      safeFbq('track', 'AddToCart', {
+        content_name: selectedTier,
+        value: selectedPrice,
+        currency: 'EUR',
+        which_lp: WHICH_LP,
+        from: attribution.from,
+      });
+    }
+
+    async function submitForm() {
+      safeFbq('track', 'InitiateCheckout', {
+        content_name: selectedTier,
+        value: selectedPrice,
+        currency: 'EUR',
+        which_lp: WHICH_LP,
+        from: attribution.from,
+      });
+
+      document.querySelector(`.step[data-step="${currentStep}"]`).classList.remove('active');
+      document.getElementById('loadingState').classList.add('active');
+
+      const socialParts = [];
+      const insta = document.getElementById('social_instagram').value.trim();
+      const fb = document.getElementById('social_facebook').value.trim();
+      const li = document.getElementById('social_linkedin').value.trim();
+      const tw = document.getElementById('social_twitter').value.trim();
+      const tk = document.getElementById('social_tiktok').value.trim();
+      
+      if (insta) socialParts.push(`Insta : ${insta}`);
+      if (fb) socialParts.push(`Facebook : ${fb}`);
+      if (li) socialParts.push(`LinkedIn: ${li}`);
+      if (tw) socialParts.push(`Twitter : ${tw}`);
+      if (tk) socialParts.push(`TikTok : ${tk}`);
+      
+      const socialMedia = socialParts.length > 0 ? socialParts.join(' , ') : '';
+
+      const payload = {
+        firstname: document.getElementById('firstname').value.trim(),
+        lastname: document.getElementById('lastname').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        email_cheater: document.getElementById('email_cheater').value.trim(),
+        alias: document.getElementById('alias').value.trim(),
+        city: document.getElementById('city').value.trim(),
+        age_range: document.getElementById('age_range').value,
+        social_media: socialMedia,
+        looking_for: `${selectedReason} : yes`,
+        report_type: selectedTier,
+        which_lp: WHICH_LP,
+        from: attribution.from,
+        fbclid: attribution.fbclid,
+        gclid: attribution.gclid,
+        utm_source: attribution.utm_source,
+        utm_campaign: attribution.utm_campaign,
+        source_url: location.href,
+      };
+
+      try {
+        const res = await fetch('https://sweepify-session.sherymadodomy.workers.dev/create-session', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        });
+        
+        const data = await res.json().catch(() => null);
+        
+        if (!res.ok || !data?.checkout_url) {
+          throw new Error('checkout-failed');
+        }
+        
+        window.location.href = data.checkout_url;
+      } catch (err) {
+        console.error('Submit error:', err);
+        document.getElementById('loadingState').classList.remove('active');
+        document.querySelector(`.step[data-step="${currentStep}"]`).classList.add('active');
+        alert('Unable to process. Please try again or contact support.');
+      }
+    }
+
+    updateProgressDots();
+  </script>
+</body>
+</html>

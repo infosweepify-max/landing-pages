@@ -1,0 +1,683 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sweepify — Comprehensive Background Check</title>
+  <meta name="description" content="Professional background verification and people search. Get comprehensive reports in hours." />
+  
+  <style>
+    :root{
+      --bg:#0f172a;
+      --card:#1e293b;
+      --muted:#94a3b8;
+      --text:#f1f5f9;
+      --accent:#3b82f6;
+      --accent2:#8b5cf6;
+      --ok:#10b981;
+      --border:#334155;
+      --shadow:0 10px 40px rgba(0,0,0,.4);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      color:var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(1200px 600px at 20% 0%, rgba(59,130,246,.08) 0%, transparent 60%),
+        radial-gradient(1000px 500px at 80% 100%, rgba(139,92,246,.06) 0%, transparent 60%),
+        var(--bg);
+      min-height:100vh;display:flex;align-items:center;justify-content:center;
+      padding:20px;
+    }
+    
+    .quiz-container{
+      max-width:720px;width:100%;
+      background:var(--card);border-radius:24px;
+      border:1px solid var(--border);box-shadow:var(--shadow);
+      padding:50px 40px;text-align:center;position:relative;
+    }
+    @media(max-width:640px){.quiz-container{padding:36px 24px}}
+
+    .logo{
+      width:52px;height:52px;margin:0 auto 20px;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      border-radius:14px;display:flex;align-items:center;justify-content:center;
+      font-weight:900;font-size:26px;color:#fff;
+      box-shadow:0 8px 24px rgba(59,130,246,.35);
+    }
+
+    .progress-bar{
+      height:6px;background:var(--border);border-radius:12px;
+      margin-bottom:28px;overflow:hidden;
+    }
+    .progress-fill{
+      height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));
+      width:0%;transition:width .5s ease;border-radius:12px;
+    }
+    .step-count{font-size:13px;color:var(--muted);margin-bottom:18px;font-weight:600;letter-spacing:.3px}
+
+    .step{display:none;animation:fadeIn .4s}
+    .step.active{display:block}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+    
+    .step h2{font-size:28px;margin-bottom:12px;line-height:1.2;font-weight:800}
+    @media(max-width:640px){.step h2{font-size:24px}}
+    .step p{color:var(--muted);font-size:15px;margin-bottom:28px;line-height:1.6}
+
+    input,select,textarea{
+      width:100%;padding:15px 17px;border-radius:12px;
+      border:1px solid var(--border);background:var(--bg);
+      color:var(--text);font-size:15px;transition:all .2s;outline:none;
+      font-family:inherit;
+    }
+    input:focus,select:focus,textarea:focus{
+      border-color:var(--accent);
+      box-shadow:0 0 0 3px rgba(59,130,246,.15);
+      background:var(--card);
+    }
+    input::placeholder,textarea::placeholder{color:var(--muted);opacity:.6}
+
+    .input-group{display:grid;gap:12px;margin-bottom:20px}
+    .input-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media(max-width:640px){.input-row{grid-template-columns:1fr}}
+
+    .social-fields{display:grid;gap:10px;margin-bottom:20px}
+    .social-input{
+      display:flex;align-items:center;gap:12px;
+      background:var(--bg);border:1px solid var(--border);border-radius:12px;
+      padding:4px 4px 4px 14px;transition:all .2s;
+    }
+    .social-input:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,.15)}
+    .social-icon{
+      width:36px;height:36px;border-radius:8px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:18px;flex-shrink:0;
+    }
+    .social-icon.instagram{background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)}
+    .social-icon.facebook{background:#1877f2}
+    .social-icon.twitter{background:#1da1f2}
+    .social-icon.linkedin{background:#0a66c2}
+    .social-icon.tiktok{background:linear-gradient(45deg,#ff0050,#00f2ea)}
+    .social-input input{border:none;background:transparent;padding:11px 12px}
+
+    .option-cards{display:grid;gap:14px;margin:20px 0}
+    .option-card{
+      padding:18px 20px;border-radius:14px;border:2px solid var(--border);
+      background:var(--bg);cursor:pointer;transition:all .3s;
+      display:flex;align-items:center;gap:16px;text-align:left;
+    }
+    .option-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+    .option-card.selected{
+      border-color:var(--accent);background:rgba(59,130,246,.08);
+      box-shadow:0 6px 20px rgba(59,130,246,.2);
+    }
+    .option-icon{
+      width:48px;height:48px;border-radius:12px;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      display:flex;align-items:center;justify-content:center;
+      font-size:22px;flex-shrink:0;
+    }
+    .option-content h3{font-size:17px;margin-bottom:4px}
+    .option-content p{font-size:13px;color:var(--muted);margin:0}
+
+    .btn{
+      padding:15px 32px;border-radius:12px;font-size:15px;font-weight:700;
+      border:none;cursor:pointer;transition:all .3s;
+    }
+    .btn-primary{
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      color:#fff;box-shadow:0 6px 20px rgba(59,130,246,.35);
+      width:100%;margin-top:22px;
+    }
+    .btn-primary:hover:not(:disabled){
+      transform:translateY(-2px);
+      box-shadow:0 10px 30px rgba(59,130,246,.45);
+    }
+    .btn-primary:disabled{opacity:.5;cursor:not-allowed}
+    
+    .btn-secondary{
+      background:transparent;color:var(--muted);
+      border:1px solid var(--border);padding:12px 24px;font-size:14px;
+      margin-top:12px;
+    }
+    .btn-secondary:hover{background:var(--bg);color:var(--text)}
+
+    .tiers{display:grid;gap:14px;margin-top:26px}
+    .tier{
+      padding:20px;border-radius:16px;border:2px solid var(--border);
+      background:var(--bg);cursor:pointer;transition:all .3s;
+      text-align:left;position:relative;
+    }
+    .tier:hover{
+      border-color:var(--accent);transform:translateY(-3px);
+      box-shadow:0 10px 25px rgba(59,130,246,.2);
+    }
+    .tier.selected{
+      border-color:var(--accent);background:rgba(59,130,246,.06);
+      box-shadow:0 8px 20px rgba(59,130,246,.25);
+    }
+    .tier .badge{
+      position:absolute;top:-9px;right:14px;padding:4px 12px;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      border-radius:12px;font-size:10px;font-weight:900;color:#fff;
+      text-transform:uppercase;letter-spacing:.5px;
+    }
+    .tier .tier-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    .tier .tier-name{font-weight:800;font-size:17px}
+    .tier .price{font-size:32px;font-weight:900;letter-spacing:-1px}
+    .tier ul{list-style:none;font-size:13px;color:var(--muted);margin-top:8px}
+    .tier ul li{padding:5px 0;display:flex;gap:8px;align-items:flex-start}
+    .tier ul li::before{content:'✓';color:var(--ok);font-weight:900;flex-shrink:0;font-size:15px}
+
+    .loading-screen{display:none;padding:40px 0}
+    .loading-screen.active{display:block}
+    .spinner-big{
+      width:60px;height:60px;border:4px solid var(--border);
+      border-top-color:var(--accent);border-radius:50%;
+      animation:spin 1s linear infinite;margin:0 auto 24px;
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .loading-text{font-size:18px;font-weight:700;margin-bottom:10px}
+    .loading-subtext{color:var(--muted);font-size:14px}
+
+    .validation-error{
+      color:#ef4444;font-size:13px;margin-top:8px;
+      display:none;
+    }
+    .validation-error.show{display:block}
+
+    .pac-container{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:12px;
+      margin-top:4px;
+      box-shadow:var(--shadow);
+    }
+    .pac-item{
+      border-top:1px solid var(--border);
+      padding:8px 12px;
+      color:var(--text);
+      cursor:pointer;
+    }
+    .pac-item:hover{background:var(--bg)}
+    .pac-item-query{color:var(--text)}
+    .pac-matched{color:var(--accent);font-weight:600}
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <div class="logo">S</div>
+    
+    <div class="step-count">Step <span id="currentStep">1</span> of <span id="totalSteps">9</span></div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <!-- Step 1: What are you searching for? -->
+    <div class="step active" data-step="1">
+      <h2>What are you searching for?</h2>
+      <p>Choose what you want to find about this person</p>
+      
+      <div class="option-cards">
+        <div class="option-card" data-value="name" onclick="selectSearchType(this)">
+          <div class="option-icon">👤</div>
+          <div class="option-content">
+            <h3>Name</h3>
+            <p>Their name.</p>
+          </div>
+        </div>
+        <div class="option-card" data-value="phone" onclick="selectSearchType(this)">
+          <div class="option-icon">📞</div>
+          <div class="option-content">
+            <h3>Phone Number</h3>
+            <p>Their phone number.</p>
+          </div>
+        </div>
+        <div class="option-card" data-value="email" onclick="selectSearchType(this)">
+          <div class="option-icon">✉️</div>
+          <div class="option-content">
+            <h3>Email Address</h3>
+            <p>Their email address.</p>
+          </div>
+        </div>
+        <div class="option-card" data-value="photo" onclick="selectSearchType(this)">
+          <div class="option-icon">📷</div>
+          <div class="option-content">
+            <h3>Photo</h3>
+            <p>Their photos.</p>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" onclick="nextStep()" disabled id="step1Btn">Next →</button>
+    </div>
+
+    <!-- Step 2: Why are you searching? -->
+    <div class="step" data-step="2">
+      <h2>Why are you searching?</h2>
+      <p>This helps us provide the most relevant results</p>
+      
+      <div class="option-cards">
+        <div class="option-card" data-value="Personal safety or dating verification" onclick="selectReason(this)">
+          <div class="option-icon">🛡️</div>
+          <div class="option-content">
+            <h3>Personal safety or dating verification</h3>
+          </div>
+        </div>
+        <div class="option-card" data-value="Checking on a family member or child's safety" onclick="selectReason(this)">
+          <div class="option-icon">👨‍👩‍👧</div>
+          <div class="option-content">
+            <h3>Checking on a family member or child's safety</h3>
+          </div>
+        </div>
+        <div class="option-card" data-value="Background check (hiring, business partnerships)" onclick="selectReason(this)">
+          <div class="option-icon">💼</div>
+          <div class="option-content">
+            <h3>Background check (hiring, business partnerships)</h3>
+          </div>
+        </div>
+        <div class="option-card" data-value="Tenant or roommate screening" onclick="selectReason(this)">
+          <div class="option-icon">🏠</div>
+          <div class="option-content">
+            <h3>Tenant or roommate screening</h3>
+          </div>
+        </div>
+        <div class="option-card" data-value="Reconnecting with old friend or classmate" onclick="selectReason(this)">
+          <div class="option-icon">💬</div>
+          <div class="option-content">
+            <h3>Reconnecting with old friend or classmate</h3>
+          </div>
+        </div>
+        <div class="option-card" data-value="Checking my own digital footprint" onclick="selectReason(this)">
+          <div class="option-icon">ℹ️</div>
+          <div class="option-content">
+            <h3>Checking my own digital footprint</h3>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" onclick="nextStep()" disabled id="step2Btn">Next →</button>
+      <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
+    </div>
+
+    <!-- Step 3: Name -->
+    <div class="step" data-step="3">
+      <h2>What's their name?</h2>
+      <p>Skip if unknown - just provide what you know</p>
+      
+      <div class="input-group">
+        <div class="input-row">
+          <input type="text" id="firstname" placeholder="First name (optional)" />
+          <input type="text" id="lastname" placeholder="Last name (optional)" />
+        </div>
+      </div>
+
+      <button class="btn btn-primary" onclick="nextStep()">Next →</button>
+      <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
+    </div>
+
+    <!-- Step 4: Social Media -->
+    <div class="step" data-step="4">
+      <h2>Social media profiles</h2>
+      <p>Any usernames or profile links you know? (All optional)</p>
+      
+      <div class="social-fields">
+        <div class="social-input">
+          <div class="social-icon instagram">📷</div>
+          <input type="text" id="social_instagram" placeholder="Instagram username" />
+        </div>
+        <div class="social-input">
+          <div class="social-icon facebook">f</div>
+          <input type="text" id="social_facebook" placeholder="Facebook profile" />
+        </div>
+        <div class="social-input">
+          <div class="social-icon linkedin">in</div>
+          <input type="text" id="social_linkedin" placeholder="LinkedIn URL" />
+        </div>
+        <div class="social-input">
+          <div class="social-icon twitter">𝕏</div>
+          <input type="text" id="social_twitter" placeholder="Twitter/X handle" />
+        </div>
+        <div class="social-input">
+          <div class="social-icon tiktok">🎵</div>
+          <input type="text" id="social_tiktok" placeholder="TikTok username" />
+        </div>
+      </div>
+
+      <button class="btn btn-primary" onclick="nextStep()">Next →</button>
+      <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
+    </div>
+
+    <!-- Step 5: Their Email -->
+    <div class="step" data-step="5">
+      <h2>Email address</h2>
+      <p>Know any email they use? (Optional)</p>
+      
+      <input type="email" id="email_cheater" placeholder="their@email.com (optional)" />
+
+      <button class="btn btn-primary" onclick="nextStep()">Next →</button>
+      <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
+    </div>
+
+    <!-- Step 6: Aliases -->
+    <div class="step" data-step="6">
+      <h2>Nicknames or aliases</h2>
+      <p>Any alternative names they go by? (Optional)</p>
+      
+      <input type="text" id="alias" placeholder="e.g., Bob, Bobby, @username" />
+
+      <button class="btn btn-primary" onclick="nextStep()">Next →</button>
+      <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
+    </div>
+
+    <!-- Step 7: Location -->
+    <div class="step" data-step="7">
+      <h2>Location details</h2>
+      <p>Where are they based? This improves accuracy</p>
+      
+      <div class="input-group">
+        <input type="text" id="city" placeholder="Start typing city name..." />
+        <select id="age_range">
+          <option value="">Age range (optional)</option>
+          <option value="18-24">18-24 years</option>
+          <option value="25-34" selected>25-34 years</option>
+          <option value="35-44">35-44 years</option>
+          <option value="45-54">45-54 years</option>
+          <option value="55-64">55-64 years</option>
+          <option value="65+">65+ years</option>
+        </select>
+      </div>
+
+      <button class="btn btn-primary" onclick="nextStep()">Next →</button>
+      <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
+    </div>
+
+    <!-- Step 8: Your Email -->
+    <div class="step" data-step="8">
+      <h2>Your email address</h2>
+      <p>Where should we send your completed report?</p>
+      
+      <input type="email" id="email" placeholder="your@email.com" required />
+      <div class="validation-error" id="emailError">Please enter your email address</div>
+      <div class="validation-error" id="dataError">Please provide at least one detail about the person in previous steps</div>
+
+      <button class="btn btn-primary" onclick="nextStep()">Next →</button>
+      <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
+    </div>
+
+    <!-- Step 9: Pricing -->
+    <div class="step" data-step="9">
+      <h2>Choose your report level</h2>
+      <p>Select the depth of information you need</p>
+      
+      <div class="tiers">
+        <div class="tier" data-tier="basic" data-price="4.99" onclick="selectTier(this)">
+          <div class="tier-header">
+            <div class="tier-name">Basic</div>
+            <div class="price">€4.99</div>
+          </div>
+          <ul>
+            <li>Profile discovery</li>
+            <li>Public records summary</li>
+            <li>Delivered in 24 hours</li>
+          </ul>
+        </div>
+
+        <div class="tier selected" data-tier="standard" data-price="14.99" onclick="selectTier(this)">
+          <div class="badge">Popular</div>
+          <div class="tier-header">
+            <div class="tier-name">Standard</div>
+            <div class="price">€14.99</div>
+          </div>
+          <ul>
+            <li>Deep profile search</li>
+            <li>Social media connections</li>
+            <li>Enhanced public records</li>
+            <li>Delivered in 12 hours</li>
+          </ul>
+        </div>
+
+        <div class="tier" data-tier="premium" data-price="17.99" onclick="selectTier(this)">
+          <div class="badge">Complete</div>
+          <div class="tier-header">
+            <div class="tier-name">Premium</div>
+            <div class="price">€17.99</div>
+          </div>
+          <ul>
+            <li>Maximum depth analysis</li>
+            <li>All available sources</li>
+            <li>Detailed activity timeline</li>
+            <li>Priority delivery (6 hours)</li>
+          </ul>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" onclick="submitForm()">Get Report Now →</button>
+      <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
+    </div>
+
+    <!-- Loading -->
+    <div class="loading-screen" id="loadingScreen">
+      <div class="spinner-big"></div>
+      <div class="loading-text">Processing your request...</div>
+      <div class="loading-subtext">Redirecting to secure checkout</div>
+    </div>
+  </div>
+
+  <!-- Google Places API -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBfb9lKLdHd_SWZZmePOj8RV_yKqRp-MPA&libraries=places"></script>
+
+  <script>
+    function safeFbq(action, event, params) {
+      if (typeof fbq !== 'undefined') fbq(action, event, params);
+    }
+  </script>
+
+  <script>
+    const WHICH_LP = 'find_v6';
+    const TOTAL_STEPS = 9;
+    
+    let currentStep = 1;
+    let selectedSearchType = '';
+    let selectedReason = '';
+    let selectedTier = 'standard';
+    let selectedPrice = 14.99;
+    let cityAutocomplete = null;
+
+    const qs = new URLSearchParams(location.search);
+    const get = (k) => qs.get(k) || '';
+    const attribution = {
+      from: get('from') || 'meta_ads',
+      which_lp: WHICH_LP,
+      fbclid: get('fbclid'),
+      gclid: get('gclid'),
+      utm_source: get('utm_source'),
+      utm_campaign: get('utm_campaign'),
+      utm_content: get('utm_content'),
+    };
+
+    try {
+      localStorage.setItem('sweepify_attrib', JSON.stringify(attribution));
+    } catch {}
+
+    setTimeout(() => {
+      safeFbq('track', 'ViewContent', {
+        content_name: 'lp_quiz_v6',
+        which_lp: WHICH_LP,
+        from: attribution.from,
+        currency: 'EUR'
+      });
+    }, 1000);
+
+    // Initialize Google Places Autocomplete
+    window.addEventListener('load', () => {
+      const cityInput = document.getElementById('city');
+      if (cityInput && google && google.maps && google.maps.places) {
+        cityAutocomplete = new google.maps.places.Autocomplete(cityInput, {
+          types: ['(cities)'],
+        });
+      }
+    });
+
+    function updateProgress() {
+      const progress = (currentStep / TOTAL_STEPS) * 100;
+      document.getElementById('progressFill').style.width = progress + '%';
+      document.getElementById('currentStep').textContent = currentStep;
+      document.getElementById('totalSteps').textContent = TOTAL_STEPS;
+    }
+
+    function selectSearchType(element) {
+      document.querySelectorAll('[data-step="1"] .option-card').forEach(c => c.classList.remove('selected'));
+      element.classList.add('selected');
+      selectedSearchType = element.dataset.value;
+      document.getElementById('step1Btn').disabled = false;
+    }
+
+    function selectReason(element) {
+      document.querySelectorAll('[data-step="2"] .option-card').forEach(c => c.classList.remove('selected'));
+      element.classList.add('selected');
+      selectedReason = element.dataset.value;
+      document.getElementById('step2Btn').disabled = false;
+    }
+
+    function nextStep() {
+      // Validation for step 8 (email + at least one field)
+      if (currentStep === 8) {
+        const email = document.getElementById('email').value.trim();
+        const emailError = document.getElementById('emailError');
+        const dataError = document.getElementById('dataError');
+        
+        emailError.classList.remove('show');
+        dataError.classList.remove('show');
+        
+        if (!email) {
+          emailError.classList.add('show');
+          return;
+        }
+        
+        // Check if at least one field about the person is filled
+        const hasData = 
+          document.getElementById('firstname').value.trim() ||
+          document.getElementById('lastname').value.trim() ||
+          document.getElementById('email_cheater').value.trim() ||
+          document.getElementById('alias').value.trim() ||
+          document.getElementById('social_instagram').value.trim() ||
+          document.getElementById('social_facebook').value.trim() ||
+          document.getElementById('social_linkedin').value.trim() ||
+          document.getElementById('social_twitter').value.trim() ||
+          document.getElementById('social_tiktok').value.trim();
+        
+        if (!hasData) {
+          dataError.classList.add('show');
+          return;
+        }
+      }
+
+      if (currentStep < TOTAL_STEPS) {
+        document.querySelector(`.step[data-step="${currentStep}"]`).classList.remove('active');
+        currentStep++;
+        document.querySelector(`.step[data-step="${currentStep}"]`).classList.add('active');
+        updateProgress();
+      }
+    }
+
+    function prevStep() {
+      if (currentStep > 1) {
+        document.querySelector(`.step[data-step="${currentStep}"]`).classList.remove('active');
+        currentStep--;
+        document.querySelector(`.step[data-step="${currentStep}"]`).classList.add('active');
+        updateProgress();
+      }
+    }
+
+    function selectTier(element) {
+      document.querySelectorAll('.tier').forEach(t => t.classList.remove('selected'));
+      element.classList.add('selected');
+      selectedTier = element.dataset.tier;
+      selectedPrice = parseFloat(element.dataset.price);
+      
+      safeFbq('track', 'AddToCart', {
+        content_name: selectedTier,
+        value: selectedPrice,
+        currency: 'EUR',
+        which_lp: WHICH_LP,
+        from: attribution.from,
+      });
+    }
+
+    async function submitForm() {
+      safeFbq('track', 'InitiateCheckout', {
+        content_name: selectedTier,
+        value: selectedPrice,
+        currency: 'EUR',
+        which_lp: WHICH_LP,
+        from: attribution.from,
+      });
+
+      document.querySelector(`.step[data-step="${currentStep}"]`).classList.remove('active');
+      document.getElementById('loadingScreen').classList.add('active');
+
+      // Build social_media string
+      const socialParts = [];
+      const insta = document.getElementById('social_instagram').value.trim();
+      const fb = document.getElementById('social_facebook').value.trim();
+      const li = document.getElementById('social_linkedin').value.trim();
+      const tw = document.getElementById('social_twitter').value.trim();
+      const tk = document.getElementById('social_tiktok').value.trim();
+      
+      if (insta) socialParts.push(`Insta : ${insta}`);
+      if (fb) socialParts.push(`Facebook : ${fb}`);
+      if (li) socialParts.push(`LinkedIn: ${li}`);
+      if (tw) socialParts.push(`Twitter : ${tw}`);
+      if (tk) socialParts.push(`TikTok : ${tk}`);
+      
+      const socialMedia = socialParts.length > 0 ? socialParts.join(' , ') : '';
+
+      const payload = {
+        firstname: document.getElementById('firstname').value.trim(),
+        lastname: document.getElementById('lastname').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        email_cheater: document.getElementById('email_cheater').value.trim(),
+        alias: document.getElementById('alias').value.trim(),
+        city: document.getElementById('city').value.trim(),
+        age_range: document.getElementById('age_range').value,
+        social_media: socialMedia,
+        looking_for: `${selectedReason} : yes`,
+        report_type: selectedTier,
+        which_lp: WHICH_LP,
+        from: attribution.from,
+        fbclid: attribution.fbclid,
+        gclid: attribution.gclid,
+        utm_source: attribution.utm_source,
+        utm_campaign: attribution.utm_campaign,
+        source_url: location.href,
+      };
+
+      try {
+        const res = await fetch('https://sweepify-session.sherymadodomy.workers.dev/create-session', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        });
+        
+        const data = await res.json().catch(() => null);
+        
+        if (!res.ok || !data?.checkout_url) {
+          throw new Error('checkout-failed');
+        }
+        
+        window.location.href = data.checkout_url;
+      } catch (err) {
+        console.error('Submit error:', err);
+        document.getElementById('loadingScreen').classList.remove('active');
+        document.querySelector(`.step[data-step="${currentStep}"]`).classList.add('active');
+        alert('Unable to process. Please try again or contact support.');
+      }
+    }
+
+    updateProgress();
+  </script>
+</body>
+</html>
