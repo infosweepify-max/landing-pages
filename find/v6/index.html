@@ -668,7 +668,7 @@
           throw new Error('checkout-failed');
         }
         
-        window.location.href = data.response.checkout_url;
+        window.location.href = data.checkout_url;
       } catch (err) {
         console.error('Submit error:', err);
         document.getElementById('loadingScreen').classList.remove('active');
