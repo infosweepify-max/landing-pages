@@ -1,0 +1,1756 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sweepify — Find Anyone's Public Online Presence</title>
+  <meta name="description" content="Discover social profiles, contact information, and public records. Trusted by thousands. Money-back guarantee." />
+
+  <!-- Google Places API -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC3l7sgHExxg_0zeCAynm68nWOmT1xREpU&libraries=places&callback=initPlaces" async defer></script>
+
+  <!-- Avenir font -->
+  <link rel="preload" href="https://cdn.sweepbank.com/sweep/assets/fonts/Avenir/Avenir-medium.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="https://cdn.sweepbank.com/sweep/assets/fonts/Avenir/Avenir-bold.woff2" as="font" type="font/woff2" crossorigin />
+
+  <style>
+    @font-face {
+      font-family: 'Avenir';
+      src: url('https://cdn.sweepbank.com/sweep/assets/fonts/Avenir/Avenir-medium.woff2') format('woff2');
+      font-weight: 400;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Avenir';
+      src: url('https://cdn.sweepbank.com/sweep/assets/fonts/Avenir/Avenir-bold.woff2') format('woff2');
+      font-weight: 700;
+      font-display: swap;
+    }
+
+    :root {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --accent: #10b981;
+      --accent-dark: #059669;
+      --error: #ef4444;
+      --border: rgba(15, 23, 42, 0.08);
+      --shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+      --gradient: linear-gradient(135deg, #10b981, #059669);
+    }
+
+    * { box-sizing: border-box; }
+    
+    body {
+      margin: 0;
+      color: var(--text);
+      font-family: 'Avenir', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .wrap {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 20px 20px 80px;
+    }
+
+    .wrap-narrow {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 20px 20px 120px;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 0 40px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: var(--gradient);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 20px;
+    }
+
+    .brand b {
+      font-size: 22px;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+
+    .pill {
+      font-size: 13px;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: var(--card);
+    }
+
+    /* Landing Page */
+    .landing {
+      display: block;
+    }
+
+    .landing.hidden {
+      display: none;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 60px 20px 80px;
+    }
+
+    .hero h1 {
+      margin: 0 0 20px;
+      font-size: 56px;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      font-weight: 700;
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 40px; }
+    }
+
+    .hero .subtitle {
+      font-size: 20px;
+      color: var(--muted);
+      margin: 0 auto 40px;
+      max-width: 680px;
+      line-height: 1.5;
+    }
+
+    .hero .cta {
+      display: inline-block;
+      padding: 18px 40px;
+      border-radius: 12px;
+      background: var(--gradient);
+      color: white;
+      font-weight: 700;
+      font-size: 18px;
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
+      transition: all 0.2s;
+      border: none;
+      cursor: pointer;
+    }
+
+    .hero .cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(16, 185, 129, 0.45);
+      text-decoration: none;
+    }
+
+    /* Trust badges */
+    .trust {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      flex-wrap: wrap;
+      margin: 60px 0;
+    }
+
+    .trust-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .trust-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: rgba(16, 185, 129, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+
+    .trust-item strong {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .trust-item small {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    /* Features */
+    .features {
+      max-width: 960px;
+      margin: 80px auto;
+    }
+
+    .features h2 {
+      text-align: center;
+      font-size: 36px;
+      margin: 0 0 48px;
+      font-weight: 700;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+    }
+
+    @media (max-width: 920px) {
+      .feature-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .feature {
+      text-align: center;
+      padding: 32px 24px;
+      border-radius: 16px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+
+    .feature-icon {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 20px;
+      border-radius: 16px;
+      background: var(--gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    .feature h3 {
+      font-size: 20px;
+      margin: 0 0 12px;
+      font-weight: 700;
+    }
+
+    .feature p {
+      font-size: 15px;
+      color: var(--muted);
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    /* Reviews */
+    .reviews {
+      max-width: 960px;
+      margin: 80px auto;
+    }
+
+    .reviews h2 {
+      text-align: center;
+      font-size: 36px;
+      margin: 0 0 16px;
+      font-weight: 700;
+    }
+
+    .rating-summary {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .stars {
+      font-size: 32px;
+      color: #fbbf24;
+      margin-bottom: 8px;
+    }
+
+    .rating-text {
+      font-size: 18px;
+      color: var(--muted);
+    }
+
+    .rating-text strong {
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .review-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    @media (max-width: 920px) {
+      .review-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .review {
+      padding: 24px;
+      border-radius: 12px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+
+    .review .stars {
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
+
+    .review p {
+      font-size: 14px;
+      color: var(--text);
+      margin: 0 0 16px;
+      line-height: 1.6;
+    }
+
+    .review .author {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .review .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 16px;
+    }
+
+    .review .author-info strong {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .review .author-info small {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* Form sections */
+    .form-section {
+      display: none;
+    }
+
+    .form-section.active {
+      display: block;
+    }
+
+    .card {
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      padding: 40px 36px;
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    .back-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: rgba(100, 116, 139, 0.1);
+      border: 1px solid var(--border);
+      padding: 8px 16px;
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .back-btn:hover {
+      background: rgba(100, 116, 139, 0.15);
+    }
+
+    h1 {
+      margin: 0 0 16px;
+      font-size: 38px;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      font-weight: 700;
+    }
+
+    .sub {
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.6;
+      margin: 0 0 32px;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+      margin-bottom: 20px;
+    }
+
+    label {
+      font-size: 14px;
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    label .opt {
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    .field-help {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: -2px;
+      line-height: 1.5;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 15px;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    }
+
+    input.error, select.error {
+      border-color: var(--error);
+    }
+
+    input.error:focus, select.error:focus {
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+    }
+
+    .error-msg {
+      color: var(--error);
+      font-size: 13px;
+      margin-top: 4px;
+      display: none;
+    }
+
+    .error-msg.show {
+      display: block;
+    }
+
+    input::placeholder {
+      color: var(--muted);
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    @media (max-width: 520px) {
+      .row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Radio options */
+    .options {
+      display: grid;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .option {
+      padding: 16px;
+      border-radius: 12px;
+      border: 2px solid var(--border);
+      background: var(--card);
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .option:hover {
+      border-color: var(--accent);
+    }
+
+    .option.selected {
+      border-color: var(--accent);
+      background: rgba(16, 185, 129, 0.05);
+    }
+
+    .option input[type="radio"] {
+      width: auto;
+      margin-top: 2px;
+    }
+
+    .option-content {
+      flex: 1;
+    }
+
+    .option-content strong {
+      display: block;
+      font-size: 15px;
+      margin-bottom: 4px;
+    }
+
+    .option-content small {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    /* Buttons */
+    .btn {
+      width: 100%;
+      padding: 16px 20px;
+      border-radius: 12px;
+      border: none;
+      background: var(--gradient);
+      color: white;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+      transition: all 0.2s;
+      font-family: inherit;
+      margin-top: 24px;
+    }
+
+    .btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    /* Scanning animation */
+    .scanner {
+      text-align: center;
+      padding: 60px 20px;
+    }
+
+    .scanner h2 {
+      margin: 0 0 12px;
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .scanner .status {
+      color: var(--muted);
+      font-size: 15px;
+      margin-bottom: 20px;
+    }
+
+    .scan-stats {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin: 30px 0 40px;
+    }
+
+    .scan-stat {
+      text-align: center;
+    }
+
+    .scan-stat .number {
+      font-size: 48px;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .scan-stat .label {
+      font-size: 14px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .scan-grid {
+      display: grid;
+      gap: 16px;
+      max-width: 480px;
+      margin: 0 auto;
+      text-align: left;
+    }
+
+    .scan-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px;
+      border-radius: 12px;
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.15);
+      opacity: 0;
+      animation: fadeInSlide 0.5s forwards;
+    }
+
+    @keyframes fadeInSlide {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .scan-item:nth-child(1) { animation-delay: 0.3s; transform: translateY(10px); }
+    .scan-item:nth-child(2) { animation-delay: 0.7s; transform: translateY(10px); }
+    .scan-item:nth-child(3) { animation-delay: 1.1s; transform: translateY(10px); }
+    .scan-item:nth-child(4) { animation-delay: 1.5s; transform: translateY(10px); }
+    .scan-item:nth-child(5) { animation-delay: 1.9s; transform: translateY(10px); }
+
+    .scan-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: var(--gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .scan-item .text {
+      flex: 1;
+    }
+
+    .scan-item .text strong {
+      display: block;
+      font-size: 15px;
+      margin-bottom: 2px;
+    }
+
+    .scan-item .text small {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .scan-item .loader {
+      width: 24px;
+      height: 24px;
+      border: 3px solid rgba(16, 185, 129, 0.2);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    .scan-item.done .loader {
+      display: none;
+    }
+
+    .scan-item.done::after {
+      content: '✓';
+      color: var(--accent);
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Results preview */
+    .preview {
+      text-align: center;
+    }
+
+    .preview h2 {
+      margin: 0 0 12px;
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .preview .found {
+      color: var(--accent);
+      font-size: 48px;
+      font-weight: 700;
+      margin: 20px 0 8px;
+    }
+
+    .preview .label {
+      color: var(--muted);
+      font-size: 16px;
+      margin-bottom: 40px;
+    }
+
+    .preview-grid {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 32px;
+      text-align: left;
+    }
+
+    .preview-item {
+      padding: 18px;
+      border-radius: 12px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    .preview-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: rgba(16, 185, 129, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .preview-item .text {
+      flex: 1;
+    }
+
+    .preview-item strong {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+
+    .preview-value {
+      display: block;
+      font-size: 15px;
+      color: var(--text);
+      background: linear-gradient(90deg, #cbd5e1 0%, #94a3b8 50%, #cbd5e1 100%);
+      background-size: 200% 100%;
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shimmer 2s linear infinite;
+      font-weight: 500;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    .lock-icon {
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    /* Pricing */
+    .pricing {
+      margin-top: 40px;
+    }
+
+    .pricing h2 {
+      font-size: 28px;
+      margin: 0 0 8px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .pricing .sub {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .tiers {
+      display: grid;
+      gap: 16px;
+    }
+
+    .tier {
+      padding: 24px;
+      border-radius: 12px;
+      border: 2px solid var(--border);
+      background: var(--card);
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .tier:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.15);
+    }
+
+    .tier.active {
+      border-color: var(--accent);
+      background: rgba(16, 185, 129, 0.04);
+      box-shadow: 0 4px 16px rgba(16, 185, 129, 0.2);
+    }
+
+    .tier-badge {
+      position: absolute;
+      top: -10px;
+      right: 16px;
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--gradient);
+      color: white;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .tier-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .tier-name {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .tier-price {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .tier-desc {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .tier ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .tier li {
+      font-size: 14px;
+      color: var(--text);
+      padding: 6px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .tier li:before {
+      content: '✓';
+      color: var(--accent);
+      font-weight: 700;
+      flex: 0 0 auto;
+    }
+
+    /* FAQ */
+    .faq {
+      margin-top: 48px;
+    }
+
+    .faq h3 {
+      font-size: 24px;
+      margin: 0 0 24px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .faq-item {
+      margin-bottom: 20px;
+    }
+
+    .faq-item h4 {
+      font-size: 16px;
+      margin: 0 0 8px;
+      font-weight: 600;
+    }
+
+    .faq-item p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* Sticky CTA */
+    .sticky-cta {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--card);
+      border-top: 1px solid var(--border);
+      padding: 16px 20px;
+      box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.08);
+      display: none;
+      z-index: 100;
+    }
+
+    .sticky-cta.show {
+      display: block;
+    }
+
+    .sticky-cta .wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .sticky-cta .info {
+      flex: 1;
+    }
+
+    .sticky-cta .info strong {
+      display: block;
+      font-size: 16px;
+      margin-bottom: 2px;
+    }
+
+    .sticky-cta .info small {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .sticky-cta .btn {
+      margin: 0;
+      white-space: nowrap;
+      padding: 14px 28px;
+    }
+
+    .guarantee {
+      text-align: center;
+      margin-top: 16px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .guarantee strong {
+      color: var(--text);
+    }
+  </style>
+</head>
+<body>
+  <!-- Landing Page -->
+  <div class="landing" id="landingPage">
+    <div class="wrap">
+      <header>
+        <a href="/" class="brand">
+          <div class="logo">S</div>
+          <b>Sweepify</b>
+        </a>
+        <div class="pill">v21</div>
+      </header>
+
+      <div class="hero">
+        <h1>Find Anyone's Public Online Presence</h1>
+        <p class="subtitle">
+          Discover social profiles, contact information, and public records from 500+ million sources. 
+          Fast, legal, and confidential. Trusted by thousands.
+        </p>
+        <button class="cta" onclick="startSearch()">Start Your Search →</button>
+      </div>
+
+      <div class="trust">
+        <div class="trust-item">
+          <div class="trust-icon">✓</div>
+          <strong>100% Legal</strong>
+          <small>Public sources only</small>
+        </div>
+        <div class="trust-item">
+          <div class="trust-icon">🔒</div>
+          <strong>Confidential</strong>
+          <small>Your search is private</small>
+        </div>
+        <div class="trust-item">
+          <div class="trust-icon">⚡</div>
+          <strong>Fast Results</strong>
+          <small>Reports in 6-24 hours</small>
+        </div>
+        <div class="trust-item">
+          <div class="trust-icon">💯</div>
+          <strong>Money-Back</strong>
+          <small>Guaranteed results</small>
+        </div>
+      </div>
+
+      <div class="features">
+        <h2>What You'll Discover</h2>
+        <div class="feature-grid">
+          <div class="feature">
+            <div class="feature-icon">🔍</div>
+            <h3>Social Profiles</h3>
+            <p>Find Facebook, Instagram, LinkedIn, Twitter, TikTok, and other social media accounts.</p>
+          </div>
+          <div class="feature">
+            <div class="feature-icon">📱</div>
+            <h3>Contact Info</h3>
+            <p>Discover email addresses, phone numbers, and current/past addresses.</p>
+          </div>
+          <div class="feature">
+            <div class="feature-icon">💼</div>
+            <h3>Professional History</h3>
+            <p>Employment records, education, certifications, and business affiliations.</p>
+          </div>
+          <div class="feature">
+            <div class="feature-icon">🏠</div>
+            <h3>Public Records</h3>
+            <p>Property ownership, court records, and legal filings from government databases.</p>
+          </div>
+          <div class="feature">
+            <div class="feature-icon">👥</div>
+            <h3>Relatives & Associates</h3>
+            <p>Family members, roommates, and known associates in public records.</p>
+          </div>
+          <div class="feature">
+            <div class="feature-icon">🌐</div>
+            <h3>Online Footprint</h3>
+            <p>Websites, blogs, forums, reviews, and mentions across the web.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="reviews">
+        <h2>Trusted by Thousands</h2>
+        <div class="rating-summary">
+          <div class="stars">★★★★★</div>
+          <p class="rating-text"><strong>4.8 out of 5</strong> based on 12,847 reviews</p>
+        </div>
+        <div class="review-grid">
+          <div class="review">
+            <div class="stars">★★★★★</div>
+            <p>"Found my old college roommate in minutes! The report included all her social profiles and current address. Definitely worth it."</p>
+            <div class="author">
+              <div class="avatar">SM</div>
+              <div class="author-info">
+                <strong>Sarah M.</strong>
+                <small>Verified Purchase</small>
+              </div>
+            </div>
+          </div>
+          <div class="review">
+            <div class="stars">★★★★★</div>
+            <p>"Used this before meeting someone from a dating app. Found out they had a criminal record. Money well spent for peace of mind."</p>
+            <div class="author">
+              <div class="avatar">JT</div>
+              <div class="author-info">
+                <strong>James T.</strong>
+                <small>Verified Purchase</small>
+              </div>
+            </div>
+          </div>
+          <div class="review">
+            <div class="stars">★★★★★</div>
+            <p>"Needed to verify a potential tenant. Report came back in 8 hours with everything I needed. Highly recommend the Standard package."</p>
+            <div class="author">
+              <div class="avatar">LK</div>
+              <div class="author-info">
+                <strong>Lisa K.</strong>
+                <small>Verified Purchase</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form Sections -->
+  <div class="wrap-narrow">
+    <header style="display:none;" id="formHeader">
+      <a href="/" class="brand">
+        <div class="logo">S</div>
+        <b>Sweepify</b>
+      </a>
+      <div class="pill">v21</div>
+    </header>
+
+    <form id="searchForm">
+      <!-- Step 1: What are you looking for? -->
+      <div class="form-section" id="step1">
+        <div class="card">
+          <h1>What are you looking for?</h1>
+          <p class="sub">
+            This helps us prioritize your search and provide the most relevant results.
+          </p>
+
+          <div class="options">
+            <label class="option">
+              <input type="radio" name="searchPurpose" value="dating" required />
+              <div class="option-content">
+                <strong>Dating Safety Check</strong>
+                <small>Verify someone before meeting — social profiles, background, and public records.</small>
+              </div>
+            </label>
+            <label class="option">
+              <input type="radio" name="searchPurpose" value="reconnect" />
+              <div class="option-content">
+                <strong>Reconnect with Someone</strong>
+                <small>Find an old friend, classmate, or lost contact.</small>
+              </div>
+            </label>
+            <label class="option">
+              <input type="radio" name="searchPurpose" value="business" />
+              <div class="option-content">
+                <strong>Business / Professional Check</strong>
+                <small>Research a potential hire, partner, or client.</small>
+              </div>
+            </label>
+            <label class="option">
+              <input type="radio" name="searchPurpose" value="general" />
+              <div class="option-content">
+                <strong>General Background Check</strong>
+                <small>Just looking for someone's public information.</small>
+              </div>
+            </label>
+          </div>
+
+          <button type="button" class="btn" onclick="goToStep(2)">Next →</button>
+        </div>
+      </div>
+
+      <!-- Step 2: Why are you searching? -->
+      <div class="form-section" id="step2">
+        <div class="card">
+          <button type="button" class="back-btn" onclick="goToStep(1)">← Back</button>
+          <h1>Why do we ask?</h1>
+          <p class="sub">
+            Understanding your intent helps us:
+          </p>
+          <ul style="color: var(--muted); line-height: 1.8; margin-bottom: 32px;">
+            <li>Prioritize the most relevant information</li>
+            <li>Focus on safety-critical data for dating checks</li>
+            <li>Surface professional signals for business searches</li>
+            <li>Improve our search accuracy over time</li>
+          </ul>
+          <p class="sub">
+            Your search remains completely private and confidential.
+          </p>
+
+          <button type="button" class="btn" onclick="goToStep(3)">Continue →</button>
+        </div>
+      </div>
+
+      <!-- Step 3: Person Details -->
+      <div class="form-section" id="step3">
+        <div class="card">
+          <button type="button" class="back-btn" onclick="goToStep(2)">← Back</button>
+          <h1>Who are you searching for?</h1>
+          <p class="sub">
+            Fill in at least one field besides age range. More information = better accuracy.
+          </p>
+
+          <div class="field">
+            <label>First name <span class="opt">(optional)</span></label>
+            <input type="text" name="firstName" id="firstName" placeholder="John" />
+            <div class="field-help">Legal first name helps us match the right person in public records.</div>
+          </div>
+
+          <div class="row">
+            <div class="field">
+              <label>Last name <span class="opt">(optional)</span></label>
+              <input type="text" name="lastName" id="lastName" placeholder="Doe" />
+              <div class="field-help">Improves matching accuracy.</div>
+            </div>
+            <div class="field">
+              <label>Age range <span class="opt">(optional)</span></label>
+              <select name="ageRange" id="ageRange">
+                <option value="">Select age range</option>
+                <option value="18-25">18-25</option>
+                <option value="26-35">26-35</option>
+                <option value="36-45">36-45</option>
+                <option value="46-60">46-60</option>
+                <option value="60+">60+</option>
+              </select>
+              <div class="field-help">Helps narrow down results.</div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>City / Location <span class="opt">(optional)</span></label>
+            <input type="text" name="city" id="cityInput" placeholder="New York" />
+            <div class="field-help">Current or past city helps us locate the right person.</div>
+          </div>
+
+          <div class="field">
+            <label>Email address <span class="opt">(optional)</span></label>
+            <input type="email" name="targetEmail" id="targetEmail" placeholder="john@example.com" />
+            <div class="field-help">If you know their email, we can find associated accounts.</div>
+          </div>
+
+          <div class="field">
+            <label>Social media handles <span class="opt">(optional)</span></label>
+            <input type="text" name="instagram" id="instagram" placeholder="@instagram" />
+            <div class="field-help">Instagram username if you know it.</div>
+          </div>
+
+          <div class="field">
+            <input type="text" name="facebook" id="facebook" placeholder="Facebook profile URL" />
+            <div class="field-help">Paste their Facebook profile link if available.</div>
+          </div>
+
+          <div class="field">
+            <input type="text" name="twitter" id="twitter" placeholder="@twitter" />
+            <div class="field-help">Twitter/X handle if known.</div>
+          </div>
+
+          <div class="error-msg" id="step3Error">Please fill in at least one field besides age range.</div>
+
+          <button type="button" class="btn" onclick="validateStep3()">Next →</button>
+        </div>
+      </div>
+
+      <!-- Step 4: Email Collection -->
+      <div class="form-section" id="step4">
+        <div class="card">
+          <button type="button" class="back-btn" onclick="goToStep(3)">← Back</button>
+          <h1>Where should we send your report?</h1>
+          <p class="sub">
+            We'll email you the full report once the search is complete (usually 12-24 hours).
+          </p>
+
+          <div class="field">
+            <label>Your email</label>
+            <input type="email" name="customerEmail" id="customerEmail" placeholder="you@example.com" required />
+            <div class="field-help">We need this to send you the completed report. We never share your email.</div>
+            <div class="error-msg" id="emailError">Please enter a valid email address.</div>
+          </div>
+
+          <button type="button" class="btn" onclick="validateEmail()">Start Search →</button>
+        </div>
+      </div>
+
+      <!-- Step 5: Scanning -->
+      <div class="form-section" id="step5">
+        <div class="card scanner">
+          <h2>Searching databases...</h2>
+          <p class="status">Scanning 500+ million public records</p>
+
+          <div class="scan-stats">
+            <div class="scan-stat">
+              <div class="number" id="resultsCount">0</div>
+              <div class="label">Results Found</div>
+            </div>
+            <div class="scan-stat">
+              <div class="number" id="dbCount">0</div>
+              <div class="label">Databases Scanned</div>
+            </div>
+          </div>
+
+          <div class="scan-grid">
+            <div class="scan-item" data-stage="1">
+              <div class="scan-icon">🔍</div>
+              <div class="text">
+                <strong>Social Media Profiles</strong>
+                <small>Searching Facebook, Instagram, Twitter, LinkedIn...</small>
+              </div>
+              <div class="loader"></div>
+            </div>
+
+            <div class="scan-item" data-stage="2">
+              <div class="scan-icon">📱</div>
+              <div class="text">
+                <strong>Contact Information</strong>
+                <small>Checking phone, email, addresses...</small>
+              </div>
+              <div class="loader"></div>
+            </div>
+
+            <div class="scan-item" data-stage="3">
+              <div class="scan-icon">💼</div>
+              <div class="text">
+                <strong>Professional History</strong>
+                <small>Employment, education, certifications...</small>
+              </div>
+              <div class="loader"></div>
+            </div>
+
+            <div class="scan-item" data-stage="4">
+              <div class="scan-icon">🏠</div>
+              <div class="text">
+                <strong>Public Records</strong>
+                <small>Property, business, court records...</small>
+              </div>
+              <div class="loader"></div>
+            </div>
+
+            <div class="scan-item" data-stage="5">
+              <div class="scan-icon">🌐</div>
+              <div class="text">
+                <strong>Online Presence</strong>
+                <small>Websites, blogs, mentions, reviews...</small>
+              </div>
+              <div class="loader"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 6: Preview + Checkout -->
+      <div class="form-section" id="step6">
+        <div class="card preview">
+          <h2>Search Complete!</h2>
+          <div class="found" id="dataPoints">127</div>
+          <p class="label">data points found</p>
+
+          <div class="preview-grid">
+            <div class="preview-item">
+              <div class="preview-icon">👤</div>
+              <div class="text">
+                <strong>Full Name</strong>
+                <span class="preview-value">Jonathan David Peterson</span>
+              </div>
+              <span class="lock-icon">🔒</span>
+            </div>
+
+            <div class="preview-item">
+              <div class="preview-icon">📧</div>
+              <div class="text">
+                <strong>Email Addresses</strong>
+                <span class="preview-value">john.peterson@gmail.com</span>
+              </div>
+              <span class="lock-icon">🔒</span>
+            </div>
+
+            <div class="preview-item">
+              <div class="preview-icon">📱</div>
+              <div class="text">
+                <strong>Phone Numbers</strong>
+                <span class="preview-value">+1 (555) 123-4567</span>
+              </div>
+              <span class="lock-icon">🔒</span>
+            </div>
+
+            <div class="preview-item">
+              <div class="preview-icon">📘</div>
+              <div class="text">
+                <strong>Facebook Profile</strong>
+                <span class="preview-value">facebook.com/john.peterson</span>
+              </div>
+              <span class="lock-icon">🔒</span>
+            </div>
+
+            <div class="preview-item">
+              <div class="preview-icon">📷</div>
+              <div class="text">
+                <strong>Instagram</strong>
+                <span class="preview-value">@johnpeterson_nyc</span>
+              </div>
+              <span class="lock-icon">🔒</span>
+            </div>
+
+            <div class="preview-item">
+              <div class="preview-icon">💼</div>
+              <div class="text">
+                <strong>LinkedIn</strong>
+                <span class="preview-value">linkedin.com/in/johnpeterson</span>
+              </div>
+              <span class="lock-icon">🔒</span>
+            </div>
+
+            <div class="preview-item">
+              <div class="preview-icon">🏠</div>
+              <div class="text">
+                <strong>Location History</strong>
+                <span class="preview-value">New York, NY • Los Angeles, CA</span>
+              </div>
+              <span class="lock-icon">🔒</span>
+            </div>
+
+            <div class="preview-item">
+              <div class="preview-icon">🎓</div>
+              <div class="text">
+                <strong>Education</strong>
+                <span class="preview-value">Columbia University, MBA 2015</span>
+              </div>
+              <span class="lock-icon">🔒</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card pricing">
+          <h2>Unlock Your Full Report</h2>
+          <p class="sub">Choose the package that's right for you</p>
+
+          <div class="tiers">
+            <div class="tier" data-tier="basic" data-price="4.99">
+              <div class="tier-header">
+                <div class="tier-name">Basic</div>
+                <div class="tier-price">€4.99</div>
+              </div>
+              <div class="tier-desc">Good for quick profile checks</div>
+              <ul>
+                <li>3-5 social profiles discovered</li>
+                <li>Basic online presence summary</li>
+                <li>Public usernames & handles</li>
+                <li>24-hour delivery</li>
+              </ul>
+            </div>
+
+            <div class="tier active" data-tier="standard" data-price="14.99">
+              <div class="tier-badge">Most Popular</div>
+              <div class="tier-header">
+                <div class="tier-name">Standard</div>
+                <div class="tier-price">€14.99</div>
+              </div>
+              <div class="tier-desc">Best value for thorough research</div>
+              <ul>
+                <li>Everything in Basic, plus:</li>
+                <li>8-12+ social profiles & networks</li>
+                <li>Potential email addresses & phone numbers</li>
+                <li>Professional history (LinkedIn, jobs)</li>
+                <li>Location history & addresses</li>
+                <li>Education & certifications</li>
+                <li>12-hour delivery</li>
+              </ul>
+            </div>
+
+            <div class="tier" data-tier="premium" data-price="17.99">
+              <div class="tier-header">
+                <div class="tier-name">Premium</div>
+                <div class="tier-price">€17.99</div>
+              </div>
+              <div class="tier-desc">Maximum depth for serious research</div>
+              <ul>
+                <li>Everything in Standard, plus:</li>
+                <li>15-20+ profiles across all platforms</li>
+                <li>Comprehensive background check</li>
+                <li>Court records & legal filings</li>
+                <li>Property ownership & business records</li>
+                <li>Relatives & associates</li>
+                <li>Deep web & archived content</li>
+                <li>Priority 6-hour delivery</li>
+              </ul>
+            </div>
+          </div>
+
+          <input type="hidden" name="selectedTier" value="standard" />
+          <input type="hidden" name="selectedPrice" value="14.99" />
+
+          <div class="guarantee">
+            <strong>✓ 100% Money-Back Guarantee</strong><br>
+            If we find no results, full refund. No questions asked.
+          </div>
+        </div>
+
+        <div class="card faq">
+          <h3>Frequently Asked Questions</h3>
+
+          <div class="faq-item">
+            <h4>Does it always find someone?</h4>
+            <p>
+              Results depend on public online presence. If someone keeps profiles private or uses different names, 
+              findings may be limited. That's why we offer a money-back guarantee.
+            </p>
+          </div>
+
+          <div class="faq-item">
+            <h4>What's the difference between packages?</h4>
+            <p>
+              Basic gives you a quick profile scan (3-5 profiles). Standard adds contact info, professional history, 
+              and location data (8-12+ profiles). Premium includes comprehensive background checks, court records, 
+              and deep web searches (15-20+ profiles).
+            </p>
+          </div>
+
+          <div class="faq-item">
+            <h4>How long does it take?</h4>
+            <p>
+              Basic: 24 hours • Standard: 12 hours • Premium: 6 hours (priority). 
+              You'll receive an email when your report is ready.
+            </p>
+          </div>
+
+          <div class="faq-item">
+            <h4>Is this legal?</h4>
+            <p>
+              Yes. We only search publicly available information from legal sources. This is not a consumer report 
+              under FCRA and cannot be used for employment, credit, or housing decisions.
+            </p>
+          </div>
+
+          <div class="faq-item">
+            <h4>What if I'm not satisfied?</h4>
+            <p>
+              Contact us within 30 days for a full refund if you're not satisfied or if we found no results. No hassle.
+            </p>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Sticky CTA -->
+  <div class="sticky-cta" id="stickyCTA">
+    <div class="wrap">
+      <div class="info">
+        <strong id="stickyTier">Standard Report</strong>
+        <small id="stickyPrice">€14.99 • 12-hour delivery</small>
+      </div>
+      <button type="button" class="btn" onclick="submitForm()">
+        Unlock Report
+      </button>
+    </div>
+  </div>
+
+  <script>
+    let currentStep = 0;
+    let formData = {};
+    let placesService = null;
+
+    // Google Places init
+    function initPlaces() {
+      const input = document.getElementById('cityInput');
+      if (input && window.google) {
+        const autocomplete = new google.maps.places.Autocomplete(input, {
+          types: ['(cities)']
+        });
+        autocomplete.addListener('place_changed', function() {
+          const place = autocomplete.getPlace();
+          if (place && place.formatted_address) {
+            formData.city = place.formatted_address;
+          }
+        });
+      }
+    }
+
+    function startSearch() {
+      document.getElementById('landingPage').classList.add('hidden');
+      document.getElementById('formHeader').style.display = 'flex';
+      goToStep(1);
+    }
+
+    function goToStep(step) {
+      if (currentStep > 0) {
+        document.getElementById(`step${currentStep}`).classList.remove('active');
+      }
+      document.getElementById(`step${step}`).classList.add('active');
+      currentStep = step;
+      window.scrollTo(0, 0);
+    }
+
+    // Radio option selection styling
+    document.addEventListener('change', (e) => {
+      if (e.target.type === 'radio') {
+        document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+        e.target.closest('.option').classList.add('selected');
+      }
+    });
+
+    function validateStep3() {
+      const firstName = document.getElementById('firstName').value.trim();
+      const lastName = document.getElementById('lastName').value.trim();
+      const city = document.getElementById('cityInput').value.trim();
+      const email = document.getElementById('targetEmail').value.trim();
+      const instagram = document.getElementById('instagram').value.trim();
+      const facebook = document.getElementById('facebook').value.trim();
+      const twitter = document.getElementById('twitter').value.trim();
+
+      const hasAtLeastOne = firstName || lastName || city || email || instagram || facebook || twitter;
+
+      if (!hasAtLeastOne) {
+        document.getElementById('step3Error').classList.add('show');
+        return;
+      }
+
+      document.getElementById('step3Error').classList.remove('show');
+
+      // Save data
+      formData.firstName = firstName;
+      formData.lastName = lastName;
+      formData.ageRange = document.getElementById('ageRange').value;
+      formData.city = city;
+      formData.targetEmail = email;
+      formData.instagram = instagram;
+      formData.facebook = facebook;
+      formData.twitter = twitter;
+
+      goToStep(4);
+    }
+
+    function validateEmail() {
+      const emailInput = document.getElementById('customerEmail');
+      const email = emailInput.value.trim();
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (!email || !emailRegex.test(email)) {
+        emailInput.classList.add('error');
+        document.getElementById('emailError').classList.add('show');
+        return;
+      }
+
+      emailInput.classList.remove('error');
+      document.getElementById('emailError').classList.remove('show');
+
+      formData.customerEmail = email;
+      startScan();
+    }
+
+    function startScan() {
+      goToStep(5);
+
+      let results = 0;
+      let databases = 0;
+      let stage = 1;
+
+      // Animate counters
+      const resultsInterval = setInterval(() => {
+        results += Math.floor(Math.random() * 15) + 5;
+        document.getElementById('resultsCount').textContent = results;
+      }, 400);
+
+      const dbInterval = setInterval(() => {
+        databases += Math.floor(Math.random() * 3) + 1;
+        document.getElementById('dbCount').textContent = databases;
+      }, 600);
+
+      // Animate stages
+      const stageInterval = setInterval(() => {
+        const item = document.querySelector(`.scan-item[data-stage="${stage}"]`);
+        if (item) {
+          item.classList.add('done');
+        }
+        stage++;
+        if (stage > 5) {
+          clearInterval(stageInterval);
+          clearInterval(resultsInterval);
+          clearInterval(dbInterval);
+          
+          setTimeout(() => {
+            const finalPoints = Math.floor(Math.random() * 80) + 80;
+            document.getElementById('dataPoints').textContent = finalPoints;
+            goToStep(6);
+            
+            setTimeout(() => {
+              window.addEventListener('scroll', toggleStickyCTA);
+              toggleStickyCTA();
+            }, 500);
+          }, 1000);
+        }
+      }, 1200);
+    }
+
+    function toggleStickyCTA() {
+      const pricing = document.querySelector('.pricing');
+      const sticky = document.getElementById('stickyCTA');
+      
+      if (pricing && sticky) {
+        const rect = pricing.getBoundingClientRect();
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+          sticky.classList.add('show');
+        } else {
+          sticky.classList.remove('show');
+        }
+      }
+    }
+
+    // Tier selection
+    document.addEventListener('click', (e) => {
+      const tier = e.target.closest('.tier');
+      if (!tier) return;
+
+      document.querySelectorAll('.tier').forEach(t => t.classList.remove('active'));
+      tier.classList.add('active');
+
+      const tierName = tier.dataset.tier;
+      const tierPrice = tier.dataset.price;
+
+      document.querySelector('[name="selectedTier"]').value = tierName;
+      document.querySelector('[name="selectedPrice"]').value = tierPrice;
+
+      const tierNames = {
+        basic: 'Basic Report',
+        standard: 'Standard Report',
+        premium: 'Premium Report'
+      };
+      const delivery = {
+        basic: '24-hour delivery',
+        standard: '12-hour delivery',
+        premium: '6-hour delivery'
+      };
+
+      document.getElementById('stickyTier').textContent = tierNames[tierName];
+      document.getElementById('stickyPrice').textContent = `€${tierPrice} • ${delivery[tierName]}`;
+    });
+
+    async function submitForm() {
+      const finalData = {
+        ...formData,
+        selectedTier: document.querySelector('[name="selectedTier"]').value,
+        selectedPrice: document.querySelector('[name="selectedPrice"]').value,
+        report_type: document.querySelector('[name="selectedTier"]').value,
+        mpc_code: 'SPF_' + Date.now()
+      };
+
+      const stickyBtn = document.querySelector('#stickyCTA .btn');
+      stickyBtn.disabled = true;
+      stickyBtn.textContent = 'Processing...';
+
+      try {
+        const response = await fetch('https://sweepify.io/version-test/api/1.1/wf/create-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(finalData)
+        });
+
+        const result = await response.json();
+
+        if (result.response && result.response.access_code) {
+          window.location.href = `https://sweepify.io/thank_you?code=${result.response.access_code}&report_type=${finalData.selectedTier}`;
+        } else {
+          throw new Error('No access code received');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Something went wrong. Please try again.');
+        stickyBtn.disabled = false;
+        stickyBtn.textContent = 'Unlock Report';
+      }
+    }
+  </script>
+</body>
+</html>

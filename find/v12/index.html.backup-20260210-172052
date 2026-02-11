@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Know Who You're Really Dating | Sweepify Background Check</title>
+  <meta name="description" content="Find hidden profiles, verify identity, and discover red flags before you trust someone. Fast, legal, confidential background checks.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #fafafa;
+      --surface: #fff;
+      --border: #e5e5e5;
+      --text: #171717;
+      --muted: #737373;
+      --accent: #f97316;
+      --accent2: #ea580c;
+      --success: #16a34a;
+      --error: #dc2626;
+      --shadow: 0 4px 20px rgba(0,0,0,.08);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family:'Inter', -apple-system, system-ui, sans-serif;
+      background:var(--bg); color:var(--text);
+      line-height:1.6; -webkit-font-smoothing:antialiased;
+      overflow-x:hidden;
+    }
+    .container { max-width:600px; margin:0 auto; padding:0 20px; }
+    
+    /* Hero */
+    .hero {
+      background:linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+      padding:40px 20px 32px; text-align:center;
+      border-bottom:1px solid var(--border);
+    }
+    .hero img { width:140px; margin:0 auto 20px; display:block; }
+    .hero h1 {
+      font-size:clamp(26px, 6vw, 36px); font-weight:900;
+      line-height:1.2; margin-bottom:12px; color:var(--text);
+    }
+    .hero p {
+      font-size:16px; color:var(--muted); margin-bottom:20px;
+    }
+    .trust-badges {
+      display:flex; justify-content:center; gap:20px; flex-wrap:wrap;
+      font-size:13px; color:var(--muted); margin-top:16px;
+    }
+    .trust-badges span {
+      display:flex; align-items:center; gap:6px;
+    }
+    
+    /* Quiz Container */
+    .quiz-container {
+      background:var(--surface); border-radius:16px;
+      margin:32px auto; padding:32px 24px; max-width:600px;
+      box-shadow:var(--shadow); border:1px solid var(--border);
+    }
+    .progress-bar-container {
+      height:8px; background:var(--border); border-radius:8px;
+      margin-bottom:24px; overflow:hidden;
+    }
+    .progress-bar {
+      height:100%; background:linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius:8px; transition:width .3s ease;
+    }
+    .progress-text {
+      text-align:center; font-size:14px; color:var(--muted);
+      margin-bottom:20px; font-weight:600;
+    }
+    .step { display:none; }
+    .step.active { display:block; animation:fadeIn .3s; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+    .step h2 {
+      font-size:22px; font-weight:800; margin-bottom:8px;
+      color:var(--text);
+    }
+    .step p {
+      font-size:14px; color:var(--muted); margin-bottom:24px;
+    }
+    .form-group { margin-bottom:20px; position:relative; }
+    .form-label {
+      display:block; font-size:14px; font-weight:600;
+      margin-bottom:8px; color:var(--text);
+    }
+    .optional { color:var(--muted); font-weight:400; font-size:13px; }
+    .form-input, .form-select {
+      width:100%; padding:14px 40px 14px 14px;
+      background:var(--bg); border:2px solid var(--border);
+      border-radius:10px; color:var(--text); font-size:15px;
+      transition:all .2s; font-family:inherit;
+    }
+    .form-input:focus, .form-select:focus {
+      outline:none; border-color:var(--accent);
+      box-shadow:0 0 0 3px rgba(249,115,22,.1);
+    }
+    .form-input.valid { border-color:var(--success); }
+    .validation-check {
+      position:absolute; right:14px; top:42px;
+      color:var(--success); font-size:20px; display:none;
+    }
+    .validation-check.show { display:block; animation:pop .3s; }
+    @keyframes pop { from { transform:scale(0); } to { transform:scale(1); } }
+    .input-hint {
+      font-size:12px; color:var(--muted); margin-top:6px;
+      display:block;
+    }
+    .instagram-special {
+      background:linear-gradient(135deg, #fff7ed 0%, #fff 100%);
+      border:2px solid var(--accent); padding:20px;
+      border-radius:12px; margin-bottom:20px;
+    }
+    .instagram-special .form-label {
+      color:var(--accent); font-size:15px;
+    }
+    .instagram-special .input-hint {
+      color:var(--accent); font-weight:600;
+    }
+    .btn-group {
+      display:flex; gap:12px; margin-top:24px;
+    }
+    .btn {
+      flex:1; padding:16px; border:none; border-radius:10px;
+      font-size:16px; font-weight:700; cursor:pointer;
+      transition:all .2s; font-family:inherit;
+    }
+    .btn-primary {
+      background:linear-gradient(135deg, var(--accent), var(--accent2));
+      color:#fff; box-shadow:var(--shadow);
+    }
+    .btn-primary:hover { transform:translateY(-2px); box-shadow:0 6px 24px rgba(249,115,22,.3); }
+    .btn-secondary {
+      background:var(--border); color:var(--text);
+    }
+    .btn-secondary:hover { background:#d4d4d4; }
+    
+    /* Pricing Section */
+    .pricing-comparison {
+      background:var(--surface); border:2px solid var(--accent);
+      border-radius:12px; padding:20px; margin-bottom:24px;
+    }
+    .pricing-comparison h4 {
+      font-size:16px; font-weight:800; margin-bottom:16px;
+      text-align:center; color:var(--text);
+    }
+    .compare-row {
+      display:grid; grid-template-columns:1fr auto 1fr;
+      gap:12px; align-items:center; padding:12px 0;
+      border-bottom:1px solid var(--border);
+    }
+    .compare-row:last-child { border:none; }
+    .compare-left { text-align:right; color:var(--muted); }
+    .compare-vs { font-weight:700; color:var(--accent); }
+    .compare-right { font-weight:700; color:var(--success); }
+    .pricing-grid {
+      display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+      gap:12px; margin-bottom:20px;
+    }
+    .price-card {
+      background:var(--surface); border:2px solid var(--border);
+      border-radius:12px; padding:20px; cursor:pointer;
+      transition:all .3s; position:relative;
+    }
+    .price-card:hover { border-color:var(--accent); transform:translateY(-2px); }
+    .price-card.selected {
+      border-color:var(--accent); background:rgba(249,115,22,.03);
+      box-shadow:0 4px 16px rgba(249,115,22,.2);
+    }
+    .price-badge {
+      position:absolute; top:-10px; right:10px;
+      background:var(--success); color:#fff;
+      padding:4px 10px; border-radius:12px;
+      font-size:10px; font-weight:800; text-transform:uppercase;
+    }
+    .price-name { font-size:14px; font-weight:700; margin-bottom:6px; }
+    .price-amount { font-size:28px; font-weight:900; margin-bottom:12px; line-height:1; }
+    .price-features {
+      list-style:none; font-size:12px; margin-bottom:12px;
+    }
+    .price-features li {
+      padding:4px 0; display:flex; align-items:center; gap:6px;
+    }
+    .check { color:var(--success); font-weight:700; }
+    .cross { color:var(--muted); }
+    .price-delivery {
+      font-size:11px; color:var(--accent); font-weight:700;
+      text-align:center; padding-top:10px; border-top:1px solid var(--border);
+    }
+    
+    /* Sample Report */
+    .sample-report {
+      background:var(--surface); border-radius:12px;
+      padding:24px; border:1px solid var(--border);
+      margin:32px auto; max-width:600px;
+    }
+    .sample-report h3 {
+      font-size:20px; font-weight:800; margin-bottom:16px;
+      text-align:center;
+    }
+    .sample-img {
+      width:100%; border-radius:8px; border:1px solid var(--border);
+      filter:blur(2px); opacity:0.6;
+    }
+    .sample-caption {
+      text-align:center; font-size:13px; color:var(--muted);
+      margin-top:12px; font-style:italic;
+    }
+    
+    /* Social Proof Notification */
+    .social-proof {
+      position:fixed; bottom:20px; left:20px;
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:12px; padding:12px 16px; box-shadow:var(--shadow);
+      display:none; max-width:280px; z-index:1000;
+      animation:slideIn .5s;
+    }
+    @keyframes slideIn { from { transform:translateX(-100%); opacity:0; } to { transform:translateX(0); opacity:1; } }
+    .social-proof.show { display:block; }
+    .social-proof-text {
+      font-size:13px; color:var(--text); margin-bottom:4px;
+      font-weight:600;
+    }
+    .social-proof-time {
+      font-size:11px; color:var(--muted);
+    }
+    
+    /* Exit Intent Popup */
+    .exit-popup {
+      position:fixed; top:0; left:0; right:0; bottom:0;
+      background:rgba(0,0,0,.7); z-index:9999;
+      display:none; align-items:center; justify-content:center;
+      animation:fadeInBg .3s;
+    }
+    @keyframes fadeInBg { from { opacity:0; } to { opacity:1; } }
+    .exit-popup.show { display:flex; }
+    .exit-content {
+      background:var(--surface); border-radius:16px;
+      padding:32px; max-width:400px; position:relative;
+      animation:popIn .3s;
+    }
+    @keyframes popIn { from { transform:scale(0.8); opacity:0; } to { transform:scale(1); opacity:1; } }
+    .exit-close {
+      position:absolute; top:12px; right:12px;
+      background:none; border:none; font-size:24px;
+      cursor:pointer; color:var(--muted);
+    }
+    .exit-content h3 {
+      font-size:24px; font-weight:900; margin-bottom:12px;
+      color:var(--text);
+    }
+    .exit-content p {
+      font-size:15px; color:var(--muted); margin-bottom:20px;
+    }
+    .exit-code {
+      background:rgba(249,115,22,.1); color:var(--accent);
+      padding:12px; border-radius:8px; text-align:center;
+      font-size:20px; font-weight:900; margin-bottom:20px;
+    }
+    .exit-btn {
+      width:100%; padding:16px; background:linear-gradient(135deg, var(--accent), var(--accent2));
+      color:#fff; border:none; border-radius:10px;
+      font-size:16px; font-weight:700; cursor:pointer;
+    }
+    
+    /* Sticky Mobile CTA */
+    .sticky-cta {
+      position:fixed; bottom:0; left:0; right:0;
+      background:var(--surface); border-top:1px solid var(--border);
+      padding:12px 20px; display:none; z-index:999;
+      box-shadow:0 -4px 20px rgba(0,0,0,.1);
+    }
+    @media (max-width:768px) {
+      .sticky-cta { display:block; }
+      .sticky-cta.hide { display:none; }
+    }
+    .sticky-cta-btn {
+      width:100%; padding:14px; background:linear-gradient(135deg, var(--accent), var(--accent2));
+      color:#fff; border:none; border-radius:10px;
+      font-size:15px; font-weight:700;
+    }
+    
+    /* Loading */
+    .loading {
+      display:none; text-align:center; padding:40px;
+    }
+    .spinner {
+      width:60px; height:60px; border:4px solid var(--border);
+      border-top-color:var(--accent); border-radius:50%;
+      animation:spin 1s linear infinite; margin:0 auto 20px;
+    }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    
+    /* Mobile Responsive */
+    @media (max-width:640px) {
+      .hero { padding:32px 20px 24px; }
+      .hero h1 { font-size:28px; }
+      .quiz-container { padding:24px 20px; margin:24px 16px; }
+      .pricing-grid { grid-template-columns:1fr; }
+      .btn-group { flex-direction:column; }
+      body { padding-bottom:80px; }
+    }
+    
+    .pac-container {
+      background:#fff; border:1px solid var(--border); border-radius:12px;
+      margin-top:2px; box-shadow:var(--shadow);
+    }
+    .pac-item { border-top:1px solid #ddd; padding:8px 12px; cursor:pointer; }
+    .pac-item:hover { background:#f5f5f5; }
+    .pac-matched { color:var(--accent); font-weight:600; }
+  </style>
+</head>
+<body>
+  
+  <div class="hero">
+    <img src="https://b49f241f8f6fa5b315e69c8011c794ec.cdn.bubble.io/f1768373112537x922911495335053700/sweepify-logo.svg" alt="Sweepify">
+    <h1>Know Who You're Really Dating</h1>
+    <p>Find hidden profiles, verify identity, and discover red flags in hours. Legal, confidential, and fast.</p>
+    <div class="trust-badges">
+      <span>✓ 18,500+ Reports</span>
+      <span>✓ 4.8/5 Rating</span>
+      <span>✓ 100% Legal</span>
+    </div>
+  </div>
+  
+  <div class="sample-report">
+    <h3>📋 What You'll Get</h3>
+    <div style="background:#f5f5f5;padding:40px 20px;border-radius:8px;border:1px solid #e5e5e5;">
+      <div style="text-align:center;color:#737373;font-size:14px;">
+        <strong style="display:block;font-size:18px;margin-bottom:12px;color:#171717;">Sample Report Preview</strong>
+        ✓ Social Media Profiles Found<br>
+        ✓ Public Records & Background<br>
+        ✓ Criminal History (if any)<br>
+        ✓ Contact Information<br>
+        ✓ Employment & Education<br>
+        ✓ Online Activity Timeline
+      </div>
+    </div>
+    <p class="sample-caption">Example report - your report will include real verified data</p>
+  </div>
+  
+  <div class="quiz-container">
+    <div class="progress-bar-container">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+    <div class="progress-text" id="progressText"></div>
+    
+    <!-- Step 1: Name -->
+    <div class="step active" data-step="1">
+      <h2>Let's start with their name</h2>
+      <p>First and last name (if you know it)</p>
+      <div class="form-group">
+        <label class="form-label">First Name <span class="optional">(optional)</span></label>
+        <input type="text" class="form-input" id="firstname" placeholder="First name" data-validate="name">
+        <span class="validation-check">✓</span>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Last Name <span class="optional">(optional)</span></label>
+        <input type="text" class="form-input" id="lastname" placeholder="Last name" data-validate="name">
+        <span class="validation-check">✓</span>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="nextStep()">Next →</button>
+      </div>
+    </div>
+    
+    <!-- Step 2: Age + Instagram -->
+    <div class="step" data-step="2">
+      <h2>This helps us find the right person</h2>
+      <p>Age range and social media</p>
+      <div class="form-group">
+        <label class="form-label">Age Range</label>
+        <select class="form-select" id="age_range">
+          <option value="18-24">18-24 years</option>
+          <option value="25-34">25-34 years</option>
+          <option value="30-40" selected>30-40 years</option>
+          <option value="41-50">41-50 years</option>
+          <option value="51-60">51-60 years</option>
+          <option value="60+">60+ years</option>
+        </select>
+      </div>
+      <div class="instagram-special">
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label">Instagram Username ⭐</label>
+          <input type="text" class="form-input" id="instagram" placeholder="@username or instagram.com/username" data-validate="social">
+          <span class="validation-check">✓</span>
+          <small class="input-hint">This is the most important field - helps us find them fast!</small>
+        </div>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
+        <button class="btn btn-primary" onclick="nextStep()">Next →</button>
+      </div>
+    </div>
+    
+    <!-- Step 3: City -->
+    <div class="step" data-step="3">
+      <h2>Where are they located?</h2>
+      <p>City or region (helps narrow down results)</p>
+      <div class="form-group">
+        <label class="form-label">City <span class="optional">(optional)</span></label>
+        <input type="text" class="form-input" id="city" placeholder="Start typing city name..." data-validate="city">
+        <span class="validation-check">✓</span>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
+        <button class="btn btn-primary" onclick="nextStep()">Almost there! →</button>
+      </div>
+    </div>
+    
+    <!-- Step 4: Additional -->
+    <div class="step" data-step="4">
+      <h2>Any other details?</h2>
+      <p>Optional - but helps improve accuracy</p>
+      <div class="form-group">
+        <label class="form-label">Facebook <span class="optional">(if known)</span></label>
+        <input type="text" class="form-input" id="facebook" placeholder="Profile URL or username" data-validate="social">
+        <span class="validation-check">✓</span>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Their Email <span class="optional">(if known)</span></label>
+        <input type="email" class="form-input" id="email_cheater" placeholder="person@example.com" data-validate="email">
+        <span class="validation-check">✓</span>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
+        <button class="btn btn-primary" onclick="nextStep()">Continue →</button>
+      </div>
+    </div>
+    
+    <!-- Step 5: Your Info -->
+    <div class="step" data-step="5">
+      <h2>Almost done! Last step</h2>
+      <p>We need your email to send the report</p>
+      <div class="form-group">
+        <label class="form-label">Why are you searching?</label>
+        <select class="form-select" id="looking_for">
+          <option value="dating" selected>Dating / Personal safety</option>
+          <option value="family">Family member safety</option>
+          <option value="hiring">Before hiring</option>
+          <option value="business">Business partner</option>
+          <option value="tenant">Tenant screening</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Your Email *</label>
+        <input type="email" class="form-input" id="email" placeholder="your@email.com" required data-validate="email">
+        <span class="validation-check">✓</span>
+        <small class="input-hint">We'll send your report here securely</small>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
+        <button class="btn btn-primary" onclick="nextStep()">Choose Package →</button>
+      </div>
+    </div>
+    
+    <!-- Step 6: Pricing -->
+    <div class="step" data-step="6">
+      <h2>Choose your report package</h2>
+      <p>All packages include money-back guarantee</p>
+      
+      <div class="pricing-comparison">
+        <h4>💰 You Save 96% vs Private Investigator</h4>
+        <div class="compare-row">
+          <div class="compare-left">Private Investigator</div>
+          <div class="compare-vs">VS</div>
+          <div class="compare-right">Sweepify</div>
+        </div>
+        <div class="compare-row">
+          <div class="compare-left">$500-$2,000</div>
+          <div class="compare-vs"></div>
+          <div class="compare-right">€4.99-€17.99</div>
+        </div>
+        <div class="compare-row">
+          <div class="compare-left">5-14 days</div>
+          <div class="compare-vs"></div>
+          <div class="compare-right">6-24 hours</div>
+        </div>
+      </div>
+      
+      <div class="pricing-grid">
+        <div class="price-card" data-tier="basic" data-price="4.99" onclick="selectTier(this)">
+          <div class="price-name">Basic</div>
+          <div class="price-amount">€5</div>
+          <ul class="price-features">
+            <li><span class="check">✓</span> Background check</li>
+            <li><span class="check">✓</span> Public records</li>
+            <li><span class="cross">✗</span> Social profiles</li>
+            <li><span class="cross">✗</span> Criminal records</li>
+          </ul>
+          <div class="price-delivery">24h delivery</div>
+        </div>
+        
+        <div class="price-card selected" data-tier="standard" data-price="14.99" onclick="selectTier(this)">
+          <div class="price-badge">Most Popular</div>
+          <div class="price-name">Standard</div>
+          <div class="price-amount">€15</div>
+          <ul class="price-features">
+            <li><span class="check">✓</span> Deep background</li>
+            <li><span class="check">✓</span> Hidden profiles</li>
+            <li><span class="check">✓</span> Criminal records</li>
+            <li><span class="cross">✗</span> Timeline</li>
+          </ul>
+          <div class="price-delivery">12h delivery</div>
+        </div>
+        
+        <div class="price-card" data-tier="premium" data-price="17.99" onclick="selectTier(this)">
+          <div class="price-name">Premium</div>
+          <div class="price-amount">€18</div>
+          <ul class="price-features">
+            <li><span class="check">✓</span> Complete dossier</li>
+            <li><span class="check">✓</span> All sources</li>
+            <li><span class="check">✓</span> Full records</li>
+            <li><span class="check">✓</span> Timeline</li>
+          </ul>
+          <div class="price-delivery">⚡ Rush 6h</div>
+        </div>
+      </div>
+      
+      <div style="text-align:center;padding:16px;background:rgba(22,163,74,.05);border-radius:8px;border:1px solid rgba(22,163,74,.2);margin-bottom:20px;">
+        <strong style="color:#16a34a;">✓ 100% Money-Back Guarantee</strong><br>
+        <small style="color:#737373;">If we find no results, full refund. No questions asked.</small>
+      </div>
+      
+      <div class="btn-group">
+        <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
+        <button class="btn btn-primary" onclick="submitForm()">Get My Report →</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Loading State -->
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <div style="font-size:20px;font-weight:800;margin-bottom:10px;">Processing Your Request...</div>
+    <div style="color:#737373;font-size:15px;">Creating your secure report</div>
+  </div>
+  
+  <!-- Social Proof Notification -->
+  <div class="social-proof" id="socialProof">
+    <div class="social-proof-text" id="socialProofText"></div>
+    <div class="social-proof-time">Just now</div>
+  </div>
+  
+  <!-- Exit Intent Popup -->
+  <div class="exit-popup" id="exitPopup">
+    <div class="exit-content">
+      <button class="exit-close" onclick="closeExit()">×</button>
+      <h3>Wait! Don't Leave Yet 👋</h3>
+      <p>Get 20% off your first report with code:</p>
+      <div class="exit-code">FIRST20</div>
+      <p style="font-size:13px;">Just enter this code at checkout. Offer expires in 15 minutes!</p>
+      <button class="exit-btn" onclick="closeExit()">Continue My Search →</button>
+    </div>
+  </div>
+  
+  <!-- Sticky Mobile CTA -->
+  <div class="sticky-cta" id="stickyCTA">
+    <button class="sticky-cta-btn" onclick="scrollToQuiz()">Get Started - From €4.99</button>
+  </div>
+  
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBfb9lKLdHd_SWZZmePOj8RV_yKqRp-MPA&libraries=places"></script>
+  <script>
+    const WHICH_LP = 'find_v12';
+    const TOTAL_STEPS = 6;
+    let currentStep = 1;
+    let selectedTier = 'standard';
+    let selectedPrice = '14.99';
+    let cityAutocomplete = null;
+    let exitIntentTriggered = false;
+    
+    const qs = new URLSearchParams(location.search);
+    const get = (k) => qs.get(k) || '';
+    const attribution = {
+      from: get('from') || 'meta_ads',
+      fbclid: get('fbclid') || '',
+      gclid: get('gclid') || ''
+    };
+    
+    // Social proof names/cities
+    const socialProofData = [
+      {name: 'Sarah', location: 'Texas'},
+      {name: 'Mike', location: 'California'},
+      {name: 'Jessica', location: 'Florida'},
+      {name: 'David', location: 'New York'},
+      {name: 'Emily', location: 'Arizona'},
+      {name: 'Chris', location: 'Colorado'},
+      {name: 'Amanda', location: 'Michigan'},
+      {name: 'Ryan', location: 'Oregon'}
+    ];
+    
+    // Init
+    window.addEventListener('load', () => {
+      updateProgress();
+      initGooglePlaces();
+      startSocialProof();
+      initExitIntent();
+      initValidation();
+      checkStickyCTA();
+    });
+    
+    // Progress
+    function updateProgress() {
+      const percent = (currentStep / TOTAL_STEPS) * 100;
+      document.getElementById('progressBar').style.width = percent + '%';
+      
+      let text = '';
+      if (currentStep === 1) text = 'Step 1 of 6 - Let\'s get started! 🎯';
+      else if (currentStep === 2) text = 'Step 2 of 6 - Great progress! 👍';
+      else if (currentStep === 3) text = 'Step 3 of 6 - Halfway there! 🚀';
+      else if (currentStep === 4) text = 'Step 4 of 6 - Almost done! ⭐';
+      else if (currentStep === 5) text = 'Step 5 of 6 - Last step! 🎉';
+      else if (currentStep === 6) text = 'Final Step - Choose your package! 💪';
+      
+      document.getElementById('progressText').textContent = text;
+    }
+    
+    // Navigation
+    function nextStep() {
+      // Validation for step 5 (email required)
+      if (currentStep === 5) {
+        const email = document.getElementById('email').value.trim();
+        if (!email) {
+          alert('Please enter your email address');
+          return;
+        }
+        if (!email.includes('@')) {
+          alert('Please enter a valid email address');
+          return;
+        }
+      }
+      
+      // Check if at least some info provided
+      if (currentStep === 4) {
+        const firstname = document.getElementById('firstname').value.trim();
+        const lastname = document.getElementById('lastname').value.trim();
+        const instagram = document.getElementById('instagram').value.trim();
+        const email_cheater = document.getElementById('email_cheater').value.trim();
+        const facebook = document.getElementById('facebook').value.trim();
+        
+        if (!firstname && !lastname && !instagram && !email_cheater && !facebook) {
+          alert('Please provide at least one detail about the person (name, Instagram, email, or Facebook)');
+          return;
+        }
+      }
+      
+      if (currentStep < TOTAL_STEPS) {
+        document.querySelector(`[data-step="${currentStep}"]`).classList.remove('active');
+        currentStep++;
+        document.querySelector(`[data-step="${currentStep}"]`).classList.add('active');
+        updateProgress();
+        window.scrollTo({top: 0, behavior: 'smooth'});
+        
+        // Hide sticky CTA when in quiz
+        if (currentStep > 1) {
+          document.getElementById('stickyCTA').classList.add('hide');
+        }
+      }
+    }
+    
+    function prevStep() {
+      if (currentStep > 1) {
+        document.querySelector(`[data-step="${currentStep}"]`).classList.remove('active');
+        currentStep--;
+        document.querySelector(`[data-step="${currentStep}"]`).classList.add('active');
+        updateProgress();
+        window.scrollTo({top: 0, behavior: 'smooth'});
+      }
+    }
+    
+    // Pricing
+    function selectTier(el) {
+      document.querySelectorAll('.price-card').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedTier = el.dataset.tier;
+      selectedPrice = el.dataset.price;
+    }
+    
+    // Google Places
+    function initGooglePlaces() {
+      const cityInput = document.getElementById('city');
+      if (cityInput && window.google) {
+        cityAutocomplete = new google.maps.places.Autocomplete(cityInput, {
+          types: ['(cities)']
+        });
+      }
+    }
+    
+    // Real-time Validation
+    function initValidation() {
+      document.querySelectorAll('[data-validate]').forEach(input => {
+        input.addEventListener('input', (e) => {
+          const type = e.target.dataset.validate;
+          const val = e.target.value.trim();
+          const check = e.target.parentElement.querySelector('.validation-check');
+          
+          let isValid = false;
+          if (type === 'name' && val.length > 1) isValid = true;
+          if (type === 'email' && val.includes('@') && val.includes('.')) isValid = true;
+          if (type === 'social' && val.length > 2) isValid = true;
+          if (type === 'city' && val.length > 2) isValid = true;
+          
+          if (isValid) {
+            e.target.classList.add('valid');
+            if (check) {
+              check.classList.add('show');
+              setTimeout(() => check.classList.remove('show'), 2000);
+            }
+          } else {
+            e.target.classList.remove('valid');
+          }
+        });
+      });
+    }
+    
+    // Social Proof
+    function startSocialProof() {
+      setInterval(() => {
+        const random = socialProofData[Math.floor(Math.random() * socialProofData.length)];
+        document.getElementById('socialProofText').textContent = 
+          `${random.name} from ${random.location} just ordered a report`;
+        document.getElementById('socialProof').classList.add('show');
+        
+        setTimeout(() => {
+          document.getElementById('socialProof').classList.remove('show');
+        }, 5000);
+      }, 45000); // Every 45 seconds
+    }
+    
+    // Exit Intent
+    function initExitIntent() {
+      document.addEventListener('mouseleave', (e) => {
+        if (e.clientY < 10 && !exitIntentTriggered && currentStep < 6) {
+          exitIntentTriggered = true;
+          document.getElementById('exitPopup').classList.add('show');
+        }
+      });
+    }
+    
+    function closeExit() {
+      document.getElementById('exitPopup').classList.remove('show');
+    }
+    
+    // Sticky CTA
+    function checkStickyCTA() {
+      window.addEventListener('scroll', () => {
+        const quiz = document.querySelector('.quiz-container');
+        const rect = quiz.getBoundingClientRect();
+        const stickyCTA = document.getElementById('stickyCTA');
+        
+        if (rect.top < -100 && currentStep === 1) {
+          stickyCTA.classList.remove('hide');
+        } else {
+          stickyCTA.classList.add('hide');
+        }
+      });
+    }
+    
+    function scrollToQuiz() {
+      document.querySelector('.quiz-container').scrollIntoView({behavior: 'smooth'});
+    }
+    
+    // Submit
+    async function submitForm() {
+      const email = document.getElementById('email').value.trim();
+      if (!email) {
+        alert('Please enter your email address');
+        return;
+      }
+      
+      const firstname = document.getElementById('firstname').value.trim();
+      const lastname = document.getElementById('lastname').value.trim();
+      const email_cheater = document.getElementById('email_cheater').value.trim();
+      const age_range = document.getElementById('age_range').value;
+      const instagram = document.getElementById('instagram').value.trim();
+      const facebook = document.getElementById('facebook').value.trim();
+      const city = document.getElementById('city').value.trim();
+      const looking_for = document.getElementById('looking_for').value;
+      
+      if (!firstname && !lastname && !instagram && !email_cheater && !facebook) {
+        alert('Please provide at least one detail about the person you\'re searching');
+        return;
+      }
+      
+      const socialParts = [];
+      if (instagram) socialParts.push(`Instagram: ${instagram}`);
+      if (facebook) socialParts.push(`Facebook: ${facebook}`);
+      const social_media = socialParts.join(' , ');
+      
+      document.querySelector('.quiz-container').style.display = 'none';
+      document.getElementById('loading').style.display = 'block';
+      
+      try {
+        const res = await fetch('https://sweepify-session.sherymadodomy.workers.dev/create-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            firstname,
+            lastname,
+            email,
+            email_cheater,
+            city,
+            age_range,
+            social_media,
+            looking_for,
+            report_type: selectedTier,
+            which_lp: WHICH_LP,
+            from: attribution.from,
+            fbclid: attribution.fbclid,
+            gclid: attribution.gclid
+          })
+        });
+        
+        const data = await res.json();
+        
+        if (!res.ok || !data?.checkout_url) {
+          throw new Error('checkout-failed');
+        }
+        
+        window.location.href = data.checkout_url;
+        
+      } catch (err) {
+        console.error(err);
+        document.getElementById('loading').style.display = 'none';
+        document.querySelector('.quiz-container').style.display = 'block';
+        alert('Something went wrong. Please try again or contact support.');
+      }
+    }
+  </script>
+</body>
+</html>

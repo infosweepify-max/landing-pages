@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Know Who You're Really Dating | Sweepify Background Check</title>
+  <meta name="description" content="Find hidden profiles, verify identity, and discover red flags before you trust someone.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBfb9lKLdHd_SWZZmePOj8RV_yKqRp-MPA&libraries=places&callback=initMap" async defer></script>
+  <style>
+    :root {
+      --bg: #fafafa;
+      --surface: #fff;
+      --border: #e5e5e5;
+      --text: #171717;
+      --muted: #737373;
+      --accent: #f97316;
+      --accent2: #ea580c;
+      --success: #16a34a;
+      --error: #dc2626;
+      --shadow: 0 4px 20px rgba(0,0,0,.08);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family:'Inter', -apple-system, system-ui, sans-serif;
+      background:var(--bg); color:var(--text);
+      line-height:1.6; -webkit-font-smoothing:antialiased;
+      overflow-x:hidden;
+    }
+    .container { max-width:600px; margin:0 auto; padding:0 20px; }
+    
+    /* Hero */
+    .hero {
+      background:linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+      padding:40px 20px 32px; text-align:center;
+      border-bottom:1px solid var(--border);
+    }
+    .hero img { width:140px; margin:0 auto 20px; display:block; }
+    .hero h1 {
+      font-size:clamp(26px, 6vw, 36px); font-weight:900;
+      line-height:1.2; margin-bottom:12px; color:var(--text);
+    }
+    .hero p {
+      font-size:16px; color:var(--muted); margin-bottom:20px;
+    }
+    
+    /* Quiz Container */
+    .quiz-container {
+      background:var(--surface); border-radius:16px;
+      margin:32px auto; padding:32px 24px; max-width:600px;
+      box-shadow:var(--shadow); border:1px solid var(--border);
+    }
+    .quiz-container.hidden { display:none; }
+    .progress-bar-container {
+      height:8px; background:var(--border); border-radius:8px;
+      margin-bottom:24px; overflow:hidden;
+    }
+    .progress-bar {
+      height:100%; background:linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius:8px; transition:width .3s ease;
+    }
+    .progress-text {
+      text-align:center; font-size:14px; color:var(--muted);
+      margin-bottom:20px; font-weight:600;
+    }
+    .step { display:none; }
+    .step.active { display:block; animation:fadeIn .3s; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+    .step h2 {
+      font-size:22px; font-weight:800; margin-bottom:8px;
+      color:var(--text);
+    }
+    .step p {
+      font-size:14px; color:var(--muted); margin-bottom:24px;
+    }
+    .form-group { margin-bottom:20px; position:relative; }
+    .form-label {
+      display:block; font-size:14px; font-weight:600;
+      margin-bottom:8px; color:var(--text);
+    }
+    .optional { color:var(--muted); font-weight:400; font-size:13px; }
+    .form-input, .form-select {
+      width:100%; padding:14px;
+      background:var(--bg); border:2px solid var(--border);
+      border-radius:10px; color:var(--text); font-size:15px;
+      transition:all .2s; font-family:inherit;
+    }
+    .form-input:focus, .form-select:focus {
+      outline:none; border-color:var(--accent);
+      box-shadow:0 0 0 3px rgba(249,115,22,.1);
+    }
+    .btn-group {
+      display:flex; gap:12px; margin-top:24px;
+    }
+    .btn {
+      flex:1; padding:16px; border:none; border-radius:10px;
+      font-size:16px; font-weight:700; cursor:pointer;
+      transition:all .2s; font-family:inherit;
+    }
+    .btn-primary {
+      background:linear-gradient(135deg, var(--accent), var(--accent2));
+      color:#fff;
+    }
+    .btn-primary:hover { transform:translateY(-2px); box-shadow:0 8px 16px rgba(249,115,22,.3); }
+    .btn-secondary {
+      background:var(--bg); color:var(--text);
+      border:2px solid var(--border);
+    }
+    .btn-secondary:hover { background:#f4f4f5; }
+    
+    /* Price Cards */
+    .price-grid {
+      display:grid; grid-template-columns:repeat(3, 1fr);
+      gap:12px; margin-bottom:24px;
+    }
+    @media (max-width: 600px) {
+      .price-grid { grid-template-columns:1fr; }
+    }
+    .price-card {
+      background:var(--bg); border:3px solid var(--border);
+      border-radius:12px; padding:16px; text-align:center;
+      cursor:pointer; transition:all .2s; position:relative;
+    }
+    .price-card:hover { border-color:var(--accent); }
+    .price-card.selected {
+      border-color:var(--accent); background:rgba(249,115,22,.05);
+      box-shadow:0 8px 16px rgba(249,115,22,.15);
+    }
+    .price-name { font-size:14px; font-weight:700; margin-bottom:6px; }
+    .price-amount { font-size:28px; font-weight:900; margin-bottom:12px; color:var(--text); }
+    .price-features {
+      list-style:none; font-size:13px; text-align:left;
+      margin-bottom:8px;
+    }
+    .price-features li { margin-bottom:6px; padding-left:20px; position:relative; }
+    .check { color:var(--success); position:absolute; left:0; font-weight:900; }
+    .cross { color:var(--muted); position:absolute; left:0; }
+    
+    /* Scanning Animation */
+    .scanning-container {
+      display:none; background:var(--surface);
+      border-radius:16px; padding:48px 32px;
+      max-width:600px; margin:32px auto;
+      box-shadow:var(--shadow); text-align:center;
+    }
+    .scanning-container.active { display:block; animation:fadeIn .3s; }
+    .scan-spinner {
+      width:80px; height:80px; margin:0 auto 24px;
+      border:6px solid var(--border);
+      border-top-color:var(--accent);
+      border-radius:50%;
+      animation:spin 1s linear infinite;
+    }
+    @keyframes spin {
+      to { transform:rotate(360deg); }
+    }
+    .scan-title {
+      font-size:24px; font-weight:900; margin-bottom:12px;
+    }
+    .scan-subtitle {
+      font-size:16px; color:var(--muted); margin-bottom:32px;
+    }
+    .scan-progress {
+      background:var(--border); height:8px;
+      border-radius:8px; overflow:hidden; margin-bottom:16px;
+    }
+    .scan-progress-bar {
+      height:100%; background:linear-gradient(90deg, var(--accent), var(--accent2));
+      width:0%; transition:width 2s ease;
+    }
+    .scan-stage {
+      font-size:14px; color:var(--muted); font-weight:600;
+    }
+    
+    /* Results Preview */
+    .results-preview {
+      display:none; background:var(--surface);
+      border-radius:16px; padding:32px 24px;
+      max-width:600px; margin:32px auto;
+      box-shadow:var(--shadow);
+    }
+    .results-preview.active { display:block; animation:fadeIn .3s; }
+    .results-header {
+      text-align:center; margin-bottom:32px;
+    }
+    .results-header h2 {
+      font-size:28px; font-weight:900; margin-bottom:8px;
+      color:var(--success);
+    }
+    .results-header p {
+      font-size:16px; color:var(--muted);
+    }
+    .results-item {
+      background:var(--bg); border-radius:12px;
+      padding:20px; margin-bottom:16px;
+      position:relative; overflow:hidden;
+    }
+    .results-item-title {
+      font-size:16px; font-weight:700; margin-bottom:8px;
+      display:flex; align-items:center; gap:8px;
+    }
+    .results-item-content {
+      font-size:14px; color:var(--muted);
+      filter:blur(6px); user-select:none;
+    }
+    .results-blur-overlay {
+      position:absolute; top:0; left:0; right:0; bottom:0;
+      background:rgba(255,255,255,.7);
+      display:flex; align-items:center; justify-content:center;
+      font-weight:700; color:var(--text);
+    }
+    .results-cta {
+      background:linear-gradient(135deg, var(--accent), var(--accent2));
+      color:#fff; padding:20px; border-radius:12px;
+      text-align:center; margin-top:24px;
+    }
+    .results-cta h3 {
+      font-size:20px; font-weight:900; margin-bottom:8px;
+    }
+    .results-cta p {
+      font-size:14px; margin-bottom:16px; opacity:.9;
+    }
+    .results-cta button {
+      background:#fff; color:var(--accent);
+      border:none; padding:16px 32px; border-radius:10px;
+      font-size:16px; font-weight:700; cursor:pointer;
+      transition:all .2s;
+    }
+    .results-cta button:hover {
+      transform:translateY(-2px); box-shadow:0 8px 16px rgba(0,0,0,.2);
+    }
+  </style>
+</head>
+<body>
+  <!-- Hero -->
+  <div class="hero">
+    <img src="https://b49f241f8f6fa5b315e69c8011c794ec.cdn.bubble.io/f1768373112537x922911495335053700/sweepify-logo.svg" alt="Sweepify">
+    <h1>Know Who You're Really Dating</h1>
+    <p>Find hidden profiles, verify identity, and discover red flags before you trust someone.</p>
+  </div>
+  
+  <!-- Quiz Container -->
+  <div class="quiz-container" id="quizContainer">
+    <div class="progress-bar-container">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+    <div class="progress-text" id="progressText"></div>
+    
+    <!-- Step 1 -->
+    <div class="step active" data-step="1">
+      <h2>Who are you searching for?</h2>
+      <p>Enter their name to get started</p>
+      <div class="form-group">
+        <label class="form-label">First Name</label>
+        <input type="text" class="form-input" id="firstname" placeholder="First name">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Last Name</label>
+        <input type="text" class="form-input" id="lastname" placeholder="Last name">
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="nextStep()">Continue →</button>
+      </div>
+    </div>
+    
+    <!-- Step 2 -->
+    <div class="step" data-step="2">
+      <h2>How old are they?</h2>
+      <p>This helps narrow down the search</p>
+      <div class="form-group">
+        <label class="form-label">Age Range</label>
+        <select class="form-select" id="age_range">
+          <option value="">Select age range</option>
+          <option value="18-24">18-24</option>
+          <option value="25-34">25-34</option>
+          <option value="35-44">35-44</option>
+          <option value="45-54">45-54</option>
+          <option value="55+">55+</option>
+        </select>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
+        <button class="btn btn-primary" onclick="nextStep()">Continue →</button>
+      </div>
+    </div>
+    
+    <!-- Step 3 -->
+    <div class="step" data-step="3">
+      <h2>Where are they located?</h2>
+      <p>City or region helps narrow down results</p>
+      <div class="form-group">
+        <label class="form-label">City <span class="optional">(optional)</span></label>
+        <input type="text" class="form-input" id="city" placeholder="Start typing city name...">
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
+        <button class="btn btn-primary" onclick="nextStep()">Continue →</button>
+      </div>
+    </div>
+    
+    <!-- Step 4 -->
+    <div class="step" data-step="4">
+      <h2>Do you know their social media?</h2>
+      <p>Instagram, Facebook, or email helps verify identity</p>
+      <div class="form-group">
+        <label class="form-label">Instagram <span class="optional">(optional)</span></label>
+        <input type="text" class="form-input" id="instagram" placeholder="@username">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Facebook <span class="optional">(optional)</span></label>
+        <input type="text" class="form-input" id="facebook" placeholder="Profile URL or username">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Their Email <span class="optional">(optional)</span></label>
+        <input type="email" class="form-input" id="email_cheater" placeholder="person@example.com">
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
+        <button class="btn btn-primary" onclick="nextStep()">Continue →</button>
+      </div>
+    </div>
+    
+    <!-- Step 5 -->
+    <div class="step" data-step="5">
+      <h2>What are you looking for?</h2>
+      <p>This helps us prioritize the report</p>
+      <div class="form-group">
+        <label class="form-label">Main Concern</label>
+        <select class="form-select" id="looking_for">
+          <option value="">Select one</option>
+          <option value="dating_verification">Dating/relationship verification</option>
+          <option value="hidden_profiles">Hidden profiles & accounts</option>
+          <option value="criminal_records">Criminal records</option>
+          <option value="employment">Employment history</option>
+          <option value="general">General background check</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Your Email (for report delivery)</label>
+        <input type="email" class="form-input" id="email" placeholder="your@email.com" required>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
+        <button class="btn btn-primary" onclick="nextStep()">Continue →</button>
+      </div>
+    </div>
+    
+    <!-- Step 6 - Pricing -->
+    <div class="step" data-step="6">
+      <h2>Choose Your Package</h2>
+      <p>Select the depth of investigation you need</p>
+      
+      <div class="price-grid">
+        <div class="price-card" data-tier="basic" data-price="4.99" onclick="selectTier(this)">
+          <div class="price-name">Basic</div>
+          <div class="price-amount">€5</div>
+          <ul class="price-features">
+            <li><span class="check">✓</span> Basic search</li>
+            <li><span class="check">✓</span> Social profiles</li>
+            <li><span class="cross">✗</span> Full records</li>
+          </ul>
+        </div>
+        
+        <div class="price-card selected" data-tier="standard" data-price="14.99" onclick="selectTier(this)">
+          <div class="price-name">Standard</div>
+          <div class="price-amount">€15</div>
+          <ul class="price-features">
+            <li><span class="check">✓</span> Deep search</li>
+            <li><span class="check">✓</span> Hidden profiles</li>
+            <li><span class="check">✓</span> Criminal check</li>
+          </ul>
+        </div>
+        
+        <div class="price-card" data-tier="premium" data-price="17.99" onclick="selectTier(this)">
+          <div class="price-name">Premium</div>
+          <div class="price-amount">€18</div>
+          <ul class="price-features">
+            <li><span class="check">✓</span> Complete file</li>
+            <li><span class="check">✓</span> All sources</li>
+            <li><span class="check">✓</span> Full timeline</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="btn-group">
+        <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
+        <button class="btn btn-primary" onclick="startScan()">Start Search →</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Scanning Animation -->
+  <div class="scanning-container" id="scanningContainer">
+    <div class="scan-spinner"></div>
+    <div class="scan-title" id="scanTitle">Searching Databases...</div>
+    <div class="scan-subtitle" id="scanSubtitle">This may take a moment</div>
+    <div class="scan-progress">
+      <div class="scan-progress-bar" id="scanProgressBar"></div>
+    </div>
+    <div class="scan-stage" id="scanStage">Initializing search...</div>
+  </div>
+  
+  <!-- Results Preview -->
+  <div class="results-preview" id="resultsPreview">
+    <div class="results-header">
+      <h2>✓ Results Found!</h2>
+      <p>We found matching information. Unlock the full report to view details.</p>
+    </div>
+    
+    <div class="results-item">
+      <div class="results-item-title">
+        <span>📱</span> Social Media Profiles
+      </div>
+      <div class="results-item-content">
+        Found 4 social media accounts including Instagram, Facebook, and TikTok profiles with activity dating back to 2019...
+      </div>
+      <div class="results-blur-overlay">🔒 Unlock to view</div>
+    </div>
+    
+    <div class="results-item">
+      <div class="results-item-title">
+        <span>🏠</span> Location History
+      </div>
+      <div class="results-item-content">
+        Current location: New York, NY. Previous addresses in California and Texas. Timeline shows residential history...
+      </div>
+      <div class="results-blur-overlay">🔒 Unlock to view</div>
+    </div>
+    
+    <div class="results-item">
+      <div class="results-item-title">
+        <span>⚠️</span> Background Information
+      </div>
+      <div class="results-item-content">
+        Public records search complete. Found employment history, education records, and public social media activity...
+      </div>
+      <div class="results-blur-overlay">🔒 Unlock to view</div>
+    </div>
+    
+    <div class="results-cta">
+      <h3>Unlock Full Report</h3>
+      <p>Get instant access to all findings, detailed analysis, and verification</p>
+      <button onclick="proceedToCheckout()">View Complete Report →</button>
+    </div>
+  </div>
+  
+  <script>
+    const TOTAL_STEPS = 6;
+    let currentStep = 1;
+    let selectedTier = 'standard';
+    let selectedPrice = '14.99';
+    let cityAutocomplete = null;
+    let formData = {};
+    
+    // Initialize
+    window.initMap = function() {
+      const cityInput = document.getElementById('city');
+      if (cityInput && window.google && window.google.maps) {
+        cityAutocomplete = new google.maps.places.Autocomplete(cityInput, {
+          types: ['(cities)']
+        });
+        console.log('Google Places initialized');
+      }
+    };
+    
+    window.addEventListener('load', () => {
+      updateProgress();
+      // Google Places will init via callback
+    });
+    
+    // Progress
+    function updateProgress() {
+      const percent = (currentStep / TOTAL_STEPS) * 100;
+      document.getElementById('progressBar').style.width = percent + '%';
+      
+      const texts = [
+        'Step 1 of 6 - Let\'s get started! 🎯',
+        'Step 2 of 6 - Great progress! 👍',
+        'Step 3 of 6 - Halfway there! 🚀',
+        'Step 4 of 6 - Almost done! ⭐',
+        'Step 5 of 6 - Last step! 🎉',
+        'Final Step - Choose your package! 💪'
+      ];
+      
+      document.getElementById('progressText').textContent = texts[currentStep - 1] || '';
+    }
+    
+    // Navigation
+    function nextStep() {
+      if (currentStep === 5) {
+        const email = document.getElementById('email').value.trim();
+        if (!email || !email.includes('@')) {
+          alert('Please enter a valid email address');
+          return;
+        }
+      }
+      
+      if (currentStep < TOTAL_STEPS) {
+        document.querySelector(`[data-step="${currentStep}"]`).classList.remove('active');
+        currentStep++;
+        document.querySelector(`[data-step="${currentStep}"]`).classList.add('active');
+        updateProgress();
+        window.scrollTo({top: 0, behavior: 'smooth'});
+      }
+    }
+    
+    function prevStep() {
+      if (currentStep > 1) {
+        document.querySelector(`[data-step="${currentStep}"]`).classList.remove('active');
+        currentStep--;
+        document.querySelector(`[data-step="${currentStep}"]`).classList.add('active');
+        updateProgress();
+        window.scrollTo({top: 0, behavior: 'smooth'});
+      }
+    }
+    
+    // Pricing
+    function selectTier(el) {
+      document.querySelectorAll('.price-card').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedTier = el.dataset.tier;
+      selectedPrice = el.dataset.price;
+    }
+    
+    // Start Scan
+    function startScan() {
+      // Collect form data
+      formData = {
+        firstname: document.getElementById('firstname').value.trim(),
+        lastname: document.getElementById('lastname').value.trim(),
+        age_range: document.getElementById('age_range').value,
+        city: document.getElementById('city').value.trim(),
+        instagram: document.getElementById('instagram').value.trim(),
+        facebook: document.getElementById('facebook').value.trim(),
+        email_cheater: document.getElementById('email_cheater').value.trim(),
+        looking_for: document.getElementById('looking_for').value,
+        email: document.getElementById('email').value.trim(),
+        tier: selectedTier,
+        price: selectedPrice
+      };
+      
+      // Hide quiz
+      document.getElementById('quizContainer').classList.add('hidden');
+      
+      // Show scanning
+      document.getElementById('scanningContainer').classList.add('active');
+      
+      // Animate scan
+      animateScan();
+    }
+    
+    function animateScan() {
+      const stages = [
+        { title: 'Searching Databases...', subtitle: 'Scanning 500+ million records', stage: 'Querying social media platforms', progress: 25 },
+        { title: 'Analyzing Profiles...', subtitle: 'Cross-referencing data sources', stage: 'Matching identity markers', progress: 50 },
+        { title: 'Verifying Information...', subtitle: 'Confirming accuracy', stage: 'Compiling results', progress: 75 },
+        { title: 'Finalizing Report...', subtitle: 'Almost ready', stage: 'Preparing your report', progress: 95 }
+      ];
+      
+      let currentStage = 0;
+      
+      const updateStage = () => {
+        if (currentStage < stages.length) {
+          const s = stages[currentStage];
+          document.getElementById('scanTitle').textContent = s.title;
+          document.getElementById('scanSubtitle').textContent = s.subtitle;
+          document.getElementById('scanStage').textContent = s.stage;
+          document.getElementById('scanProgressBar').style.width = s.progress + '%';
+          currentStage++;
+          setTimeout(updateStage, 2000);
+        } else {
+          // Show results preview
+          showResults();
+        }
+      };
+      
+      updateStage();
+    }
+    
+    function showResults() {
+      document.getElementById('scanningContainer').classList.remove('active');
+      document.getElementById('resultsPreview').classList.add('active');
+    }
+    
+    async function proceedToCheckout() {
+      // Create session and redirect to payment
+      const socialParts = [];
+      if (formData.instagram) socialParts.push(`Instagram: ${formData.instagram}`);
+      if (formData.facebook) socialParts.push(`Facebook: ${formData.facebook}`);
+      const social_media = socialParts.join(' , ');
+      
+      try {
+        const res = await fetch('https://sweepify-session.sherymadodomy.workers.dev/create-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            firstname: formData.firstname,
+            lastname: formData.lastname,
+            email: formData.email,
+            email_cheater: formData.email_cheater,
+            city: formData.city,
+            age_range: formData.age_range,
+            social_media: social_media,
+            looking_for: formData.looking_for,
+            report_type: formData.tier,
+            which_lp: 'find_v12_fixed',
+            from: 'meta_ads',
+            fbclid: '',
+            gclid: ''
+          })
+        });
+        
+        const data = await res.json();
+        
+        if (!res.ok || !data?.checkout_url) {
+          throw new Error('checkout-failed');
+        }
+        
+        window.location.href = data.checkout_url;
+        
+      } catch (err) {
+        console.error(err);
+        alert('Something went wrong. Please try again or contact support.');
+      }
+    }
+  </script>
+</body>
+</html>
