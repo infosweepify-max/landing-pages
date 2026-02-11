@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sweepify - Know Who You're Really Connecting With</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC3l7sgHExxg_0zeCAynm68nWOmT1xREpU&libraries=places&callback=initMap" async defer></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    :root {
+      --bg: #ffffff;
+      --text: #0f1419;
+      --text-secondary: #536471;
+      --border: #eff3f4;
+      --accent: #1d9bf0;
+      --accent-hover: #1a8cd8;
+      --success: #00ba7c;
+      --error: #f4212e;
+      --surface: #f7f9f9;
+    }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 0 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* Header */
+    .header {
+      padding: 24px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .logo {
+      height: 32px;
+    }
+    
+    /* Main Content */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 48px 0;
+    }
+    
+    /* Landing Page */
+    .landing {
+      text-align: center;
+      animation: fadeIn 0.4s ease;
+    }
+    
+    .landing h1 {
+      font-size: 42px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+    
+    .landing p {
+      font-size: 18px;
+      color: var(--text-secondary);
+      margin-bottom: 32px;
+      line-height: 1.6;
+    }
+    
+    .trust-indicators {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin: 32px 0;
+      flex-wrap: wrap;
+    }
+    
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+    
+    .trust-item svg {
+      width: 20px;
+      height: 20px;
+      color: var(--success);
+    }
+    
+    /* Quiz Pages */
+    .quiz-page {
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+    
+    .quiz-page.active {
+      display: block;
+    }
+    
+    .progress {
+      margin-bottom: 32px;
+    }
+    
+    .progress-bar {
+      height: 4px;
+      background: var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: var(--accent);
+      transition: width 0.3s ease;
+    }
+    
+    .progress-text {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-top: 12px;
+    }
+    
+    .quiz-page h2 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    
+    .quiz-page .subtitle {
+      font-size: 16px;
+      color: var(--text-secondary);
+      margin-bottom: 32px;
+    }
+    
+    /* Form Elements */
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+    
+    .form-input, .form-select {
+      width: 100%;
+      padding: 12px 16px;
+      font-size: 15px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+    
+    .form-input:focus, .form-select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(29, 155, 240, 0.1);
+    }
+    
+    .form-input::placeholder {
+      color: var(--text-secondary);
+      opacity: 0.6;
+    }
+    
+    .optional {
+      color: var(--text-secondary);
+      font-weight: 400;
+      font-size: 13px;
+    }
+    
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    
+    @media (max-width: 480px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    /* Buttons */
+    .btn {
+      width: 100%;
+      padding: 14px 24px;
+      font-size: 15px;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(29, 155, 240, 0.3);
+    }
+    
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+    
+    .btn-secondary {
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    
+    .btn-secondary:hover {
+      background: var(--border);
+    }
+    
+    .btn-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 32px;
+    }
+    
+    .btn-group .btn {
+      flex: 1;
+    }
+    
+    /* Scanning Animation */
+    .scanning {
+      display: none;
+      text-align: center;
+      animation: fadeIn 0.4s ease;
+    }
+    
+    .scanning.active {
+      display: block;
+    }
+    
+    .scan-spinner {
+      width: 64px;
+      height: 64px;
+      border: 4px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 24px;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .scanning h2 {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+    
+    .scanning p {
+      color: var(--text-secondary);
+      margin-bottom: 32px;
+    }
+    
+    .scan-stage {
+      font-size: 14px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+    
+    /* Results Preview */
+    .results {
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+    
+    .results.active {
+      display: block;
+    }
+    
+    .results-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    
+    .results-header h2 {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--success);
+      margin-bottom: 8px;
+    }
+    
+    .results-header p {
+      color: var(--text-secondary);
+    }
+    
+    .result-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .result-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .result-content {
+      font-size: 14px;
+      color: var(--text-secondary);
+      filter: blur(4px);
+      user-select: none;
+    }
+    
+    .result-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      color: var(--text);
+    }
+    
+    /* Pricing */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    
+    @media (max-width: 600px) {
+      .pricing-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .price-card {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+    
+    .price-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+    
+    .price-card.selected {
+      border-color: var(--accent);
+      background: rgba(29, 155, 240, 0.05);
+    }
+    
+    .price-name {
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+    
+    .price-amount {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    
+    .price-features {
+      list-style: none;
+      font-size: 13px;
+      text-align: left;
+    }
+    
+    .price-features li {
+      padding: 6px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .price-features .check {
+      color: var(--success);
+      font-weight: 700;
+    }
+    
+    .price-features .cross {
+      color: var(--text-secondary);
+    }
+    
+    .guarantee {
+      background: rgba(0, 186, 124, 0.1);
+      border: 1px solid rgba(0, 186, 124, 0.2);
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    
+    .guarantee strong {
+      color: var(--success);
+    }
+    
+    .guarantee small {
+      display: block;
+      margin-top: 4px;
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+    
+    /* Animations */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <img src="https://b49f241f8f6fa5b315e69c8011c794ec.cdn.bubble.io/f1768373112537x922911495335053700/sweepify-logo.svg" alt="Sweepify" class="logo">
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main">
+      <!-- Landing Page -->
+      <div class="landing" id="landing">
+        <h1>Know Who You're Really Connecting With</h1>
+        <p>Verify identities, discover hidden profiles, and protect yourself before it's too late. Fast, legal, and confidential.</p>
+        
+        <div class="trust-indicators">
+          <div class="trust-item">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+            Legal & Confidential
+          </div>
+          <div class="trust-item">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+            Results in 6-12 Hours
+          </div>
+          <div class="trust-item">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+            Money-Back Guarantee
+          </div>
+        </div>
+        
+        <button class="btn btn-primary" onclick="startQuiz()">Start Background Check →</button>
+      </div>
+      
+      <!-- Quiz Page 1: What are you looking for? -->
+      <div class="quiz-page" id="page1">
+        <div class="progress">
+          <div class="progress-bar">
+            <div class="progress-fill" id="progressBar" style="width: 16.67%"></div>
+          </div>
+          <div class="progress-text" id="progressText">Step 1 of 6</div>
+        </div>
+        
+        <h2>What are you looking for?</h2>
+        <p class="subtitle">This helps us prioritize your search</p>
+        
+        <div class="form-group">
+          <select class="form-select" id="looking_for">
+            <option value="">Select your main concern</option>
+            <option value="dating_verification">Dating/relationship verification</option>
+            <option value="hidden_profiles">Find hidden social profiles</option>
+            <option value="criminal_records">Criminal background check</option>
+            <option value="employment">Professional verification</option>
+            <option value="general">General background check</option>
+          </select>
+        </div>
+        
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="nextPage(2)">Continue →</button>
+        </div>
+      </div>
+      
+      <!-- Quiz Page 2: Basic Info -->
+      <div class="quiz-page" id="page2">
+        <div class="progress">
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 33.33%"></div>
+          </div>
+          <div class="progress-text">Step 2 of 6</div>
+        </div>
+        
+        <h2>Who are you searching for?</h2>
+        <p class="subtitle">Basic information helps us find the right person</p>
+        
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">First Name</label>
+            <input type="text" class="form-input" id="firstname" placeholder="John">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last Name</label>
+            <input type="text" class="form-input" id="lastname" placeholder="Doe">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Alias/Nickname <span class="optional">(optional)</span></label>
+          <input type="text" class="form-input" id="alias" placeholder="Known by another name?">
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Age Range</label>
+          <select class="form-select" id="age_range">
+            <option value="">Select age range</option>
+            <option value="18-24">18-24</option>
+            <option value="25-34">25-34</option>
+            <option value="35-44">35-44</option>
+            <option value="45-54">45-54</option>
+            <option value="55+">55+</option>
+          </select>
+        </div>
+        
+        <div class="btn-group">
+          <button class="btn btn-secondary" onclick="prevPage(1)">← Back</button>
+          <button class="btn btn-primary" onclick="nextPage(3)">Continue →</button>
+        </div>
+      </div>
+      
+      <!-- Quiz Page 3: Location & Socials -->
+      <div class="quiz-page" id="page3">
+        <div class="progress">
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 50%"></div>
+          </div>
+          <div class="progress-text">Step 3 of 6</div>
+        </div>
+        
+        <h2>Location & Social Profiles</h2>
+        <p class="subtitle">This helps us narrow down and verify the right person</p>
+        
+        <div class="form-group">
+          <label class="form-label">City <span class="optional">(optional)</span></label>
+          <input type="text" class="form-input" id="city" placeholder="Start typing...">
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Instagram <span class="optional">(optional)</span></label>
+          <input type="text" class="form-input" id="instagram" placeholder="@username">
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Facebook <span class="optional">(optional)</span></label>
+          <input type="text" class="form-input" id="facebook" placeholder="Profile URL or username">
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Twitter/X <span class="optional">(optional)</span></label>
+          <input type="text" class="form-input" id="twitter" placeholder="@username">
+        </div>
+        
+        <div class="btn-group">
+          <button class="btn btn-secondary" onclick="prevPage(2)">← Back</button>
+          <button class="btn btn-primary" onclick="nextPage(4)">Continue →</button>
+        </div>
+      </div>
+      
+      <!-- Quiz Page 4: Why & Email -->
+      <div class="quiz-page" id="page4">
+        <div class="progress">
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 66.67%"></div>
+          </div>
+          <div class="progress-text">Step 4 of 6</div>
+        </div>
+        
+        <h2>Final details</h2>
+        <p class="subtitle">We'll send your report to this email</p>
+        
+        <div class="form-group">
+          <label class="form-label">Your Email</label>
+          <input type="email" class="form-input" id="email" placeholder="your@email.com" required>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Their Email <span class="optional">(optional)</span></label>
+          <input type="email" class="form-input" id="email_cheater" placeholder="person@example.com">
+        </div>
+        
+        <div class="btn-group">
+          <button class="btn btn-secondary" onclick="prevPage(3)">← Back</button>
+          <button class="btn btn-primary" onclick="startScan()">Start Search →</button>
+        </div>
+      </div>
+      
+      <!-- Scanning Animation -->
+      <div class="scanning" id="scanning">
+        <div class="scan-spinner"></div>
+        <h2>Searching Databases...</h2>
+        <p>Scanning 500+ million records</p>
+        <p class="scan-stage" id="scanStage">Initializing search...</p>
+      </div>
+      
+      <!-- Results Preview -->
+      <div class="results" id="results">
+        <div class="results-header">
+          <h2>✓ Results Found</h2>
+          <p>We found matching information. Choose a package to view the full report.</p>
+        </div>
+        
+        <div class="result-card">
+          <div class="result-title">
+            <span>📱</span> Social Media Profiles
+          </div>
+          <div class="result-content">
+            Found 4 active social media accounts including Instagram, Facebook, Twitter, and TikTok profiles with activity dating back to 2018...
+          </div>
+          <div class="result-overlay">🔒 Unlock to view</div>
+        </div>
+        
+        <div class="result-card">
+          <div class="result-title">
+            <span>📍</span> Location History
+          </div>
+          <div class="result-content">
+            Current location matches provided information. Historical data shows previous addresses in California and New York...
+          </div>
+          <div class="result-overlay">🔒 Unlock to view</div>
+        </div>
+        
+        <div class="result-card">
+          <div class="result-title">
+            <span>🔍</span> Background Information
+          </div>
+          <div class="result-content">
+            Public records search complete. Found employment history, education records, and verified identity information...
+          </div>
+          <div class="result-overlay">🔒 Unlock to view</div>
+        </div>
+        
+        <button class="btn btn-primary" onclick="showPricing()">Choose Package to Unlock →</button>
+      </div>
+      
+      <!-- Pricing Page -->
+      <div class="quiz-page" id="pricing">
+        <div class="progress">
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 100%"></div>
+          </div>
+          <div class="progress-text">Final Step - Choose Your Package</div>
+        </div>
+        
+        <h2>Unlock Your Report</h2>
+        <p class="subtitle">Select the package that's right for you</p>
+        
+        <div class="pricing-grid">
+          <div class="price-card" data-tier="basic" data-price="4.99" onclick="selectTier(this)">
+            <div class="price-name">Basic</div>
+            <div class="price-amount">€5</div>
+            <ul class="price-features">
+              <li><span class="check">✓</span> Social profiles</li>
+              <li><span class="check">✓</span> Basic info</li>
+              <li><span class="cross">✗</span> Full records</li>
+            </ul>
+          </div>
+          
+          <div class="price-card selected" data-tier="standard" data-price="14.99" onclick="selectTier(this)">
+            <div class="price-name">Standard</div>
+            <div class="price-amount">€15</div>
+            <ul class="price-features">
+              <li><span class="check">✓</span> Deep search</li>
+              <li><span class="check">✓</span> Hidden profiles</li>
+              <li><span class="check">✓</span> Criminal check</li>
+            </ul>
+          </div>
+          
+          <div class="price-card" data-tier="premium" data-price="17.99" onclick="selectTier(this)">
+            <div class="price-name">Premium</div>
+            <div class="price-amount">€18</div>
+            <ul class="price-features">
+              <li><span class="check">✓</span> Complete file</li>
+              <li><span class="check">✓</span> All sources</li>
+              <li><span class="check">✓</span> Full timeline</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="guarantee">
+          <strong>✓ 100% Money-Back Guarantee</strong>
+          <small>If we find no results, full refund. No questions asked.</small>
+        </div>
+        
+        <button class="btn btn-primary" onclick="checkout()">Get My Report →</button>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    let currentPage = 0;
+    let selectedTier = 'standard';
+    let selectedPrice = '14.99';
+    let formData = {};
+    let cityAutocomplete = null;
+    
+    // Google Places init
+    window.initMap = function() {
+      const cityInput = document.getElementById('city');
+      if (cityInput && window.google && window.google.maps) {
+        cityAutocomplete = new google.maps.places.Autocomplete(cityInput, {
+          types: ['(cities)']
+        });
+      }
+    };
+    
+    function startQuiz() {
+      document.getElementById('landing').classList.add('hidden');
+      document.getElementById('page1').classList.add('active');
+      currentPage = 1;
+    }
+    
+    function nextPage(page) {
+      // Validation
+      if (currentPage === 4) {
+        const email = document.getElementById('email').value.trim();
+        if (!email || !email.includes('@')) {
+          alert('Please enter a valid email address');
+          return;
+        }
+      }
+      
+      document.getElementById(`page${currentPage}`).classList.remove('active');
+      document.getElementById(`page${page}`).classList.add('active');
+      currentPage = page;
+      window.scrollTo(0, 0);
+    }
+    
+    function prevPage(page) {
+      document.getElementById(`page${currentPage}`).classList.remove('active');
+      document.getElementById(`page${page}`).classList.add('active');
+      currentPage = page;
+      window.scrollTo(0, 0);
+    }
+    
+    function startScan() {
+      // Collect form data
+      formData = {
+        firstname: document.getElementById('firstname').value.trim(),
+        lastname: document.getElementById('lastname').value.trim(),
+        alias: document.getElementById('alias').value.trim(),
+        age_range: document.getElementById('age_range').value,
+        city: document.getElementById('city').value.trim(),
+        instagram: document.getElementById('instagram').value.trim(),
+        facebook: document.getElementById('facebook').value.trim(),
+        twitter: document.getElementById('twitter').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        email_cheater: document.getElementById('email_cheater').value.trim(),
+        looking_for: document.getElementById('looking_for').value
+      };
+      
+      // Hide current page
+      document.getElementById('page4').classList.remove('active');
+      
+      // Show scanning
+      document.getElementById('scanning').classList.add('active');
+      
+      // Animate scan
+      const stages = [
+        'Searching social media platforms...',
+        'Cross-referencing public records...',
+        'Analyzing location data...',
+        'Compiling results...'
+      ];
+      
+      let stageIndex = 0;
+      const stageInterval = setInterval(() => {
+        if (stageIndex < stages.length) {
+          document.getElementById('scanStage').textContent = stages[stageIndex];
+          stageIndex++;
+        } else {
+          clearInterval(stageInterval);
+          // Show results
+          document.getElementById('scanning').classList.remove('active');
+          document.getElementById('results').classList.add('active');
+        }
+      }, 1500);
+    }
+    
+    function showPricing() {
+      document.getElementById('results').classList.remove('active');
+      document.getElementById('pricing').classList.add('active');
+      window.scrollTo(0, 0);
+    }
+    
+    function selectTier(el) {
+      document.querySelectorAll('.price-card').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedTier = el.dataset.tier;
+      selectedPrice = el.dataset.price;
+    }
+    
+    async function checkout() {
+      // Build social media string
+      const socialParts = [];
+      if (formData.instagram) socialParts.push(`Instagram: ${formData.instagram}`);
+      if (formData.facebook) socialParts.push(`Facebook: ${formData.facebook}`);
+      if (formData.twitter) socialParts.push(`Twitter: ${formData.twitter}`);
+      const social_media = socialParts.join(' , ');
+      
+      try {
+        // Submit to Bubble
+        const bubbleRes = await fetch('https://sweepify.io/version-test/api/1.1/wf/create-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            firstname: formData.firstname,
+            lastname: formData.lastname,
+            alias: formData.alias,
+            email: formData.email,
+            email_cheater: formData.email_cheater,
+            city: formData.city,
+            age_range: formData.age_range,
+            social_media: social_media,
+            looking_for: formData.looking_for,
+            report_type: selectedTier,
+            which_lp: 'premium_quiz',
+            from: 'meta_ads',
+            fbclid: '',
+            gclid: ''
+          })
+        });
+        
+        const bubbleData = await bubbleRes.json();
+        
+        if (!bubbleData.access_code) {
+          throw new Error('No access code received');
+        }
+        
+        const code = bubbleData.access_code;
+        
+        // Redirect to Whop with proper structure
+        const planIds = {
+          basic: 'plan_xxx',
+          standard: 'plan_yyy', 
+          premium: 'plan_zzz'
+        };
+        
+        const checkoutData = {
+          mode: 'payment',
+          plan_id: planIds[selectedTier],
+          redirect_url: `https://sweepify.io/thank_you?code=${code}&b=yes&report_type=${selectedTier}`,
+          source_url: `https://sweepify.io?code=${code}&report_type=${selectedTier}`,
+          metadata: {
+            mpc_code: code,
+            report_type: selectedTier
+          }
+        };
+        
+        // For now, just redirect to sweepify
+        window.location.href = `https://sweepify.io/thank_you?code=${code}&report_type=${selectedTier}`;
+        
+      } catch (err) {
+        console.error(err);
+        alert('Something went wrong. Please try again or contact support.');
+      }
+    }
+  </script>
+</body>
+</html>
