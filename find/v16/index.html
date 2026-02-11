@@ -1,0 +1,808 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sweepify — Profile Discovery</title>
+  <meta name="description" content="Profile discovery & public online presence research. Find social profiles and digital footprint signals in minutes." />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Sweepify — Profile Discovery" />
+  <meta property="og:description" content="Public online presence research — fast, one‑time reports." />
+  <meta property="og:type" content="website" />
+
+  <!-- Avenir font -->
+  <link rel="preload" href="https://cdn.sweepbank.com/sweep/assets/fonts/Avenir/Avenir-medium.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="https://cdn.sweepbank.com/sweep/assets/fonts/Avenir/Avenir-bold.woff2" as="font" type="font/woff2" crossorigin />
+
+  <style>
+    @font-face {
+      font-family: 'Avenir';
+      src: url('https://cdn.sweepbank.com/sweep/assets/fonts/Avenir/Avenir-medium.woff2') format('woff2');
+      font-weight: 400;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Avenir';
+      src: url('https://cdn.sweepbank.com/sweep/assets/fonts/Avenir/Avenir-bold.woff2') format('woff2');
+      font-weight: 700;
+      font-display: swap;
+    }
+
+    :root {
+      /* SweepBank-inspired colors */
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --accent: #0ea5e9;
+      --accent-dark: #0284c7;
+      --border: rgba(15, 23, 42, 0.08);
+      --shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+      --gradient: linear-gradient(135deg, #0ea5e9, #06b6d4);
+    }
+
+    * { box-sizing: border-box; }
+    
+    body {
+      margin: 0;
+      color: var(--text);
+      font-family: 'Avenir', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .wrap {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 32px 20px 80px;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 0 40px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: var(--gradient);
+      box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+    }
+
+    .brand b {
+      font-size: 20px;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+
+    .pill {
+      font-size: 13px;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: var(--card);
+    }
+
+    /* Hero Layout */
+    .hero {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 32px;
+      align-items: start;
+    }
+
+    @media (max-width: 920px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Card */
+    .card {
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-left {
+      padding: 40px 36px;
+    }
+
+    h1 {
+      margin: 0 0 16px;
+      font-size: 48px;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      font-weight: 700;
+    }
+
+    @media (max-width: 520px) {
+      h1 { font-size: 36px; }
+    }
+
+    .sub {
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.6;
+      margin: 0 0 32px;
+    }
+
+    /* Trust badges */
+    .checks {
+      display: grid;
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .check {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .check i {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(14, 165, 233, 0.1);
+      color: var(--accent);
+      font-style: normal;
+      font-weight: 700;
+      font-size: 13px;
+      flex: 0 0 auto;
+      margin-top: 2px;
+    }
+
+    .check span {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    /* Right form */
+    .hero-right {
+      padding: 32px 28px;
+    }
+
+    .form-section {
+      margin-bottom: 28px;
+    }
+
+    .form-section h2 {
+      margin: 0 0 8px;
+      font-size: 20px;
+      letter-spacing: -0.01em;
+      font-weight: 700;
+    }
+
+    .form-section p {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    label {
+      font-size: 14px;
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    label .opt {
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 15px;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    input:focus, textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+    }
+
+    input::placeholder, textarea::placeholder {
+      color: var(--muted);
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    @media (max-width: 520px) {
+      .row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 24px 0;
+    }
+
+    /* Pricing tiers */
+    .tiers {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 20px 0;
+    }
+
+    @media (max-width: 680px) {
+      .tiers {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .tier {
+      padding: 20px 16px;
+      border-radius: 12px;
+      border: 2px solid var(--border);
+      background: var(--card);
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .tier:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(14, 165, 233, 0.15);
+    }
+
+    .tier.active {
+      border-color: var(--accent);
+      background: rgba(14, 165, 233, 0.04);
+      box-shadow: 0 4px 16px rgba(14, 165, 233, 0.2);
+    }
+
+    .tier-badge {
+      position: absolute;
+      top: -10px;
+      right: 12px;
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--gradient);
+      color: white;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .tier-name {
+      font-size: 13px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 4px;
+      font-weight: 700;
+    }
+
+    .tier-price {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+    }
+
+    .tier-desc {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .tier ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .tier li {
+      font-size: 13px;
+      color: var(--text);
+      padding: 6px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .tier li:before {
+      content: '✓';
+      color: var(--accent);
+      font-weight: 700;
+      flex: 0 0 auto;
+    }
+
+    .tier li.disabled {
+      color: var(--muted);
+    }
+
+    .tier li.disabled:before {
+      content: '✗';
+      color: var(--muted);
+    }
+
+    /* CTA */
+    .btn {
+      width: 100%;
+      padding: 16px 20px;
+      border-radius: 12px;
+      border: none;
+      background: var(--gradient);
+      color: white;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(14, 165, 233, 0.4);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .guarantee {
+      text-align: center;
+      margin-top: 16px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .guarantee strong {
+      color: var(--text);
+    }
+
+    /* Features */
+    .features {
+      margin-top: 32px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+
+    .features h3 {
+      font-size: 18px;
+      margin: 0 0 16px;
+      font-weight: 700;
+    }
+
+    .feature-grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .feature {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .feature-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: rgba(14, 165, 233, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex: 0 0 auto;
+    }
+
+    .feature div h4 {
+      margin: 0 0 4px;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .feature div p {
+      margin: 0;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* FAQ */
+    .faq {
+      margin-top: 60px;
+      max-width: 800px;
+    }
+
+    .faq h2 {
+      font-size: 32px;
+      margin: 0 0 24px;
+      font-weight: 700;
+    }
+
+    .faq-item {
+      margin-bottom: 24px;
+    }
+
+    .faq-item h3 {
+      font-size: 18px;
+      margin: 0 0 8px;
+      font-weight: 600;
+    }
+
+    .faq-item p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* Footer */
+    .disclaimer {
+      margin-top: 60px;
+      padding: 24px;
+      border-radius: 12px;
+      background: rgba(100, 116, 139, 0.05);
+      border: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .disclaimer strong {
+      color: var(--text);
+    }
+
+    /* Loading state */
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <a href="/" class="brand">
+        <div class="logo"></div>
+        <b>Sweepify</b>
+      </a>
+      <div class="pill">which_lp: find_v16</div>
+    </header>
+
+    <div class="hero">
+      <!-- Left: Messaging -->
+      <div class="card hero-left">
+        <h1>Find someone's public online presence — fast.</h1>
+        <p class="sub">
+          Sweepify is a profile discovery service that generates research reports using publicly available web sources. 
+          Great for reconnecting, dating safety checks, or verifying professional presence.
+        </p>
+
+        <div class="checks">
+          <div class="check">
+            <i>✓</i>
+            <div>
+              <span>One‑time payment</span><br>
+              <small style="color: var(--muted)">No subscriptions or trials.</small>
+            </div>
+          </div>
+          <div class="check">
+            <i>✓</i>
+            <div>
+              <span>Deeper results with more info</span><br>
+              <small style="color: var(--muted)">Add city, alias, or handles to improve accuracy.</small>
+            </div>
+          </div>
+          <div class="check">
+            <i>✓</i>
+            <div>
+              <span>Transparent limitations</span><br>
+              <small style="color: var(--muted)">Estimates from public sources — verify important details.</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="features">
+          <h3>What you'll get</h3>
+          <div class="feature-grid">
+            <div class="feature">
+              <div class="feature-icon">🔍</div>
+              <div>
+                <h4>Profile discovery</h4>
+                <p>Likely social profiles, usernames, and public mentions connected to the person.</p>
+              </div>
+            </div>
+            <div class="feature">
+              <div class="feature-icon">📊</div>
+              <div>
+                <h4>Online presence summary</h4>
+                <p>AI‑generated research report with links and citations when available.</p>
+              </div>
+            </div>
+            <div class="feature">
+              <div class="feature-icon">⚡</div>
+              <div>
+                <h4>Upgrade for depth</h4>
+                <p>Standard is recommended if you want contact & professional signals, not just profiles.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Form -->
+      <div class="card hero-right">
+        <form id="searchForm">
+          <!-- Customer email -->
+          <div class="form-section">
+            <h2>Start a search</h2>
+            <p>Enter your email to receive the report link. Add details below to improve accuracy.</p>
+            
+            <div class="field">
+              <label>Your email <span class="opt">(where we'll send the report)</span></label>
+              <input type="email" name="customerEmail" placeholder="you@example.com" required />
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <!-- Target person details -->
+          <div class="form-section">
+            <h2>Who are you searching for?</h2>
+            <p>More details = better accuracy</p>
+
+            <div class="field">
+              <label>First name</label>
+              <input type="text" name="firstName" placeholder="John" required />
+            </div>
+
+            <div class="row">
+              <div class="field">
+                <label>Last name</label>
+                <input type="text" name="lastName" placeholder="Doe" required />
+              </div>
+              <div class="field">
+                <label>Age <span class="opt">(optional)</span></label>
+                <input type="number" name="age" placeholder="30" min="18" max="99" />
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Alias / Nickname <span class="opt">(optional)</span></label>
+              <input type="text" name="alias" placeholder="JD" />
+            </div>
+
+            <div class="field">
+              <label>City / Location <span class="opt">(optional)</span></label>
+              <input type="text" name="city" placeholder="New York" />
+            </div>
+
+            <div class="field">
+              <label>Their email <span class="opt">(optional — helps narrow results)</span></label>
+              <input type="email" name="targetEmail" placeholder="john@example.com" />
+            </div>
+
+            <div class="field">
+              <label>Social media handles <span class="opt">(optional)</span></label>
+              <input type="text" name="instagram" placeholder="@instagram" />
+            </div>
+
+            <div class="field">
+              <input type="text" name="facebook" placeholder="Facebook profile URL" />
+            </div>
+
+            <div class="field">
+              <input type="text" name="twitter" placeholder="@twitter" />
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <!-- Pricing -->
+          <div class="form-section">
+            <h2>Choose your package</h2>
+            <p>Select the depth of research you need</p>
+
+            <div class="tiers">
+              <div class="tier" data-tier="basic" data-price="4.99">
+                <div class="tier-name">Basic</div>
+                <div class="tier-price">€4.99</div>
+                <div class="tier-desc">Quick profile scan</div>
+                <ul>
+                  <li>Social profile discovery</li>
+                  <li>Basic online presence summary</li>
+                  <li class="disabled">Contact information</li>
+                  <li class="disabled">Professional signals</li>
+                  <li class="disabled">Deep web search</li>
+                </ul>
+              </div>
+
+              <div class="tier active" data-tier="standard" data-price="14.99">
+                <div class="tier-badge">Most Popular</div>
+                <div class="tier-name">Standard</div>
+                <div class="tier-price">€14.99</div>
+                <div class="tier-desc">Recommended for thorough research</div>
+                <ul>
+                  <li>Everything in Basic</li>
+                  <li>Potential contact info (email, phone)</li>
+                  <li>Professional history & LinkedIn</li>
+                  <li>Deeper social media analysis</li>
+                  <li>Public records search</li>
+                </ul>
+              </div>
+
+              <div class="tier" data-tier="premium" data-price="17.99">
+                <div class="tier-name">Premium</div>
+                <div class="tier-price">€17.99</div>
+                <div class="tier-desc">Maximum depth & detail</div>
+                <ul>
+                  <li>Everything in Standard</li>
+                  <li>Comprehensive background check</li>
+                  <li>Court records & legal filings</li>
+                  <li>Property ownership records</li>
+                  <li>Business affiliations</li>
+                  <li>Priority processing (6h delivery)</li>
+                </ul>
+              </div>
+            </div>
+
+            <input type="hidden" name="selectedTier" value="standard" />
+            <input type="hidden" name="selectedPrice" value="14.99" />
+
+            <button type="submit" class="btn">Continue to Payment</button>
+
+            <div class="guarantee">
+              <strong>✓ 100% Money-Back Guarantee</strong><br>
+              If we find no results, full refund. No questions asked.
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- FAQ -->
+    <div class="faq">
+      <h2>FAQ</h2>
+
+      <div class="faq-item">
+        <h3>Does it always find someone?</h3>
+        <p>
+          No — results depend on public online presence. If someone keeps profiles private or uses different names, 
+          findings may be limited. That's why we offer a money-back guarantee if we find nothing.
+        </p>
+      </div>
+
+      <div class="faq-item">
+        <h3>What should I enter for best results?</h3>
+        <p>
+          Name + city helps a lot. If you know their email, Instagram handle, or any social profiles, include those too. 
+          The more info you provide, the more accurate the match.
+        </p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Is this a background check?</h3>
+        <p>
+          No. It's a profile discovery / public online presence research report using public web sources. 
+          It's not a consumer report under the FCRA and cannot be used for employment, credit, or housing decisions.
+        </p>
+      </div>
+
+      <div class="faq-item">
+        <h3>How long does it take?</h3>
+        <p>
+          Most reports are ready within 12-24 hours. Premium orders get priority processing (6-12 hours). 
+          You'll receive an email with your report link once it's ready.
+        </p>
+      </div>
+
+      <div class="faq-item">
+        <h3>What if I'm not satisfied?</h3>
+        <p>
+          If we find no results or you're not satisfied, contact us within 30 days for a full refund. No hassle.
+        </p>
+      </div>
+    </div>
+
+    <!-- Disclaimer -->
+    <div class="disclaimer">
+      <strong>Important:</strong> Sweepify provides publicly available information research reports. 
+      This is not a consumer reporting agency and is not for employment, credit, insurance, or housing decisions. 
+      Data is sourced from public web sources and may contain inaccuracies — always verify important details independently.
+    </div>
+  </div>
+
+  <script>
+    // Tier selection
+    document.querySelectorAll('.tier').forEach(tier => {
+      tier.addEventListener('click', function() {
+        document.querySelectorAll('.tier').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+        
+        const tierName = this.dataset.tier;
+        const tierPrice = this.dataset.price;
+        
+        document.querySelector('[name="selectedTier"]').value = tierName;
+        document.querySelector('[name="selectedPrice"]').value = tierPrice;
+      });
+    });
+
+    // Form submission
+    document.getElementById('searchForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const formData = new FormData(this);
+      const data = Object.fromEntries(formData.entries());
+      
+      const btn = this.querySelector('.btn');
+      btn.disabled = true;
+      btn.textContent = 'Processing...';
+      
+      try {
+        const response = await fetch('https://sweepify.io/version-test/api/1.1/wf/create-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...data,
+            report_type: data.selectedTier,
+            mpc_code: 'SPF_' + Date.now()
+          })
+        });
+        
+        const result = await response.json();
+        
+        if (result.response && result.response.access_code) {
+          window.location.href = `https://sweepify.io/thank_you?code=${result.response.access_code}&report_type=${data.selectedTier}`;
+        } else {
+          throw new Error('No access code received');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Something went wrong. Please try again.');
+        btn.disabled = false;
+        btn.textContent = 'Continue to Payment';
+      }
+    });
+  </script>
+</body>
+</html>
