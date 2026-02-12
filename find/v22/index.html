@@ -140,6 +140,7 @@
       font-weight: 800;
       line-height: 1.2;
       margin-bottom: 12px;
+      padding-top: 60px;
       letter-spacing: -0.03em;
     }
 
@@ -677,7 +678,11 @@
             <div class="quick-options">
               <label class="quick-option">
                 <input type="radio" name="purpose" value="dating" style="display:none;" />
-                <span class="quick-icon">💘</span>
+                <span class="quick-icon">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                  </svg>
+                </span>
                 <div class="quick-text">
                   <strong>Dating Safety Check</strong>
                   <small>Verify someone before meeting — social profiles & background</small>
@@ -686,7 +691,14 @@
 
               <label class="quick-option">
                 <input type="radio" name="purpose" value="reconnect" style="display:none;" />
-                <span class="quick-icon">👋</span>
+                <span class="quick-icon">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                  </svg>
+                </span>
                 <div class="quick-text">
                   <strong>Reconnect with Someone</strong>
                   <small>Find an old friend, classmate, or lost contact</small>
@@ -695,7 +707,12 @@
 
               <label class="quick-option">
                 <input type="radio" name="purpose" value="business" style="display:none;" />
-                <span class="quick-icon">💼</span>
+                <span class="quick-icon">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                  </svg>
+                </span>
                 <div class="quick-text">
                   <strong>Business Check</strong>
                   <small>Research a potential hire, partner, or client</small>
@@ -704,7 +721,12 @@
 
               <label class="quick-option">
                 <input type="radio" name="purpose" value="general" style="display:none;" />
-                <span class="quick-icon">🔍</span>
+                <span class="quick-icon">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                  </svg>
+                </span>
                 <div class="quick-text">
                   <strong>General Search</strong>
                   <small>Find someone's public information</small>
@@ -713,7 +735,14 @@
             </div>
 
             <div class="why-hint">
-              <strong>💡 Why we ask</strong>
+              <strong>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display:inline;vertical-align:middle;margin-right:4px;">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                  <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+                Why we ask
+              </strong>
               Understanding your intent helps us focus on safety-critical data for dating checks, professional signals for business searches, and improve accuracy. Your search remains completely private.
             </div>
 
@@ -799,7 +828,7 @@
               <label>Your Email</label>
               <input type="email" name="customerEmail" id="customerEmail" placeholder="you@example.com" required />
               <div class="field-hint">We'll send your completed report here (never shared)</div>
-              <div class="error-msg" id="emailError">Please enter a valid email (must contain @ and .)</div>
+              <div class="error-msg" id="emailError">Please enter a valid email address.</div>
             </div>
 
             <button type="button" class="btn" onclick="validateEmail()">Start Search →</button>
@@ -898,8 +927,8 @@
             <input type="hidden" name="selectedPrice" value="14.99" />
 
             <div class="guarantee">
-              <strong>✓ 100% Money-Back Guarantee</strong><br>
-              Full refund if no results found
+              <strong>✓ Comprehensive Data Search</strong><br>
+              Professional background check services
             </div>
           </div>
 
@@ -1055,9 +1084,12 @@
       const name = formData.firstName || 'user';
 
       const resultsInt = setInterval(() => {
-        results += Math.floor(Math.random() * 12) + 3;
-        document.getElementById('results').textContent = results;
-      }, 700);
+        if (results < 12) {
+          results += Math.floor(Math.random() * 2) + 1;
+          if (results > 12) results = 12;
+          document.getElementById('results').textContent = results;
+        }
+      }, 1200);
 
       const dbInt = setInterval(() => {
         databases += Math.floor(Math.random() * 3) + 1;
@@ -1071,8 +1103,7 @@
           clearInterval(dbInt);
 
           setTimeout(() => {
-            const points = Math.floor(Math.random() * 80) + 80;
-            document.getElementById('dataPoints').textContent = points;
+            document.getElementById('dataPoints').textContent = '12';
             populatePreview();
             goToStep(5);
 
@@ -1100,15 +1131,20 @@
       const lastName = formData.lastName || 'Doe';
       const city = formData.city || 'New York';
 
+      const firstTwo = (str) => {
+        if (!str) return '••';
+        return str.substring(0, 2) + '••••••';
+      };
+
       const data = [
-        { icon: '👤', label: 'Full Name', value: `${firstName} ${lastName}` },
-        { icon: '📧', label: 'Email', value: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@gmail.com` },
-        { icon: '📱', label: 'Phone', value: `+1 (555) ${Math.floor(Math.random() * 900 + 100)}-${Math.floor(Math.random() * 9000 + 1000)}` },
-        { icon: '📘', label: 'Facebook', value: `facebook.com/${firstName.toLowerCase()}.${lastName.toLowerCase()}` },
-        { icon: '📷', label: 'Instagram', value: `@${firstName.toLowerCase()}${lastName.toLowerCase()}` },
-        { icon: '💼', label: 'LinkedIn', value: `linkedin.com/in/${firstName.toLowerCase()}${lastName.toLowerCase()}` },
-        { icon: '🏠', label: 'Location', value: `${city} • ${['LA', 'Chicago', 'Miami', 'Boston'][Math.floor(Math.random() * 4)]}` },
-        { icon: '🎓', label: 'Education', value: `${['Harvard', 'Stanford', 'MIT', 'Columbia'][Math.floor(Math.random() * 4)]}` }
+        { icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>', label: 'Full Name', value: firstTwo(firstName) + ' ' + firstTwo(lastName) },
+        { icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>', label: 'Email', value: firstTwo(firstName.toLowerCase()) + '••••@••••.com' },
+        { icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>', label: 'Phone', value: '+1 (••••) •••-••••' },
+        { icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>', label: 'Facebook', value: 'fa••••••.com/' + firstTwo(firstName.toLowerCase()) },
+        { icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>', label: 'Instagram', value: '@' + firstTwo(firstName.toLowerCase()) + '••••••' },
+        { icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>', label: 'LinkedIn', value: 'li••••••.com/in/' + firstTwo(firstName.toLowerCase()) },
+        { icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>', label: 'Location', value: firstTwo(city) + '•••••••, ••' },
+        { icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>', label: 'Education', value: '••••••• University' }
       ];
 
       const grid = document.getElementById('previewGrid');
@@ -1117,9 +1153,14 @@
           <div class="preview-icon">${item.icon}</div>
           <div class="preview-text">
             <strong>${item.label}</strong>
-            <div class="preview-value">${item.value}</div>
+            <div class="preview-value" style="font-family:'Courier New',monospace;letter-spacing:0.05em;">${item.value}</div>
           </div>
-          <span class="lock">🔒</span>
+          <span class="lock">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          </span>
         </div>
       `).join('');
     }
@@ -1128,13 +1169,8 @@
       const pricing = document.querySelector('.tiers');
       const sticky = document.getElementById('stickyCTA');
 
-      if (pricing) {
-        const rect = pricing.getBoundingClientRect();
-        if (rect.top < window.innerHeight && rect.bottom > 0) {
-          sticky.classList.add('show');
-        } else {
-          sticky.classList.remove('show');
-        }
+      if (pricing && sticky) {
+        sticky.classList.add('show');
       }
     }
 
@@ -1157,38 +1193,21 @@
       document.getElementById('stickyPrice').textContent = `€${tierPrice} • 10-min delivery`;
     });
 
-    async function submitForm() {
-      const data = {
-        ...formData,
-        selectedTier: document.querySelector('[name="selectedTier"]').value,
-        selectedPrice: document.querySelector('[name="selectedPrice"]').value,
-        report_type: document.querySelector('[name="selectedTier"]').value,
-        mpc_code: 'SPF_' + Date.now()
+    function submitForm() {
+      const selectedTier = document.querySelector('[name="selectedTier"]').value;
+      
+      const whopPlans = {
+        basic: 'plan_oCsBXlKhLTgqe',
+        standard: 'plan_PlJi3Fq01djzJ',
+        premium: 'plan_tP7U4tYPujlbT'
       };
-
-      const btn = document.querySelector('#stickyCTA .btn');
-      btn.disabled = true;
-      btn.textContent = 'Processing...';
-
-      try {
-        const res = await fetch('https://sweepify.io/version-test/api/1.1/wf/create-session', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
-        });
-
-        const result = await res.json();
-
-        if (result.response && result.response.access_code) {
-          window.location.href = `https://sweepify.io/thank_you?code=${result.response.access_code}&report_type=${data.selectedTier}`;
-        } else {
-          throw new Error('No access code');
-        }
-      } catch (error) {
-        console.error(error);
-        alert('Error. Please try again.');
-        btn.disabled = false;
-        btn.textContent = 'Unlock Report';
+      
+      const planId = whopPlans[selectedTier];
+      
+      if (planId) {
+        window.location.href = `https://whop.com/checkout/${planId}/`;
+      } else {
+        alert('Please select a package');
       }
     }
   </script>
