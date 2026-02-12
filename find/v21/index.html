@@ -990,7 +990,6 @@
           <div class="logo">S</div>
           <b>Sweepify</b>
         </a>
-        <div class="pill">v21</div>
       </header>
 
       <div class="hero">
@@ -1163,7 +1162,6 @@
         <div class="logo">S</div>
         <b>Sweepify</b>
       </a>
-      <div class="pill">v21</div>
     </header>
 
     <form id="searchForm">
@@ -1645,7 +1643,9 @@
           document.getElementById('resultsCount').textContent = '20';
           
           setTimeout(() => {
-            document.getElementById('dataPoints').textContent = '20';
+            // Randomize data points (115-140 range)
+            const randomPoints = Math.floor(Math.random() * 26) + 115;
+            document.getElementById('dataPoints').textContent = randomPoints;
             populatePreview();
             goToStep(5);
             
@@ -1697,28 +1697,28 @@
     }
 
     function generatePreviewData() {
-      const firstName = formData.firstName || 'John';
-      const lastName = formData.lastName || 'Doe';
-      const city = formData.city || 'New York';
+      const firstName = formData.firstName || '';
+      const lastName = formData.lastName || '';
+      const city = formData.city || '';
       
-      // Show only first 2 characters/letters
-      const firstTwo = (str) => {
-        if (!str) return '••';
-        return str.substring(0, 2) + '••••••';
+      // New rule: no input = ***, has input = first 2 letters + *****
+      const previewField = (value) => {
+        if (!value || value.trim() === '') return '*****';
+        return value.substring(0, 2) + '*****';
       };
       
-      // Name: only first 2 letters of first name + ***
-      const namePreview = firstName ? firstName.substring(0, 2) + '***' : 'Jo***';
+      // Name: only first name
+      const namePreview = previewField(firstName);
       
       return [
         { icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>', label: 'Full Name', value: namePreview },
-        { icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>', label: 'Email Addresses', value: firstTwo(firstName.toLowerCase()) + '••••@••••.com' },
-        { icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>', label: 'Phone Numbers', value: '+1 (••••) •••-••••' },
-        { icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>', label: 'Facebook Profile', value: 'fa••••••.com/' + firstTwo(firstName.toLowerCase()) },
-        { icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>', label: 'Instagram', value: '@' + firstTwo(firstName.toLowerCase()) + '••••••' },
-        { icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>', label: 'LinkedIn', value: 'li••••••.com/in/' + firstTwo(firstName.toLowerCase()) },
-        { icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>', label: 'Location History', value: firstTwo(city) + '•••••••, ••' },
-        { icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>', label: 'Education', value: '••••••• University' }
+        { icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>', label: 'Email Addresses', value: firstName ? previewField(firstName.toLowerCase()) + '@*****.com' : '*****@*****.com' },
+        { icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>', label: 'Phone Numbers', value: '+1 (*****) ***-****' },
+        { icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>', label: 'Facebook Profile', value: 'fa*****.com/' + (firstName ? previewField(firstName.toLowerCase()) : '*****') },
+        { icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>', label: 'Instagram', value: '@' + (firstName ? previewField(firstName.toLowerCase()) : '*****') },
+        { icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>', label: 'LinkedIn', value: 'li*****.com/in/' + (firstName ? previewField(firstName.toLowerCase()) : '*****') },
+        { icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>', label: 'Location History', value: city ? previewField(city) + ', **' : '*****, **' },
+        { icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>', label: 'Education', value: '***** University' }
       ];
     }
 
