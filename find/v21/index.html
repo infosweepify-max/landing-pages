@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Sweepify — Find Anyone's Public Online Presence</title>
+  <title>Sweepify - Find Anyone's Public Online Presence</title>
   <meta name="description" content="Discover social profiles, contact information, and public records. Trusted by thousands. Money-back guarantee." />
 
   <!-- Google Places API -->
@@ -41,9 +41,15 @@
     }
 
     * { box-sizing: border-box; }
-    
-    body {
+
+    html, body {
       margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      width: 100%;
+    }
+
+    body {
       color: var(--text);
       font-family: 'Avenir', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: var(--bg);
@@ -210,7 +216,7 @@
       font-size: 24px;
       flex-shrink: 0;
     }
-    
+
     .trust-icon svg {
       display: block;
       margin: auto;
@@ -385,6 +391,7 @@
     /* Form sections */
     .form-section {
       display: none;
+      padding-bottom: 120px;
     }
 
     .form-section.active {
@@ -928,8 +935,9 @@
       right: 0;
       background: var(--card);
       border-top: 1px solid var(--border);
-      padding: 16px 20px;
-      box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.08);
+      padding: 16px 20px 20px;
+      padding-bottom: max(20px, env(safe-area-inset-bottom));
+      box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.15);
       display: none;
       z-index: 100;
     }
@@ -995,7 +1003,7 @@
       <div class="hero">
         <h1>Find Anyone's Public Online Presence</h1>
         <p class="subtitle">
-          Discover social profiles, contact information, and public records from 500+ million sources. 
+          Discover social profiles, contact information, and public records from 500+ million sources.
           Fast, legal, and confidential. Trusted by thousands.
         </p>
         <button class="cta" onclick="startSearch()">Start Your Search →</button>
@@ -1178,7 +1186,7 @@
               <input type="radio" name="searchPurpose" value="dating" required />
               <div class="option-content">
                 <strong>Dating Safety Check</strong>
-                <small>Verify someone before meeting — social profiles, background, and public records.</small>
+                <small>Verify someone before meeting - social profiles, background, and public records.</small>
               </div>
             </label>
             <label class="option">
@@ -1414,7 +1422,7 @@
           <div class="faq-item">
             <h4>Does it always find someone?</h4>
             <p>
-              Results depend on public online presence. If someone keeps profiles private or uses different names, 
+              Results depend on public online presence. If someone keeps profiles private or uses different names,
               findings may be limited. That's why we offer a money-back guarantee.
             </p>
           </div>
@@ -1422,8 +1430,8 @@
           <div class="faq-item">
             <h4>What's the difference between packages?</h4>
             <p>
-              Basic gives you a quick profile scan (3-5 profiles). Standard adds contact info, professional history, 
-              and location data (8-12+ profiles). Premium includes comprehensive background checks, court records, 
+              Basic gives you a quick profile scan (3-5 profiles). Standard adds contact info, professional history,
+              and location data (8-12+ profiles). Premium includes comprehensive background checks, court records,
               and deep web searches (15-20+ profiles).
             </p>
           </div>
@@ -1431,7 +1439,7 @@
           <div class="faq-item">
             <h4>How long does it take?</h4>
             <p>
-              All packages deliver in 10-15 minutes. 
+              All packages deliver in 10-15 minutes.
               You'll receive an email when your report is ready.
             </p>
           </div>
@@ -1439,7 +1447,7 @@
           <div class="faq-item">
             <h4>Is this legal?</h4>
             <p>
-              Yes. We only search publicly available information from legal sources. This is not a consumer report 
+              Yes. We only search publicly available information from legal sources. This is not a consumer report
               under FCRA and cannot be used for employment, credit, or housing decisions.
             </p>
           </div>
@@ -1494,7 +1502,7 @@
     window.addEventListener('scroll', () => {
       const mainHeader = document.getElementById('mainHeader');
       const formHeader = document.getElementById('formHeader');
-      
+
       if (window.scrollY > 100) {
         if (mainHeader && getComputedStyle(mainHeader.parentElement).display !== 'none') {
           mainHeader.classList.add('sticky');
@@ -1638,17 +1646,17 @@
           clearInterval(queryInterval);
           clearInterval(resultsInterval);
           clearInterval(dbInterval);
-          
+
           // Ensure results reaches exactly 20 at the end
           document.getElementById('resultsCount').textContent = '20';
-          
+
           setTimeout(() => {
             // Randomize data points (115-140 range)
             const randomPoints = Math.floor(Math.random() * 26) + 115;
             document.getElementById('dataPoints').textContent = randomPoints;
             populatePreview();
             goToStep(5);
-            
+
             setTimeout(() => {
               window.addEventListener('scroll', toggleStickyCTA);
               toggleStickyCTA();
@@ -1660,13 +1668,13 @@
         const q = sqlQueries[queryIndex];
         const line = document.createElement('div');
         line.className = 'sql-line';
-        
+
         let html = '';
         if (q.keyword) html += `<span class="keyword">${q.keyword}</span> `;
         if (q.table) html += `<span class="table">${q.table}</span> `;
         if (q.value) html += `<span class="value">${q.value}</span> `;
         if (q.comment) html += `<span class="comment">${q.comment}</span>`;
-        
+
         line.innerHTML = html;
         sqlConsole.appendChild(line);
         sqlConsole.scrollTop = sqlConsole.scrollHeight;
@@ -1678,7 +1686,7 @@
     function populatePreview() {
       const grid = document.getElementById('previewGrid');
       const data = generatePreviewData();
-      
+
       grid.innerHTML = data.map(item => `
         <div class="preview-item">
           <div class="preview-icon">${item.icon}</div>
@@ -1700,16 +1708,16 @@
       const firstName = formData.firstName || '';
       const lastName = formData.lastName || '';
       const city = formData.city || '';
-      
+
       // New rule: no input = ***, has input = first 2 letters + *****
       const previewField = (value) => {
         if (!value || value.trim() === '') return '*****';
         return value.substring(0, 2) + '*****';
       };
-      
+
       // Name: only first name
       const namePreview = previewField(firstName);
-      
+
       return [
         { icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>', label: 'Full Name', value: namePreview },
         { icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>', label: 'Email Addresses', value: firstName ? previewField(firstName.toLowerCase()) + '@*****.com' : '*****@*****.com' },
@@ -1725,7 +1733,7 @@
     function toggleStickyCTA() {
       const pricing = document.querySelector('.pricing');
       const sticky = document.getElementById('stickyCTA');
-      
+
       // Show immediately when pricing section exists
       if (pricing && sticky) {
         sticky.classList.add('show');
@@ -1758,16 +1766,16 @@
 
     function submitForm() {
       const selectedTier = document.querySelector('[name="selectedTier"]').value;
-      
+
       // Whop checkout plan IDs
       const whopPlans = {
         basic: 'plan_oCsBXlKhLTgqe',
         standard: 'plan_PlJi3Fq01djzJ',
         premium: 'plan_tP7U4tYPujlbT'
       };
-      
+
       const planId = whopPlans[selectedTier];
-      
+
       if (planId) {
         window.location.href = `https://whop.com/checkout/${planId}/`;
       } else {

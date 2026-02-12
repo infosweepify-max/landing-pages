@@ -29,6 +29,11 @@
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
+    html, body {
+      overflow-x: hidden;
+      width: 100%;
+    }
+    
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       background: var(--bg);
@@ -603,10 +608,11 @@
       bottom: 0;
       left: 0;
       right: 0;
-      background: rgba(15, 23, 42, 0.95);
+      background: rgba(15, 23, 42, 0.98);
       backdrop-filter: blur(20px);
       border-top: 1px solid var(--border);
-      padding: 16px 24px;
+      padding: 16px 24px 20px;
+      padding-bottom: max(20px, env(safe-area-inset-bottom));
       z-index: 999;
       display: none;
     }
@@ -654,6 +660,7 @@
 
     .form-section {
       display: none;
+      padding-bottom: 120px;
     }
 
     .form-section.active {
