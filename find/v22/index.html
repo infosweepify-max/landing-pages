@@ -1,0 +1,1196 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sweepify — Find Anyone Online</title>
+  <meta name="description" content="Discover social profiles, contact info, and public records in 10-15 minutes." />
+
+  <!-- Google Places API -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC3l7sgHExxg_0zeCAynm68nWOmT1xREpU&libraries=places&callback=initPlaces" async defer></script>
+
+  <!-- Inter font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --card-light: #334155;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --accent: #10b981;
+      --accent-glow: rgba(16, 185, 129, 0.2);
+      --border: rgba(241, 245, 249, 0.1);
+      --gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Sticky header */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: rgba(15, 23, 42, 0.9);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      z-index: 1000;
+    }
+
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 16px;
+      box-shadow: 0 0 20px var(--accent-glow);
+    }
+
+    .logo-text {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .version {
+      font-size: 11px;
+      color: var(--muted);
+      background: var(--card);
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+    }
+
+    .content {
+      padding-top: 80px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 40px 24px 100px;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 40px 32px;
+      margin-bottom: 24px;
+      position: relative;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .back-btn {
+      position: absolute;
+      top: 24px;
+      left: 24px;
+      background: var(--card-light);
+      border: 1px solid var(--border);
+      padding: 8px 14px;
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      z-index: 10;
+    }
+
+    .back-btn:hover {
+      background: var(--bg);
+      transform: translateX(-2px);
+    }
+
+    h1 {
+      font-size: 32px;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 12px;
+      letter-spacing: -0.03em;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 16px;
+      margin-bottom: 32px;
+      line-height: 1.5;
+    }
+
+    .why-hint {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 24px;
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .why-hint strong {
+      color: var(--accent);
+      display: block;
+      margin-bottom: 8px;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Quick tap options */
+    .quick-options {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .quick-option {
+      background: var(--card-light);
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      padding: 18px 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .quick-option:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .quick-option.selected {
+      background: rgba(16, 185, 129, 0.1);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .quick-icon {
+      font-size: 28px;
+      flex-shrink: 0;
+    }
+
+    .quick-text {
+      flex: 1;
+    }
+
+    .quick-text strong {
+      display: block;
+      font-size: 15px;
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+
+    .quick-text small {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    /* Form fields */
+    .field {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--text);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    label .opt {
+      color: var(--muted);
+      font-weight: 400;
+      text-transform: none;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 14px 16px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 15px;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    input::placeholder {
+      color: var(--muted);
+    }
+
+    input.error, select.error {
+      border-color: #ef4444;
+    }
+
+    .field-hint {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+
+    .error-msg {
+      color: #ef4444;
+      font-size: 12px;
+      margin-top: 6px;
+      display: none;
+    }
+
+    .error-msg.show {
+      display: block;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    @media (max-width: 520px) {
+      .row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Buttons */
+    .btn {
+      width: 100%;
+      padding: 18px 24px;
+      border: none;
+      border-radius: 12px;
+      background: var(--gradient);
+      color: white;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 20px var(--accent-glow);
+      font-family: inherit;
+      margin-top: 24px;
+    }
+
+    .btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 30px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Scanning - SQL terminal style */
+    .scanner {
+      text-align: center;
+      padding: 40px 0;
+    }
+
+    .scanner h2 {
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .scanner .status {
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 32px;
+    }
+
+    .terminal {
+      background: #000;
+      border-radius: 12px;
+      padding: 24px;
+      margin: 32px 0;
+      font-family: 'Courier New', monospace;
+      text-align: left;
+      max-height: 400px;
+      overflow-y: auto;
+      box-shadow: 0 0 40px rgba(16, 185, 129, 0.2);
+      border: 1px solid var(--accent);
+    }
+
+    .terminal-line {
+      font-size: 13px;
+      margin-bottom: 6px;
+      color: #10b981;
+      opacity: 0;
+      animation: terminalFade 0.3s forwards;
+    }
+
+    .terminal-line .prompt {
+      color: #60a5fa;
+    }
+
+    .terminal-line .keyword {
+      color: #f472b6;
+      font-weight: 700;
+    }
+
+    .terminal-line .value {
+      color: #fbbf24;
+    }
+
+    @keyframes terminalFade {
+      to { opacity: 1; }
+    }
+
+    .scan-stats {
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      margin-top: 32px;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 48px;
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Preview */
+    .preview-grid {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .preview-item {
+      background: var(--card-light);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .preview-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: rgba(16, 185, 129, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .preview-text {
+      flex: 1;
+    }
+
+    .preview-text strong {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: var(--muted);
+    }
+
+    .preview-value {
+      font-size: 15px;
+      background: linear-gradient(90deg, #cbd5e1, #94a3b8, #cbd5e1);
+      background-size: 200%;
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shimmer 2s linear infinite;
+      font-weight: 600;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 200%; }
+      100% { background-position: -200%; }
+    }
+
+    .lock {
+      color: var(--muted);
+      font-size: 20px;
+    }
+
+    /* Pricing tiers */
+    .tiers {
+      display: grid;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .tier {
+      background: var(--card-light);
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .tier:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .tier.active {
+      background: rgba(16, 185, 129, 0.1);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .tier-badge {
+      position: absolute;
+      top: -10px;
+      right: 20px;
+      background: var(--gradient);
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .tier-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .tier-name {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .tier-price {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--accent);
+    }
+
+    .tier-desc {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+
+    .tier ul {
+      list-style: none;
+    }
+
+    .tier li {
+      font-size: 14px;
+      padding: 6px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .tier li:before {
+      content: '✓';
+      color: var(--accent);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    /* FAQ */
+    .faq {
+      margin-top: 40px;
+    }
+
+    .faq h3 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .faq-item {
+      margin-bottom: 20px;
+      padding: 20px;
+      background: var(--card-light);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+
+    .faq-item h4 {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .faq-item p {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* Sticky CTA */
+    .sticky-cta {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid var(--border);
+      padding: 16px 24px;
+      z-index: 999;
+      display: none;
+    }
+
+    .sticky-cta.show {
+      display: block;
+    }
+
+    .sticky-content {
+      max-width: 680px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .sticky-info strong {
+      display: block;
+      font-size: 15px;
+      margin-bottom: 2px;
+    }
+
+    .sticky-info small {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .sticky-cta .btn {
+      margin: 0;
+      flex-shrink: 0;
+      padding: 14px 32px;
+    }
+
+    .guarantee {
+      text-align: center;
+      margin-top: 16px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .guarantee strong {
+      color: var(--accent);
+    }
+
+    .form-section {
+      display: none;
+    }
+
+    .form-section.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="logo">
+        <div class="logo-icon">S</div>
+        <div class="logo-text">Sweepify</div>
+      </div>
+      <div class="version">v22</div>
+    </div>
+  </header>
+
+  <div class="content">
+    <div class="container">
+      <form id="searchForm">
+        <!-- Step 1: Purpose + Why -->
+        <div class="form-section active" id="step1">
+          <div class="card">
+            <h1>What are you searching for?</h1>
+            <p class="subtitle">
+              Help us prioritize the most relevant information for your needs.
+            </p>
+
+            <div class="quick-options">
+              <label class="quick-option">
+                <input type="radio" name="purpose" value="dating" style="display:none;" />
+                <span class="quick-icon">💘</span>
+                <div class="quick-text">
+                  <strong>Dating Safety Check</strong>
+                  <small>Verify someone before meeting — social profiles & background</small>
+                </div>
+              </label>
+
+              <label class="quick-option">
+                <input type="radio" name="purpose" value="reconnect" style="display:none;" />
+                <span class="quick-icon">👋</span>
+                <div class="quick-text">
+                  <strong>Reconnect with Someone</strong>
+                  <small>Find an old friend, classmate, or lost contact</small>
+                </div>
+              </label>
+
+              <label class="quick-option">
+                <input type="radio" name="purpose" value="business" style="display:none;" />
+                <span class="quick-icon">💼</span>
+                <div class="quick-text">
+                  <strong>Business Check</strong>
+                  <small>Research a potential hire, partner, or client</small>
+                </div>
+              </label>
+
+              <label class="quick-option">
+                <input type="radio" name="purpose" value="general" style="display:none;" />
+                <span class="quick-icon">🔍</span>
+                <div class="quick-text">
+                  <strong>General Search</strong>
+                  <small>Find someone's public information</small>
+                </div>
+              </label>
+            </div>
+
+            <div class="why-hint">
+              <strong>💡 Why we ask</strong>
+              Understanding your intent helps us focus on safety-critical data for dating checks, professional signals for business searches, and improve accuracy. Your search remains completely private.
+            </div>
+
+            <button type="button" class="btn" onclick="goToStep(2)">Continue →</button>
+          </div>
+        </div>
+
+        <!-- Step 2: Person Details -->
+        <div class="form-section" id="step2">
+          <div class="card">
+            <button type="button" class="back-btn" onclick="goToStep(1)">← Back</button>
+            <h1>Who are you searching for?</h1>
+            <p class="subtitle">
+              Fill in at least one field. More details = better results.
+            </p>
+
+            <div class="field">
+              <label>First Name <span class="opt">(optional)</span></label>
+              <input type="text" name="firstName" id="firstName" placeholder="John" />
+              <div class="field-hint">Helps match the right person in records</div>
+            </div>
+
+            <div class="row">
+              <div class="field">
+                <label>Last Name <span class="opt">(optional)</span></label>
+                <input type="text" name="lastName" id="lastName" placeholder="Doe" />
+              </div>
+              <div class="field">
+                <label>Age Range <span class="opt">(optional)</span></label>
+                <select name="age" id="age">
+                  <option value="">Select range</option>
+                  <option value="18-25">18-25</option>
+                  <option value="26-35">26-35</option>
+                  <option value="36-45">36-45</option>
+                  <option value="46-60">46-60</option>
+                  <option value="60+">60+</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>City / Location <span class="opt">(optional)</span></label>
+              <input type="text" name="city" id="cityInput" placeholder="New York" />
+              <div class="field-hint">Current or past city</div>
+            </div>
+
+            <div class="field">
+              <label>Email <span class="opt">(optional)</span></label>
+              <input type="email" name="targetEmail" id="targetEmail" placeholder="john@example.com" />
+            </div>
+
+            <div class="field">
+              <label>Instagram <span class="opt">(optional)</span></label>
+              <input type="text" name="instagram" id="instagram" placeholder="@username" />
+            </div>
+
+            <div class="field">
+              <label>Facebook <span class="opt">(optional)</span></label>
+              <input type="text" name="facebook" id="facebook" placeholder="Profile URL" />
+            </div>
+
+            <div class="field">
+              <label>Twitter/X <span class="opt">(optional)</span></label>
+              <input type="text" name="twitter" id="twitter" placeholder="@handle" />
+            </div>
+
+            <div class="error-msg" id="step2Error">Please fill in at least one field</div>
+
+            <button type="button" class="btn" onclick="validateStep2()">Next →</button>
+          </div>
+        </div>
+
+        <!-- Step 3: Email -->
+        <div class="form-section" id="step3">
+          <div class="card">
+            <button type="button" class="back-btn" onclick="goToStep(2)">← Back</button>
+            <h1>Where should we send your report?</h1>
+            <p class="subtitle">
+              Reports delivered in 10-15 minutes via email.
+            </p>
+
+            <div class="field">
+              <label>Your Email</label>
+              <input type="email" name="customerEmail" id="customerEmail" placeholder="you@example.com" required />
+              <div class="field-hint">We'll send your completed report here (never shared)</div>
+              <div class="error-msg" id="emailError">Please enter a valid email (must contain @ and .)</div>
+            </div>
+
+            <button type="button" class="btn" onclick="validateEmail()">Start Search →</button>
+          </div>
+        </div>
+
+        <!-- Step 4: Scanning -->
+        <div class="form-section" id="step4">
+          <div class="card scanner">
+            <h2>Scanning databases...</h2>
+            <p class="status">Searching 500+ million public records</p>
+
+            <div class="terminal" id="terminal"></div>
+
+            <div class="scan-stats">
+              <div class="stat">
+                <div class="stat-number" id="results">0</div>
+                <div class="stat-label">Results</div>
+              </div>
+              <div class="stat">
+                <div class="stat-number" id="databases">0</div>
+                <div class="stat-label">Databases</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 5: Preview + Pricing -->
+        <div class="form-section" id="step5">
+          <div class="card">
+            <h1 style="text-align:center;">Search Complete!</h1>
+            <p class="subtitle" style="text-align:center;">
+              <span id="dataPoints" style="color:var(--accent);font-size:48px;font-weight:800;display:block;margin:20px 0 8px;">127</span>
+              data points discovered
+            </p>
+
+            <div class="preview-grid" id="previewGrid"></div>
+          </div>
+
+          <div class="card">
+            <h1 style="text-align:center;font-size:28px;">Unlock Your Report</h1>
+            <p class="subtitle" style="text-align:center;margin-bottom:32px;">
+              Choose your package
+            </p>
+
+            <div class="tiers">
+              <div class="tier" data-tier="basic" data-price="4.99">
+                <div class="tier-header">
+                  <div class="tier-name">Basic</div>
+                  <div class="tier-price">€4.99</div>
+                </div>
+                <div class="tier-desc">Quick profile scan</div>
+                <ul>
+                  <li>3-5 social profiles</li>
+                  <li>Basic online presence</li>
+                  <li>15-minute delivery</li>
+                </ul>
+              </div>
+
+              <div class="tier active" data-tier="standard" data-price="14.99">
+                <div class="tier-badge">Popular</div>
+                <div class="tier-header">
+                  <div class="tier-name">Standard</div>
+                  <div class="tier-price">€14.99</div>
+                </div>
+                <div class="tier-desc">Complete background check</div>
+                <ul>
+                  <li>Everything in Basic</li>
+                  <li>8-12+ social profiles</li>
+                  <li>Email & phone numbers</li>
+                  <li>Professional history</li>
+                  <li>Location history</li>
+                  <li>10-minute delivery</li>
+                </ul>
+              </div>
+
+              <div class="tier" data-tier="premium" data-price="17.99">
+                <div class="tier-header">
+                  <div class="tier-name">Premium</div>
+                  <div class="tier-price">€17.99</div>
+                </div>
+                <div class="tier-desc">Maximum depth research</div>
+                <ul>
+                  <li>Everything in Standard</li>
+                  <li>15-20+ profiles</li>
+                  <li>Court records & legal filings</li>
+                  <li>Property & business records</li>
+                  <li>Relatives & associates</li>
+                  <li>Deep web search</li>
+                  <li>10-minute priority delivery</li>
+                </ul>
+              </div>
+            </div>
+
+            <input type="hidden" name="selectedTier" value="standard" />
+            <input type="hidden" name="selectedPrice" value="14.99" />
+
+            <div class="guarantee">
+              <strong>✓ 100% Money-Back Guarantee</strong><br>
+              Full refund if no results found
+            </div>
+          </div>
+
+          <div class="card faq">
+            <h3>Frequently Asked Questions</h3>
+
+            <div class="faq-item">
+              <h4>How long does it take?</h4>
+              <p>All packages deliver in 10-15 minutes. You'll receive an email when ready.</p>
+            </div>
+
+            <div class="faq-item">
+              <h4>What's the difference between packages?</h4>
+              <p>Basic: 3-5 profiles. Standard: 8-12+ profiles with contact info. Premium: 15-20+ profiles with deep background checks.</p>
+            </div>
+
+            <div class="faq-item">
+              <h4>Is this legal?</h4>
+              <p>Yes. We only search publicly available information. Not a consumer report under FCRA.</p>
+            </div>
+
+            <div class="faq-item">
+              <h4>What if I'm not satisfied?</h4>
+              <p>Contact us within 30 days for a full refund. No questions asked.</p>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="sticky-cta" id="stickyCTA">
+    <div class="sticky-content">
+      <div class="sticky-info">
+        <strong id="stickyTier">Standard Report</strong>
+        <small id="stickyPrice">€14.99 • 10-min delivery</small>
+      </div>
+      <button type="button" class="btn" onclick="submitForm()">Unlock Report</button>
+    </div>
+  </div>
+
+  <script>
+    let currentStep = 1;
+    let formData = {};
+
+    function initPlaces() {
+      const input = document.getElementById('cityInput');
+      if (input && window.google) {
+        const autocomplete = new google.maps.places.Autocomplete(input, {
+          types: ['(cities)']
+        });
+        autocomplete.addListener('place_changed', function() {
+          const place = autocomplete.getPlace();
+          if (place && place.formatted_address) {
+            formData.city = place.formatted_address;
+          }
+        });
+      }
+    }
+
+    function goToStep(step) {
+      document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+      document.getElementById(`step${step}`).classList.add('active');
+      currentStep = step;
+      window.scrollTo(0, 0);
+    }
+
+    // Quick option selection
+    document.addEventListener('click', (e) => {
+      const option = e.target.closest('.quick-option');
+      if (option) {
+        document.querySelectorAll('.quick-option').forEach(o => o.classList.remove('selected'));
+        option.classList.add('selected');
+        option.querySelector('input').checked = true;
+      }
+    });
+
+    function validateStep2() {
+      const firstName = document.getElementById('firstName').value.trim();
+      const lastName = document.getElementById('lastName').value.trim();
+      const city = document.getElementById('cityInput').value.trim();
+      const email = document.getElementById('targetEmail').value.trim();
+      const instagram = document.getElementById('instagram').value.trim();
+      const facebook = document.getElementById('facebook').value.trim();
+      const twitter = document.getElementById('twitter').value.trim();
+
+      if (!firstName && !lastName && !city && !email && !instagram && !facebook && !twitter) {
+        document.getElementById('step2Error').classList.add('show');
+        return;
+      }
+
+      document.getElementById('step2Error').classList.remove('show');
+
+      formData.firstName = firstName;
+      formData.lastName = lastName;
+      formData.age = document.getElementById('age').value;
+      formData.city = city;
+      formData.targetEmail = email;
+      formData.instagram = instagram;
+      formData.facebook = facebook;
+      formData.twitter = twitter;
+
+      goToStep(3);
+    }
+
+    function validateEmail() {
+      const input = document.getElementById('customerEmail');
+      const email = input.value.trim();
+      const hasAt = email.includes('@');
+      const hasDot = email.includes('.');
+      const valid = hasAt && hasDot && email.indexOf('@') < email.lastIndexOf('.');
+
+      if (!valid) {
+        input.classList.add('error');
+        document.getElementById('emailError').classList.add('show');
+        return;
+      }
+
+      input.classList.remove('error');
+      document.getElementById('emailError').classList.remove('show');
+      formData.customerEmail = email;
+      startScan();
+    }
+
+    const sqlQueries = [
+      'SELECT * FROM social_profiles WHERE name LIKE "%{name}%"',
+      'JOIN contact_info ON user_id = social_profiles.id',
+      'SELECT phone_numbers FROM contact_info',
+      'SELECT email_addresses FROM contact_info',
+      'JOIN location_history ON user_id = contact_info.id',
+      'SELECT city, state FROM location_history',
+      'SELECT * FROM employment WHERE person_id = {id}',
+      'SELECT * FROM education WHERE person_id = {id}',
+      'JOIN court_records ON person_id = {id}',
+      'SELECT * FROM property_records WHERE owner = "{name}"',
+      'SELECT * FROM business_records WHERE name LIKE "%{name}%"',
+      'JOIN relatives ON family_id = {id}',
+      'SELECT * FROM online_mentions WHERE name = "{name}"',
+      'SELECT * FROM archived_content WHERE person = "{name}"',
+      'ORDER BY relevance DESC LIMIT 150'
+    ];
+
+    function startScan() {
+      goToStep(4);
+
+      const terminal = document.getElementById('terminal');
+      terminal.innerHTML = '';
+
+      let results = 0;
+      let databases = 0;
+      let queryIndex = 0;
+
+      const name = formData.firstName || 'user';
+
+      const resultsInt = setInterval(() => {
+        results += Math.floor(Math.random() * 12) + 3;
+        document.getElementById('results').textContent = results;
+      }, 700);
+
+      const dbInt = setInterval(() => {
+        databases += Math.floor(Math.random() * 3) + 1;
+        document.getElementById('databases').textContent = databases;
+      }, 1000);
+
+      const queryInt = setInterval(() => {
+        if (queryIndex >= sqlQueries.length) {
+          clearInterval(queryInt);
+          clearInterval(resultsInt);
+          clearInterval(dbInt);
+
+          setTimeout(() => {
+            const points = Math.floor(Math.random() * 80) + 80;
+            document.getElementById('dataPoints').textContent = points;
+            populatePreview();
+            goToStep(5);
+
+            setTimeout(() => {
+              window.addEventListener('scroll', toggleSticky);
+              toggleSticky();
+            }, 500);
+          }, 1000);
+          return;
+        }
+
+        const query = sqlQueries[queryIndex].replace('{name}', name).replace('{id}', Math.floor(Math.random() * 10000));
+        const line = document.createElement('div');
+        line.className = 'terminal-line';
+        line.innerHTML = `<span class="prompt">mysql></span> ${query}`;
+        terminal.appendChild(line);
+        terminal.scrollTop = terminal.scrollHeight;
+
+        queryIndex++;
+      }, 2000); // 30 seconds / 15 queries ~= 2000ms
+    }
+
+    function populatePreview() {
+      const firstName = formData.firstName || 'John';
+      const lastName = formData.lastName || 'Doe';
+      const city = formData.city || 'New York';
+
+      const data = [
+        { icon: '👤', label: 'Full Name', value: `${firstName} ${lastName}` },
+        { icon: '📧', label: 'Email', value: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@gmail.com` },
+        { icon: '📱', label: 'Phone', value: `+1 (555) ${Math.floor(Math.random() * 900 + 100)}-${Math.floor(Math.random() * 9000 + 1000)}` },
+        { icon: '📘', label: 'Facebook', value: `facebook.com/${firstName.toLowerCase()}.${lastName.toLowerCase()}` },
+        { icon: '📷', label: 'Instagram', value: `@${firstName.toLowerCase()}${lastName.toLowerCase()}` },
+        { icon: '💼', label: 'LinkedIn', value: `linkedin.com/in/${firstName.toLowerCase()}${lastName.toLowerCase()}` },
+        { icon: '🏠', label: 'Location', value: `${city} • ${['LA', 'Chicago', 'Miami', 'Boston'][Math.floor(Math.random() * 4)]}` },
+        { icon: '🎓', label: 'Education', value: `${['Harvard', 'Stanford', 'MIT', 'Columbia'][Math.floor(Math.random() * 4)]}` }
+      ];
+
+      const grid = document.getElementById('previewGrid');
+      grid.innerHTML = data.map(item => `
+        <div class="preview-item">
+          <div class="preview-icon">${item.icon}</div>
+          <div class="preview-text">
+            <strong>${item.label}</strong>
+            <div class="preview-value">${item.value}</div>
+          </div>
+          <span class="lock">🔒</span>
+        </div>
+      `).join('');
+    }
+
+    function toggleSticky() {
+      const pricing = document.querySelector('.tiers');
+      const sticky = document.getElementById('stickyCTA');
+
+      if (pricing) {
+        const rect = pricing.getBoundingClientRect();
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+          sticky.classList.add('show');
+        } else {
+          sticky.classList.remove('show');
+        }
+      }
+    }
+
+    // Tier selection
+    document.addEventListener('click', (e) => {
+      const tier = e.target.closest('.tier');
+      if (!tier) return;
+
+      document.querySelectorAll('.tier').forEach(t => t.classList.remove('active'));
+      tier.classList.add('active');
+
+      const tierName = tier.dataset.tier;
+      const tierPrice = tier.dataset.price;
+
+      document.querySelector('[name="selectedTier"]').value = tierName;
+      document.querySelector('[name="selectedPrice"]').value = tierPrice;
+
+      const names = { basic: 'Basic Report', standard: 'Standard Report', premium: 'Premium Report' };
+      document.getElementById('stickyTier').textContent = names[tierName];
+      document.getElementById('stickyPrice').textContent = `€${tierPrice} • 10-min delivery`;
+    });
+
+    async function submitForm() {
+      const data = {
+        ...formData,
+        selectedTier: document.querySelector('[name="selectedTier"]').value,
+        selectedPrice: document.querySelector('[name="selectedPrice"]').value,
+        report_type: document.querySelector('[name="selectedTier"]').value,
+        mpc_code: 'SPF_' + Date.now()
+      };
+
+      const btn = document.querySelector('#stickyCTA .btn');
+      btn.disabled = true;
+      btn.textContent = 'Processing...';
+
+      try {
+        const res = await fetch('https://sweepify.io/version-test/api/1.1/wf/create-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        const result = await res.json();
+
+        if (result.response && result.response.access_code) {
+          window.location.href = `https://sweepify.io/thank_you?code=${result.response.access_code}&report_type=${data.selectedTier}`;
+        } else {
+          throw new Error('No access code');
+        }
+      } catch (error) {
+        console.error(error);
+        alert('Error. Please try again.');
+        btn.disabled = false;
+        btn.textContent = 'Unlock Report';
+      }
+    }
+  </script>
+</body>
+</html>
