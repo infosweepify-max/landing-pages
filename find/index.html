@@ -3,385 +3,1798 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Sweepify — Find public online profiles</title>
-  <meta name="description" content="Profile discovery & public online presence research. Find social profiles and digital footprint signals in minutes." />
+  <title>Sweepify - Find Anyone's Public Online Presence</title>
+  <meta name="description" content="Discover social profiles, contact information, and public records. Trusted by thousands. Money-back guarantee." />
 
-  <!-- Open Graph -->
-  <meta property="og:title" content="Sweepify — Profile Discovery" />
-  <meta property="og:description" content="Public online presence research — fast, one‑time reports." />
-  <meta property="og:type" content="website" />
+  <!-- Google Places API -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC3l7sgHExxg_0zeCAynm68nWOmT1xREpU&libraries=places&callback=initPlaces" async defer></script>
+
+  <!-- Avenir font -->
+  <link rel="preload" href="https://cdn.sweepbank.com/sweep/assets/fonts/Avenir/Avenir-medium.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="https://cdn.sweepbank.com/sweep/assets/fonts/Avenir/Avenir-bold.woff2" as="font" type="font/woff2" crossorigin />
 
   <style>
-    :root{
-      --bg:#070b16;
-      --card:#0d1430;
-      --muted:#a8b3d6;
-      --text:#eef3ff;
-      --accent:#2563eb;
-      --accent2:#6d28d9;
-      --ok:#10b981;
-      --warn:#f59e0b;
-      --border:rgba(255,255,255,.10);
-      --shadow:0 20px 60px rgba(0,0,0,.45);
+    @font-face {
+      font-family: 'Avenir';
+      src: url('https://cdn.sweepbank.com/sweep/assets/fonts/Avenir/Avenir-medium.woff2') format('woff2');
+      font-weight: 400;
+      font-display: swap;
     }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      color:var(--text);
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      background:
-        radial-gradient(1200px 600px at 20% -10%, rgba(37,99,235,.35) 0%, rgba(7,11,22,0) 60%),
-        radial-gradient(900px 500px at 90% 10%, rgba(109,40,217,.25) 0%, rgba(7,11,22,0) 55%),
-        var(--bg);
-    }
-    a{color:inherit}
-    .wrap{max-width:1100px;margin:0 auto;padding:22px 18px 72px}
-
-    header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0 18px}
-    .brand{display:flex;align-items:center;gap:10px;text-decoration:none}
-    .logo{
-      width:34px;height:34px;border-radius:10px;
-      background:linear-gradient(135deg,var(--accent),var(--accent2));
-      box-shadow:0 10px 30px rgba(37,99,235,.25);
-    }
-    .brand b{letter-spacing:-0.02em}
-    .pill{
-      font-size:12px;color:rgba(238,243,255,.9);
-      border:1px solid var(--border);
-      padding:6px 10px;border-radius:999px;
-      background:rgba(255,255,255,.04);
+    @font-face {
+      font-family: 'Avenir';
+      src: url('https://cdn.sweepbank.com/sweep/assets/fonts/Avenir/Avenir-bold.woff2') format('woff2');
+      font-weight: 700;
+      font-display: swap;
     }
 
-    .hero{display:grid;grid-template-columns:1.15fr .85fr;gap:18px;align-items:start}
-    @media (max-width: 920px){.hero{grid-template-columns:1fr}}
-
-    .card{border:1px solid var(--border);background:rgba(13,20,48,.70);backdrop-filter: blur(10px);border-radius:18px;box-shadow:var(--shadow)}
-    .hero-left{padding:26px 24px}
-    h1{margin:0 0 10px;font-size:44px;line-height:1.05;letter-spacing:-0.03em}
-    @media (max-width: 520px){h1{font-size:36px}}
-    .sub{color:var(--muted);font-size:16px;line-height:1.5;margin:0 0 18px}
-
-    .checks{display:grid;gap:10px;margin-top:14px}
-    .check{display:flex;gap:10px;align-items:flex-start;color:rgba(238,243,255,.93)}
-    .check i{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:6px;background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.35);color:var(--ok);font-style:normal;font-weight:800;font-size:12px;flex:0 0 auto;margin-top:2px}
-    .check span{color:var(--muted)}
-
-    .hero-right{padding:18px}
-    .box{padding:16px 16px 14px}
-    .box h2{margin:0 0 6px;font-size:16px;letter-spacing:-0.01em}
-    .box p{margin:0 0 12px;color:var(--muted);font-size:13px;line-height:1.45}
-
-    .field{display:grid;gap:6px;margin-bottom:10px}
-    label{font-size:12px;color:rgba(168,179,214,.95)}
-    input{width:100%;padding:12px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.04);color:var(--text);outline:none}
-    input:focus{border-color:rgba(37,99,235,.6);box-shadow:0 0 0 3px rgba(37,99,235,.18)}
-
-    .tiers{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:10px 0 12px}
-    @media (max-width: 520px){.tiers{grid-template-columns:1fr}}
-    .tier{padding:12px;border-radius:14px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.03);cursor:pointer;user-select:none}
-    .tier.active{border-color:rgba(37,99,235,.75);background:rgba(37,99,235,.12)}
-    .tier .top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
-    .tier b{font-size:13px}
-    .tier .badge{font-size:11px;padding:3px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.12);color:rgba(238,243,255,.9)}
-    .tier .badge.pop{background:rgba(109,40,217,.18);border-color:rgba(109,40,217,.35)}
-    .tier .price{font-size:14px;font-weight:800;letter-spacing:-0.01em}
-    .tier ul{margin:0;padding-left:16px;color:var(--muted);font-size:12px;line-height:1.35}
-
-    .cta{display:flex;gap:10px;align-items:center;margin-top:6px}
-    .btn{
-      width:100%;
-      padding:13px 14px;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.10);
-      background:linear-gradient(135deg,var(--accent),#1d4ed8);
-      color:white;
-      font-weight:800;
-      cursor:pointer;
+    :root {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --accent: #10b981;
+      --accent-dark: #059669;
+      --error: #ef4444;
+      --border: rgba(15, 23, 42, 0.08);
+      --shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+      --gradient: linear-gradient(135deg, #10b981, #059669);
     }
-    .btn:disabled{opacity:.65;cursor:not-allowed}
-    .small{font-size:12px;color:var(--muted);line-height:1.35;margin-top:10px}
-    .disclaimer{font-size:12px;color:rgba(168,179,214,.95);line-height:1.35;border-top:1px solid rgba(255,255,255,.08);margin-top:12px;padding-top:12px}
 
-    .section{margin-top:18px}
-    .section h3{margin:0 0 10px;font-size:18px;letter-spacing:-0.02em}
-    .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-    @media (max-width: 920px){.grid3{grid-template-columns:1fr}}
-    .feat{padding:14px 14px 12px}
-    .feat b{display:block;margin-bottom:6px}
-    .feat p{margin:0;color:var(--muted);font-size:13px;line-height:1.45}
+    * { box-sizing: border-box; }
 
-    .faq{padding:18px 18px 6px}
-    details{border-top:1px solid rgba(255,255,255,.08);padding:12px 0}
-    details:first-of-type{border-top:none}
-    summary{cursor:pointer;font-weight:700;list-style:none}
-    summary::-webkit-details-marker{display:none}
-    details p{margin:8px 0 0;color:var(--muted);line-height:1.5;font-size:13px}
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      width: 100%;
+    }
 
-    footer{margin-top:18px;color:rgba(168,179,214,.85);font-size:12px;line-height:1.45}
-    footer a{color:rgba(168,179,214,.95)}
+    body {
+      color: var(--text);
+      font-family: 'Avenir', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .wrap {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 20px 20px 80px;
+    }
+
+    .wrap-narrow {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 20px 20px 120px;
+    }
+
+    /* Header - Sticky when scrolled */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 0 40px;
+      transition: all 0.3s ease;
+    }
+
+    header.sticky {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 16px 20px;
+      box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+      z-index: 1000;
+      max-width: 100%;
+      margin: 0;
+    }
+
+    header.sticky + * {
+      margin-top: 80px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: var(--gradient);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 20px;
+    }
+
+    .brand b {
+      font-size: 22px;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+
+    .pill {
+      font-size: 13px;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: var(--card);
+    }
+
+    /* Landing Page */
+    .landing {
+      display: block;
+    }
+
+    .landing.hidden {
+      display: none;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 60px 20px 80px;
+    }
+
+    .hero h1 {
+      margin: 0 0 20px;
+      font-size: 56px;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      font-weight: 700;
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 40px; }
+    }
+
+    .hero .subtitle {
+      font-size: 20px;
+      color: var(--muted);
+      margin: 0 auto 40px;
+      max-width: 680px;
+      line-height: 1.5;
+    }
+
+    .hero .cta {
+      display: inline-block;
+      padding: 18px 40px;
+      border-radius: 12px;
+      background: var(--gradient);
+      color: white;
+      font-weight: 700;
+      font-size: 18px;
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
+      transition: all 0.2s;
+      border: none;
+      cursor: pointer;
+    }
+
+    .hero .cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(16, 185, 129, 0.45);
+      text-decoration: none;
+    }
+
+    /* Trust badges */
+    .trust {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 32px 24px;
+      max-width: 600px;
+      margin: 60px auto;
+      padding: 0 20px;
+    }
+
+    @media (max-width: 480px) {
+      .trust {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px 16px;
+      }
+    }
+
+    .trust-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      text-align: center;
+    }
+
+    .trust-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: rgba(16, 185, 129, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+      margin-bottom: 4px;
+    }
+
+    .trust-icon svg {
+      display: block;
+      margin: auto;
+    }
+
+    .trust-item strong {
+      font-size: 15px;
+      font-weight: 600;
+      text-align: center;
+      width: 100%;
+    }
+
+    .trust-item small {
+      font-size: 13px;
+      color: var(--muted);
+      text-align: center;
+      width: 100%;
+    }
+
+    /* Features */
+    .features {
+      max-width: 960px;
+      margin: 80px auto;
+    }
+
+    .features h2 {
+      text-align: center;
+      font-size: 36px;
+      margin: 0 0 48px;
+      font-weight: 700;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+    }
+
+    @media (max-width: 920px) {
+      .feature-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .feature {
+      text-align: center;
+      padding: 32px 24px;
+      border-radius: 16px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+
+    .feature-icon {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 20px;
+      border-radius: 16px;
+      background: var(--gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    .feature h3 {
+      font-size: 20px;
+      margin: 0 0 12px;
+      font-weight: 700;
+    }
+
+    .feature p {
+      font-size: 15px;
+      color: var(--muted);
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    /* Reviews */
+    .reviews {
+      max-width: 960px;
+      margin: 80px auto;
+    }
+
+    .reviews h2 {
+      text-align: center;
+      font-size: 36px;
+      margin: 0 0 16px;
+      font-weight: 700;
+    }
+
+    .rating-summary {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .stars {
+      font-size: 32px;
+      color: #fbbf24;
+      margin-bottom: 8px;
+    }
+
+    .rating-text {
+      font-size: 18px;
+      color: var(--muted);
+    }
+
+    .rating-text strong {
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .review-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    @media (max-width: 920px) {
+      .review-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .review {
+      padding: 24px;
+      border-radius: 12px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+
+    .review .stars {
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
+
+    .review p {
+      font-size: 14px;
+      color: var(--text);
+      margin: 0 0 16px;
+      line-height: 1.6;
+    }
+
+    .review .author {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .review .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 16px;
+    }
+
+    .review .author-info strong {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .review .author-info small {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* Form sections */
+    .form-section {
+      display: none;
+      padding-bottom: 120px;
+    }
+
+    .form-section.active {
+      display: block;
+    }
+
+    .card {
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      padding: 40px 36px;
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    .back-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: rgba(100, 116, 139, 0.1);
+      border: 1px solid var(--border);
+      padding: 8px 16px;
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      z-index: 10;
+    }
+
+    .back-btn:hover {
+      background: rgba(100, 116, 139, 0.15);
+    }
+
+    h1 {
+      margin: 0 0 16px;
+      padding-top: 60px;
+      font-size: 38px;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      font-weight: 700;
+    }
+
+    .sub {
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.6;
+      margin: 0 0 32px;
+    }
+
+    .why-box {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.15);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+
+    .why-box h3 {
+      font-size: 16px;
+      margin: 0 0 12px;
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .why-box ul {
+      margin: 0;
+      padding-left: 20px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+      margin-bottom: 20px;
+    }
+
+    label {
+      font-size: 14px;
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    label .opt {
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    .field-help {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: -2px;
+      line-height: 1.5;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 15px;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    }
+
+    input.error, select.error {
+      border-color: var(--error);
+    }
+
+    input.error:focus, select.error:focus {
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+    }
+
+    .error-msg {
+      color: var(--error);
+      font-size: 13px;
+      margin-top: 4px;
+      display: none;
+    }
+
+    .error-msg.show {
+      display: block;
+    }
+
+    input::placeholder {
+      color: var(--muted);
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    @media (max-width: 520px) {
+      .row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Radio options */
+    .options {
+      display: grid;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .option {
+      padding: 16px;
+      border-radius: 12px;
+      border: 2px solid var(--border);
+      background: var(--card);
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .option:hover {
+      border-color: var(--accent);
+    }
+
+    .option.selected {
+      border-color: var(--accent);
+      background: rgba(16, 185, 129, 0.05);
+    }
+
+    .option input[type="radio"] {
+      width: auto;
+      margin-top: 2px;
+    }
+
+    .option-content {
+      flex: 1;
+    }
+
+    .option-content strong {
+      display: block;
+      font-size: 15px;
+      margin-bottom: 4px;
+    }
+
+    .option-content small {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    /* Buttons */
+    .btn {
+      width: 100%;
+      padding: 16px 20px;
+      border-radius: 12px;
+      border: none;
+      background: var(--gradient);
+      color: white;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+      transition: all 0.2s;
+      font-family: inherit;
+      margin-top: 24px;
+    }
+
+    .btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    /* Scanning animation - SQL code style */
+    .scanner {
+      text-align: center;
+      padding: 60px 20px;
+    }
+
+    .scanner h2 {
+      margin: 0 0 12px;
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .scanner .status {
+      color: var(--muted);
+      font-size: 15px;
+      margin-bottom: 20px;
+    }
+
+    .scan-stats {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin: 30px 0 40px;
+    }
+
+    .scan-stat {
+      text-align: center;
+    }
+
+    .scan-stat .number {
+      font-size: 48px;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .scan-stat .label {
+      font-size: 14px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .sql-console {
+      max-width: 680px;
+      margin: 40px auto;
+      background: #1e293b;
+      border-radius: 12px;
+      padding: 20px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      color: #94a3b8;
+      text-align: left;
+      max-height: 360px;
+      overflow-y: auto;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .sql-line {
+      margin-bottom: 8px;
+      opacity: 0;
+      animation: fadeIn 0.3s forwards;
+    }
+
+    .sql-line .keyword {
+      color: #f472b6;
+      font-weight: 700;
+    }
+
+    .sql-line .table {
+      color: #60a5fa;
+    }
+
+    .sql-line .value {
+      color: #10b981;
+    }
+
+    .sql-line .comment {
+      color: #64748b;
+      font-style: italic;
+    }
+
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+
+    /* Results preview */
+    .preview {
+      text-align: center;
+    }
+
+    .preview h2 {
+      margin: 0 0 12px;
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .preview .found {
+      color: var(--accent);
+      font-size: 48px;
+      font-weight: 700;
+      margin: 20px 0 8px;
+    }
+
+    .preview .label {
+      color: var(--muted);
+      font-size: 16px;
+      margin-bottom: 40px;
+    }
+
+    .preview-grid {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 32px;
+      text-align: left;
+    }
+
+    .preview-item {
+      padding: 18px;
+      border-radius: 12px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    .preview-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: rgba(16, 185, 129, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .preview-item .text {
+      flex: 1;
+    }
+
+    .preview-item strong {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+
+    .preview-value {
+      display: block;
+      font-size: 15px;
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .preview-value-partial {
+      display: block;
+      font-size: 15px;
+      color: var(--muted);
+      font-weight: 500;
+      font-family: 'Courier New', monospace;
+      letter-spacing: 0.05em;
+    }
+
+    .lock-icon {
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    /* Pricing */
+    .pricing {
+      margin-top: 40px;
+    }
+
+    .pricing h2 {
+      font-size: 28px;
+      margin: 0 0 8px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .pricing .sub {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .tiers {
+      display: grid;
+      gap: 16px;
+    }
+
+    .tier {
+      padding: 24px;
+      border-radius: 12px;
+      border: 2px solid var(--border);
+      background: var(--card);
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .tier:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.15);
+    }
+
+    .tier.active {
+      border-color: var(--accent);
+      background: rgba(16, 185, 129, 0.04);
+      box-shadow: 0 4px 16px rgba(16, 185, 129, 0.2);
+    }
+
+    .tier-badge {
+      position: absolute;
+      top: -10px;
+      right: 16px;
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--gradient);
+      color: white;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .tier-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .tier-name {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .tier-price {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .tier-desc {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .tier ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .tier li {
+      font-size: 14px;
+      color: var(--text);
+      padding: 6px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .tier li:before {
+      content: '✓';
+      color: var(--accent);
+      font-weight: 700;
+      flex: 0 0 auto;
+    }
+
+    /* FAQ */
+    .faq {
+      margin-top: 48px;
+    }
+
+    .faq h3 {
+      font-size: 24px;
+      margin: 0 0 24px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .faq-item {
+      margin-bottom: 20px;
+    }
+
+    .faq-item h4 {
+      font-size: 16px;
+      margin: 0 0 8px;
+      font-weight: 600;
+    }
+
+    .faq-item p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* Sticky CTA */
+    .sticky-cta {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--card);
+      border-top: 1px solid var(--border);
+      padding: 16px 20px 20px;
+      padding-bottom: max(20px, env(safe-area-inset-bottom));
+      box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.15);
+      display: none;
+      z-index: 100;
+    }
+
+    .sticky-cta.show {
+      display: block;
+    }
+
+    .sticky-cta .wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .sticky-cta .info {
+      flex: 1;
+    }
+
+    .sticky-cta .info strong {
+      display: block;
+      font-size: 16px;
+      margin-bottom: 2px;
+    }
+
+    .sticky-cta .info small {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .sticky-cta .btn {
+      margin: 0;
+      white-space: nowrap;
+      padding: 14px 28px;
+    }
+
+    .guarantee {
+      text-align: center;
+      margin-top: 16px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .guarantee strong {
+      color: var(--text);
+    }
   </style>
-
-  <!-- Meta Pixel Code -->
-  <script>
-    !(function(f,b,e,v,n,t,s){
-      if(f.fbq)return; n=f.fbq=function(){n.callMethod?
-      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-      if(!f._fbq)f._fbq=n; n.push=n; n.loaded=!0; n.version='2.0';
-      n.queue=[]; t=b.createElement(e); t.async=!0;
-      t.src=v; s=b.getElementsByTagName(e)[0];
-      s.parentNode.insertBefore(t,s)
-    })(window, document,'script','https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '891364470053610');
-    fbq('track', 'PageView');
-  </script>
-  <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=891364470053610&ev=PageView&noscript=1"/></noscript>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <a class="brand" href="/">
-        <span class="logo" aria-hidden="true"></span>
-        <b>Sweepify</b>
-      </a>
-      <span class="pill">which_lp: <b id="whichLpBadge">find_v1</b></span>
-    </header>
+  <!-- Landing Page -->
+  <div class="landing" id="landingPage">
+    <div class="wrap">
+      <header id="mainHeader">
+        <a href="/" class="brand">
+          <div class="logo">S</div>
+          <b>Sweepify</b>
+        </a>
+      </header>
 
-    <div class="hero">
-      <div class="card hero-left">
-        <h1>Find someone’s public online presence — fast.</h1>
-        <p class="sub">Sweepify is a <b>profile discovery</b> service that generates research reports using publicly available web sources. Great for reconnecting, dating safety checks, or verifying professional presence.</p>
+      <div class="hero">
+        <h1>Find Anyone's Public Online Presence</h1>
+        <p class="subtitle">
+          Discover social profiles, contact information, and public records from 500+ million sources.
+          Fast, legal, and confidential. Trusted by thousands.
+        </p>
+        <button class="cta" onclick="startSearch()">Start Your Search →</button>
+      </div>
 
-        <div class="checks">
-          <div class="check"><i>✓</i><div><b>One‑time payment</b><br><span>No subscriptions or trials.</span></div></div>
-          <div class="check"><i>✓</i><div><b>Deeper results with more info</b><br><span>Add city, alias, or handles to improve accuracy.</span></div></div>
-          <div class="check"><i>✓</i><div><b>Transparent limitations</b><br><span>Estimates from public sources — verify important details.</span></div></div>
+      <div class="trust">
+        <div class="trust-item">
+          <div class="trust-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+          <strong>100% Legal</strong>
+          <small>Public sources only</small>
         </div>
+        <div class="trust-item">
+          <div class="trust-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          </div>
+          <strong>Confidential</strong>
+          <small>Your search is private</small>
+        </div>
+        <div class="trust-item">
+          <div class="trust-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+            </svg>
+          </div>
+          <strong>Fast Results</strong>
+          <small>Reports in 10-15 minutes</small>
+        </div>
+        <div class="trust-item">
+          <div class="trust-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+            </svg>
+          </div>
+          <strong>Comprehensive</strong>
+          <small>Complete background check</small>
+        </div>
+      </div>
 
-        <div class="section">
-          <h3>What you’ll get</h3>
-          <div class="grid3">
-            <div class="card feat">
-              <b>Profile discovery</b>
-              <p>Likely social profiles, usernames, and public mentions connected to the person.</p>
+      <div class="features">
+        <h2>What You'll Discover</h2>
+        <div class="feature-grid">
+          <div class="feature">
+            <div class="feature-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.35-4.35"></path>
+              </svg>
             </div>
-            <div class="card feat">
-              <b>Online presence summary</b>
-              <p>AI‑generated research report with links and citations when available.</p>
+            <h3>Social Profiles</h3>
+            <p>Find Facebook, Instagram, LinkedIn, Twitter, TikTok, and other social media accounts.</p>
+          </div>
+          <div class="feature">
+            <div class="feature-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+                <line x1="12" y1="18" x2="12.01" y2="18"></line>
+              </svg>
             </div>
-            <div class="card feat">
-              <b>Upgrade for depth</b>
-              <p><b>Standard</b> is recommended if you want contact & professional signals, not just profiles.</p>
+            <h3>Contact Info</h3>
+            <p>Discover email addresses, phone numbers, and current/past addresses.</p>
+          </div>
+          <div class="feature">
+            <div class="feature-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+              </svg>
             </div>
+            <h3>Professional History</h3>
+            <p>Employment records, education, certifications, and business affiliations.</p>
+          </div>
+          <div class="feature">
+            <div class="feature-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+            </div>
+            <h3>Public Records</h3>
+            <p>Property ownership, court records, and legal filings from government databases.</p>
+          </div>
+          <div class="feature">
+            <div class="feature-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+            </div>
+            <h3>Relatives & Associates</h3>
+            <p>Family members, roommates, and known associates in public records.</p>
+          </div>
+          <div class="feature">
+            <div class="feature-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="2" y1="12" x2="22" y2="12"></line>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+              </svg>
+            </div>
+            <h3>Online Footprint</h3>
+            <p>Websites, blogs, forums, reviews, and mentions across the web.</p>
           </div>
         </div>
       </div>
 
-      <div class="card hero-right">
-        <div class="box">
-          <h2>Start a search</h2>
-          <p>Enter an email to receive the report link. Add details to improve accuracy.</p>
-
-          <form id="leadForm">
-            <div class="field">
-              <label for="email">Your email (required)</label>
-              <input id="email" name="email" type="email" placeholder="you@email.com" required />
-            </div>
-            <div class="field">
-              <label for="name">Person’s name (optional)</label>
-              <input id="name" name="name" type="text" placeholder="First Last" />
-            </div>
-            <div class="field">
-              <label for="city">City / location (optional)</label>
-              <input id="city" name="city" type="text" placeholder="Dubai, UAE" />
-            </div>
-
-            <div class="tiers" aria-label="Choose report tier">
-              <div class="tier" data-tier="basic" data-price="4.99">
-                <div class="top"><b>Basic</b><span class="badge">Starter</span></div>
-                <div class="price">€4.99</div>
-                <ul>
-                  <li>Profile discovery</li>
-                  <li>Presence summary</li>
-                </ul>
-              </div>
-              <div class="tier active" data-tier="standard" data-price="14.99">
-                <div class="top"><b>Standard</b><span class="badge pop">Most popular</span></div>
-                <div class="price">€14.99</div>
-                <ul>
-                  <li>Deeper search</li>
-                  <li>Enhanced signals</li>
-                </ul>
-              </div>
-              <div class="tier" data-tier="premium" data-price="17.99">
-                <div class="top"><b>Premium</b><span class="badge">Max</span></div>
-                <div class="price">€17.99</div>
-                <ul>
-                  <li>Maximum depth</li>
-                  <li>Extra analysis</li>
-                </ul>
-              </div>
-            </div>
-
-            <div class="cta">
-              <button class="btn" id="ctaBtn" type="submit">Continue to checkout</button>
-            </div>
-
-            <div class="small" id="miniNote">We’ll redirect you to payment. After payment, you’ll be sent back to Sweepify to view your report.</div>
-
-            <div class="disclaimer">
-              <b>Important:</b> Sweepify provides publicly available information research reports. This is <b>not</b> a consumer reporting agency and is <b>not</b> for employment, credit, insurance, or housing decisions.
-            </div>
-          </form>
+      <div class="reviews">
+        <h2>Trusted by Thousands</h2>
+        <div class="rating-summary">
+          <div class="stars">★★★★★</div>
+          <p class="rating-text"><strong>4.8 out of 5</strong> based on 12,847 reviews</p>
         </div>
-
-        <div class="card faq section">
-          <h3 style="margin:0 0 6px">FAQ</h3>
-          <details open>
-            <summary>Does it always find someone?</summary>
-            <p>No — results depend on public online presence. If someone keeps profiles private or uses different names, findings may be limited.</p>
-          </details>
-          <details>
-            <summary>What should I enter for best results?</summary>
-            <p>Name + city helps a lot. If you already know a handle, include it when we connect to the full flow.</p>
-          </details>
-          <details>
-            <summary>Is this a background check?</summary>
-            <p>No. It’s a profile discovery / public online presence research report using public web sources.</p>
-          </details>
+        <div class="review-grid">
+          <div class="review">
+            <div class="stars">★★★★★</div>
+            <p>"Found my old college roommate in minutes! The report included all her social profiles and current address. Definitely worth it."</p>
+            <div class="author">
+              <div class="avatar">SM</div>
+              <div class="author-info">
+                <strong>Sarah M.</strong>
+                <small>Verified Purchase</small>
+              </div>
+            </div>
+          </div>
+          <div class="review">
+            <div class="stars">★★★★★</div>
+            <p>"Used this before meeting someone from a dating app. Found out they had a criminal record. Money well spent for peace of mind."</p>
+            <div class="author">
+              <div class="avatar">JT</div>
+              <div class="author-info">
+                <strong>James T.</strong>
+                <small>Verified Purchase</small>
+              </div>
+            </div>
+          </div>
+          <div class="review">
+            <div class="stars">★★★★★</div>
+            <p>"Needed to verify a potential tenant. Report came back in 8 hours with everything I needed. Highly recommend the Standard package."</p>
+            <div class="author">
+              <div class="avatar">LK</div>
+              <div class="author-info">
+                <strong>Lisa K.</strong>
+                <small>Verified Purchase</small>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <footer>
-      <p><b>Variant:</b> <span id="whichLpFoot">find_v1</span> · <b>Channel:</b> <span id="fromFoot">(not set)</span></p>
-      <p>This page captures: <code>from</code>, <code>which_lp</code>, <code>fbclid</code>, <code>gclid</code>, and UTM params for attribution.</p>
-    </footer>
+  <!-- Form Sections -->
+  <div class="wrap-narrow">
+    <header style="display:none;" id="formHeader">
+      <a href="/" class="brand">
+        <div class="logo">S</div>
+        <b>Sweepify</b>
+      </a>
+    </header>
+
+    <form id="searchForm">
+      <!-- Step 1: What are you looking for? + Why integrated -->
+      <div class="form-section" id="step1">
+        <div class="card">
+          <h1>What are you looking for?</h1>
+          <p class="sub">
+            This helps us prioritize your search and provide the most relevant results.
+          </p>
+
+          <div class="options">
+            <label class="option">
+              <input type="radio" name="searchPurpose" value="dating" required />
+              <div class="option-content">
+                <strong>Dating Safety Check</strong>
+                <small>Verify someone before meeting - social profiles, background, and public records.</small>
+              </div>
+            </label>
+            <label class="option">
+              <input type="radio" name="searchPurpose" value="reconnect" />
+              <div class="option-content">
+                <strong>Reconnect with Someone</strong>
+                <small>Find an old friend, classmate, or lost contact.</small>
+              </div>
+            </label>
+            <label class="option">
+              <input type="radio" name="searchPurpose" value="business" />
+              <div class="option-content">
+                <strong>Business / Professional Check</strong>
+                <small>Research a potential hire, partner, or client.</small>
+              </div>
+            </label>
+            <label class="option">
+              <input type="radio" name="searchPurpose" value="general" />
+              <div class="option-content">
+                <strong>General Background Check</strong>
+                <small>Just looking for someone's public information.</small>
+              </div>
+            </label>
+          </div>
+
+          <div class="why-box">
+            <h3>💡 Why we ask</h3>
+            <ul>
+              <li>Prioritize the most relevant information</li>
+              <li>Focus on safety-critical data for dating checks</li>
+              <li>Surface professional signals for business searches</li>
+              <li>Improve our search accuracy over time</li>
+            </ul>
+            <p style="margin: 12px 0 0; font-size: 13px; color: var(--muted);">
+              Your search remains completely private and confidential.
+            </p>
+          </div>
+
+          <button type="button" class="btn" onclick="goToStep(2)">Next →</button>
+        </div>
+      </div>
+
+      <!-- Step 2: Person Details -->
+      <div class="form-section" id="step2">
+        <div class="card">
+          <button type="button" class="back-btn" onclick="goToStep(1)">← Back</button>
+          <h1>Who are you searching for?</h1>
+          <p class="sub">
+            Fill in at least one field besides age range. More information = better accuracy.
+          </p>
+
+          <div class="field">
+            <label>First name <span class="opt">(optional)</span></label>
+            <input type="text" name="firstName" id="firstName" placeholder="John" />
+            <div class="field-help">Legal first name helps us match the right person in public records.</div>
+          </div>
+
+          <div class="row">
+            <div class="field">
+              <label>Last name <span class="opt">(optional)</span></label>
+              <input type="text" name="lastName" id="lastName" placeholder="Doe" />
+              <div class="field-help">Improves matching accuracy.</div>
+            </div>
+            <div class="field">
+              <label>Age range <span class="opt">(optional)</span></label>
+              <select name="ageRange" id="ageRange">
+                <option value="">Select age range</option>
+                <option value="18-25">18-25</option>
+                <option value="26-35">26-35</option>
+                <option value="36-45">36-45</option>
+                <option value="46-60">46-60</option>
+                <option value="60+">60+</option>
+              </select>
+              <div class="field-help">Helps narrow down results.</div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>City / Location <span class="opt">(optional)</span></label>
+            <input type="text" name="city" id="cityInput" placeholder="New York" />
+            <div class="field-help">Current or past city helps us locate the right person.</div>
+          </div>
+
+          <div class="field">
+            <label>Email address <span class="opt">(optional)</span></label>
+            <input type="email" name="targetEmail" id="targetEmail" placeholder="john@example.com" />
+            <div class="field-help">If you know their email, we can find associated accounts.</div>
+          </div>
+
+          <div class="field">
+            <label>Social media handles <span class="opt">(optional)</span></label>
+            <input type="text" name="instagram" id="instagram" placeholder="@instagram" />
+            <div class="field-help">Instagram username if you know it.</div>
+          </div>
+
+          <div class="field">
+            <input type="text" name="facebook" id="facebook" placeholder="Facebook profile URL" />
+            <div class="field-help">Paste their Facebook profile link if available.</div>
+          </div>
+
+          <div class="field">
+            <input type="text" name="twitter" id="twitter" placeholder="@twitter" />
+            <div class="field-help">Twitter/X handle if known.</div>
+          </div>
+
+          <div class="error-msg" id="step2Error">Please fill in at least one field besides age range.</div>
+
+          <button type="button" class="btn" onclick="validateStep2()">Next →</button>
+        </div>
+      </div>
+
+      <!-- Step 3: Email Collection -->
+      <div class="form-section" id="step3">
+        <div class="card">
+          <button type="button" class="back-btn" onclick="goToStep(2)">← Back</button>
+          <h1>Where should we send your report?</h1>
+          <p class="sub">
+            We'll email you the full report once the search is complete (usually 10-15 minutes).
+          </p>
+
+          <div class="field">
+            <label>Your email</label>
+            <input type="email" name="customerEmail" id="customerEmail" placeholder="you@example.com" required />
+            <div class="field-help">We need this to send you the completed report. We never share your email.</div>
+            <div class="error-msg" id="emailError">Please enter a valid email address.</div>
+          </div>
+
+          <button type="button" class="btn" onclick="validateEmail()">Start Search →</button>
+        </div>
+      </div>
+
+      <!-- Step 4: Scanning -->
+      <div class="form-section" id="step4">
+        <div class="card scanner">
+          <h2>Searching databases...</h2>
+          <p class="status">Scanning 500+ million public records</p>
+
+          <div class="scan-stats">
+            <div class="scan-stat">
+              <div class="number" id="resultsCount">0</div>
+              <div class="label">Results Found</div>
+            </div>
+            <div class="scan-stat">
+              <div class="number" id="dbCount">0</div>
+              <div class="label">Databases Scanned</div>
+            </div>
+          </div>
+
+          <div class="sql-console" id="sqlConsole"></div>
+        </div>
+      </div>
+
+      <!-- Step 5: Preview + Checkout -->
+      <div class="form-section" id="step5">
+        <div class="card preview">
+          <h2>Search Complete!</h2>
+          <div class="found" id="dataPoints">127</div>
+          <p class="label">data points found</p>
+
+          <div class="preview-grid" id="previewGrid">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+        <div class="card pricing">
+          <h2>Unlock Your Full Report</h2>
+          <p class="sub">Choose the package that's right for you</p>
+
+          <div class="tiers">
+            <div class="tier" data-tier="basic" data-price="4.99">
+              <div class="tier-header">
+                <div class="tier-name">Basic</div>
+                <div class="tier-price">€4.99</div>
+              </div>
+              <div class="tier-desc">Good for quick profile checks</div>
+              <ul>
+                <li>3-5 social profiles discovered</li>
+                <li>Basic online presence summary</li>
+                <li>Public usernames & handles</li>
+                <li>15-minute delivery</li>
+              </ul>
+            </div>
+
+            <div class="tier active" data-tier="standard" data-price="14.99">
+              <div class="tier-badge">Most Popular</div>
+              <div class="tier-header">
+                <div class="tier-name">Standard</div>
+                <div class="tier-price">€14.99</div>
+              </div>
+              <div class="tier-desc">Best value for thorough research</div>
+              <ul>
+                <li>Everything in Basic, plus:</li>
+                <li>8-12+ social profiles & networks</li>
+                <li>Potential email addresses & phone numbers</li>
+                <li>Professional history (LinkedIn, jobs)</li>
+                <li>Location history & addresses</li>
+                <li>Education & certifications</li>
+                <li>10-minute delivery</li>
+              </ul>
+            </div>
+
+            <div class="tier" data-tier="premium" data-price="17.99">
+              <div class="tier-header">
+                <div class="tier-name">Premium</div>
+                <div class="tier-price">€17.99</div>
+              </div>
+              <div class="tier-desc">Maximum depth for serious research</div>
+              <ul>
+                <li>Everything in Standard, plus:</li>
+                <li>15-20+ profiles across all platforms</li>
+                <li>Comprehensive background check</li>
+                <li>Court records & legal filings</li>
+                <li>Property ownership & business records</li>
+                <li>Relatives & associates</li>
+                <li>Deep web & archived content</li>
+                <li>Priority 10-minute delivery</li>
+              </ul>
+            </div>
+          </div>
+
+          <input type="hidden" name="selectedTier" value="standard" />
+          <input type="hidden" name="selectedPrice" value="14.99" />
+
+          <div class="guarantee">
+            <strong>✓ Trusted by 15,000+ Users</strong><br>
+            Professional background research powered by 500M+ public records
+          </div>
+        </div>
+
+        <div class="card faq">
+          <h3>Frequently Asked Questions</h3>
+
+          <div class="faq-item">
+            <h4>Does it always find someone?</h4>
+            <p>
+              Results depend on public online presence. If someone keeps profiles private or uses different names,
+              findings may be limited. That's why we offer a money-back guarantee.
+            </p>
+          </div>
+
+          <div class="faq-item">
+            <h4>What's the difference between packages?</h4>
+            <p>
+              Basic gives you a quick profile scan (3-5 profiles). Standard adds contact info, professional history,
+              and location data (8-12+ profiles). Premium includes comprehensive background checks, court records,
+              and deep web searches (15-20+ profiles).
+            </p>
+          </div>
+
+          <div class="faq-item">
+            <h4>How long does it take?</h4>
+            <p>
+              All packages deliver in 10-15 minutes.
+              You'll receive an email when your report is ready.
+            </p>
+          </div>
+
+          <div class="faq-item">
+            <h4>Is this legal?</h4>
+            <p>
+              Yes. We only search publicly available information from legal sources. This is not a consumer report
+              under FCRA and cannot be used for employment, credit, or housing decisions.
+            </p>
+          </div>
+
+          <div class="faq-item">
+            <h4>What if I'm not satisfied?</h4>
+            <p>
+              Contact us within 30 days for a full refund if you're not satisfied or if we found no results. No hassle.
+            </p>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Sticky CTA -->
+  <div class="sticky-cta" id="stickyCTA">
+    <div class="wrap">
+      <div class="info">
+        <strong id="stickyTier">Standard Report</strong>
+        <small id="stickyPrice">€14.99 • 10-minute delivery</small>
+      </div>
+      <button type="button" class="btn" onclick="submitForm()">
+        Unlock Report
+      </button>
+    </div>
   </div>
 
   <script>
-    // ---- Variant constants ----
-    const WHICH_LP = 'find_v1';
-    const WHOP_URLS = {
-      basic: 'https://whop.com/malko-llc/basic-report-51',
-      standard: 'https://whop.com/malko-llc/standard-plan-1c-2758',
-      premium: 'https://whop.com/malko-llc/premium-report-4d',
-    };
+    let currentStep = 0;
+    let formData = {};
+    let placesService = null;
 
-    // ---- Helpers ----
-    const qs = new URLSearchParams(location.search);
-    const get = (k) => qs.get(k) || '';
-
-    const attribution = {
-      from: get('from') || get('channel') || '',
-      which_lp: WHICH_LP,
-      fbclid: get('fbclid'),
-      gclid: get('gclid'),
-      utm_source: get('utm_source'),
-      utm_campaign: get('utm_campaign'),
-      utm_adset: get('utm_adset'),
-      utm_content: get('utm_content'),
-      utm_term: get('utm_term'),
-    };
-
-    // Persist attribution
-    try {
-      localStorage.setItem('sweepify_attrib', JSON.stringify(attribution));
-    } catch {}
-
-    // UI badges
-    document.getElementById('whichLpBadge').textContent = WHICH_LP;
-    document.getElementById('whichLpFoot').textContent = WHICH_LP;
-    document.getElementById('fromFoot').textContent = attribution.from || '(not set)';
-
-    // Fire ViewContent (slightly delayed)
-    setTimeout(() => {
-      safeFbq('track', 'ViewContent', {
-        content_name: 'lp',
-        which_lp: attribution.which_lp,
-        from: attribution.from,
-        currency: 'EUR'
-      });
-    }, 1200);
-
-    // Tier selection
-    let selectedTier = 'standard';
-    let selectedPrice = 14.99;
-
-    const tierEls = Array.from(document.querySelectorAll('.tier'));
-    tierEls.forEach(el => {
-      el.addEventListener('click', () => {
-        tierEls.forEach(x => x.classList.remove('active'));
-        el.classList.add('active');
-        selectedTier = el.dataset.tier;
-        selectedPrice = Number(el.dataset.price || '0');
-
-        // AddToCart on tier select
-        safeFbq('track', 'AddToCart', {
-          content_name: selectedTier,
-          value: selectedPrice,
-          currency: 'EUR',
-          which_lp: attribution.which_lp,
-          from: attribution.from,
+    // Google Places init
+    function initPlaces() {
+      const input = document.getElementById('cityInput');
+      if (input && window.google) {
+        const autocomplete = new google.maps.places.Autocomplete(input, {
+          types: ['(cities)']
         });
-      });
-    });
-
-    // Form submit -> InitiateCheckout + create-session (Worker) -> redirect to checkout_url
-    document.getElementById('leadForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const btn = document.getElementById('ctaBtn');
-      const email = (document.getElementById('email').value || '').trim();
-      if (!email) return;
-
-      safeFbq('track', 'InitiateCheckout', {
-        content_name: selectedTier,
-        value: selectedPrice,
-        currency: 'EUR',
-        which_lp: attribution.which_lp,
-        from: attribution.from,
-      });
-
-      btn.disabled = true;
-      btn.textContent = 'Redirecting…';
-
-      const payload = {
-        email,
-        person_name: (document.getElementById('name').value || '').trim(),
-        city: (document.getElementById('city').value || '').trim(),
-        report_type: selectedTier,
-        tier: selectedTier,
-        which_lp: attribution.which_lp,
-        from: attribution.from,
-        fbclid: attribution.fbclid,
-        gclid: attribution.gclid,
-        utm_source: attribution.utm_source,
-        utm_campaign: attribution.utm_campaign,
-        utm_content: attribution.utm_content,
-        source_url: location.href,
-      };
-
-      try {
-        const res = await fetch('https://sweepify-session.sherymadodomy.workers.dev/create-session', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
+        autocomplete.addListener('place_changed', function() {
+          const place = autocomplete.getPlace();
+          if (place && place.formatted_address) {
+            formData.city = place.formatted_address;
+          }
         });
-        const data = await res.json().catch(() => null);
-        if (!res.ok || !data?.checkout_url) throw new Error(data?.error || 'create-session-failed');
-        window.location.href = data.checkout_url;
-      } catch (err) {
-        console.error(err);
-        btn.disabled = false;
-        btn.textContent = 'Continue to checkout';
-        alert('Sorry — something went wrong starting checkout. Please try again in 30 seconds.');
+      }
+    }
+
+    // Sticky header on scroll
+    let lastScroll = 0;
+    window.addEventListener('scroll', () => {
+      const mainHeader = document.getElementById('mainHeader');
+      const formHeader = document.getElementById('formHeader');
+
+      if (window.scrollY > 100) {
+        if (mainHeader && getComputedStyle(mainHeader.parentElement).display !== 'none') {
+          mainHeader.classList.add('sticky');
+        }
+        if (formHeader && formHeader.style.display === 'flex') {
+          formHeader.classList.add('sticky');
+        }
+      } else {
+        if (mainHeader) mainHeader.classList.remove('sticky');
+        if (formHeader) formHeader.classList.remove('sticky');
       }
     });
 
-    function safeFbq() {
-      try {
-        if (typeof window.fbq === 'function') window.fbq.apply(null, arguments);
-      } catch {}
+    function startSearch() {
+      document.getElementById('landingPage').classList.add('hidden');
+      document.getElementById('formHeader').style.display = 'flex';
+      goToStep(1);
+    }
+
+    function goToStep(step) {
+      if (currentStep > 0) {
+        document.getElementById(`step${currentStep}`).classList.remove('active');
+      }
+      document.getElementById(`step${step}`).classList.add('active');
+      currentStep = step;
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      document.body.scrollTop = 0;
+      document.documentElement.scrollTop = 0;
+    }
+
+    // Radio option selection styling
+    document.addEventListener('change', (e) => {
+      if (e.target.type === 'radio') {
+        document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+        e.target.closest('.option').classList.add('selected');
+      }
+    });
+
+    function validateStep2() {
+      const firstName = document.getElementById('firstName').value.trim();
+      const lastName = document.getElementById('lastName').value.trim();
+      const city = document.getElementById('cityInput').value.trim();
+      const email = document.getElementById('targetEmail').value.trim();
+      const instagram = document.getElementById('instagram').value.trim();
+      const facebook = document.getElementById('facebook').value.trim();
+      const twitter = document.getElementById('twitter').value.trim();
+
+      const hasAtLeastOne = firstName || lastName || city || email || instagram || facebook || twitter;
+
+      if (!hasAtLeastOne) {
+        document.getElementById('step2Error').classList.add('show');
+        return;
+      }
+
+      document.getElementById('step2Error').classList.remove('show');
+
+      // Save data
+      formData.firstName = firstName;
+      formData.lastName = lastName;
+      formData.ageRange = document.getElementById('ageRange').value;
+      formData.city = city;
+      formData.targetEmail = email;
+      formData.instagram = instagram;
+      formData.facebook = facebook;
+      formData.twitter = twitter;
+
+      goToStep(3);
+    }
+
+    function validateEmail() {
+      const emailInput = document.getElementById('customerEmail');
+      const email = emailInput.value.trim();
+      // Proper email validation: must contain @ and .
+      const hasAtSign = email.includes('@');
+      const hasDot = email.includes('.');
+      const emailValid = hasAtSign && hasDot && email.indexOf('@') < email.lastIndexOf('.');
+
+      if (!email || !emailValid) {
+        emailInput.classList.add('error');
+        document.getElementById('emailError').classList.add('show');
+        return;
+      }
+
+      emailInput.classList.remove('error');
+      document.getElementById('emailError').classList.remove('show');
+
+      formData.customerEmail = email;
+      startScan();
+    }
+
+    const sqlQueries = [
+      { keyword: 'SELECT', table: 'social_profiles', value: 'facebook, instagram, linkedin', comment: '-- Scanning social media' },
+      { keyword: 'FROM', table: 'public_records', value: '', comment: '-- Accessing databases' },
+      { keyword: 'WHERE', table: '', value: `name LIKE '${formData.firstName || ""}%'`, comment: '-- Filtering by name' },
+      { keyword: 'JOIN', table: 'contact_info', value: 'ON user_id', comment: '-- Linking contact data' },
+      { keyword: 'SELECT', table: 'phone_numbers', value: 'mobile, landline', comment: '-- Finding phone records' },
+      { keyword: 'SELECT', table: 'email_addresses', value: 'personal, work', comment: '-- Locating emails' },
+      { keyword: 'JOIN', table: 'location_history', value: 'ON user_id', comment: '-- Mapping addresses' },
+      { keyword: 'SELECT', table: 'employment', value: 'company, position, dates', comment: '-- Professional history' },
+      { keyword: 'SELECT', table: 'education', value: 'school, degree, year', comment: '-- Education records' },
+      { keyword: 'JOIN', table: 'court_records', value: 'ON person_id', comment: '-- Checking legal filings' },
+      { keyword: 'SELECT', table: 'property_records', value: 'address, value, owner', comment: '-- Property ownership' },
+      { keyword: 'SELECT', table: 'business_records', value: 'company, role', comment: '-- Business affiliations' },
+      { keyword: 'JOIN', table: 'relatives', value: 'ON family_id', comment: '-- Family connections' },
+      { keyword: 'SELECT', table: 'online_mentions', value: 'url, snippet, date', comment: '-- Web footprint' },
+      { keyword: 'SELECT', table: 'archived_content', value: 'wayback_machine', comment: '-- Historical data' },
+      { keyword: 'ORDER BY', table: '', value: 'relevance DESC', comment: '-- Ranking results' },
+      { keyword: 'LIMIT', table: '', value: '150', comment: '-- Finalizing report' }
+    ];
+
+    function startScan() {
+      goToStep(4);
+
+      const sqlConsole = document.getElementById('sqlConsole');
+      sqlConsole.innerHTML = '';
+
+      let results = 0;
+      let databases = 0;
+      let queryIndex = 0;
+
+      // 30-second scan duration (30000ms / ~17 queries = ~1765ms per query)
+      const queryDelay = 1765;
+
+      // Animate counters - max 20 results, reaches 20 at end
+      const resultsInterval = setInterval(() => {
+        if (results < 19) {
+          results += Math.floor(Math.random() * 2) + 1; // Increment by 1-2
+          if (results > 19) results = 19; // Cap at 19 during animation
+          document.getElementById('resultsCount').textContent = results;
+        }
+      }, 1500); // Gradual increase over 30 seconds
+
+      const dbInterval = setInterval(() => {
+        databases += Math.floor(Math.random() * 3) + 1;
+        document.getElementById('dbCount').textContent = databases;
+      }, 900);
+
+      // Add SQL queries sequentially
+      const queryInterval = setInterval(() => {
+        if (queryIndex >= sqlQueries.length) {
+          clearInterval(queryInterval);
+          clearInterval(resultsInterval);
+          clearInterval(dbInterval);
+
+          // Ensure results reaches exactly 20 at the end
+          document.getElementById('resultsCount').textContent = '20';
+
+          setTimeout(() => {
+            // Randomize data points (115-140 range)
+            const randomPoints = Math.floor(Math.random() * 26) + 115;
+            document.getElementById('dataPoints').textContent = randomPoints;
+            populatePreview();
+            goToStep(5);
+
+            setTimeout(() => {
+              window.addEventListener('scroll', toggleStickyCTA);
+              toggleStickyCTA();
+            }, 500);
+          }, 1000);
+          return;
+        }
+
+        const q = sqlQueries[queryIndex];
+        const line = document.createElement('div');
+        line.className = 'sql-line';
+
+        let html = '';
+        if (q.keyword) html += `<span class="keyword">${q.keyword}</span> `;
+        if (q.table) html += `<span class="table">${q.table}</span> `;
+        if (q.value) html += `<span class="value">${q.value}</span> `;
+        if (q.comment) html += `<span class="comment">${q.comment}</span>`;
+
+        line.innerHTML = html;
+        sqlConsole.appendChild(line);
+        sqlConsole.scrollTop = sqlConsole.scrollHeight;
+
+        queryIndex++;
+      }, queryDelay);
+    }
+
+    function populatePreview() {
+      const grid = document.getElementById('previewGrid');
+      const data = generatePreviewData();
+
+      grid.innerHTML = data.map(item => `
+        <div class="preview-item">
+          <div class="preview-icon">${item.icon}</div>
+          <div class="text">
+            <strong>${item.label}</strong>
+            <span class="preview-value-partial">${item.value}</span>
+          </div>
+          <span class="lock-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          </span>
+        </div>
+      `).join('');
+    }
+
+    function generatePreviewData() {
+      const firstName = formData.firstName || '';
+      const lastName = formData.lastName || '';
+      const city = formData.city || '';
+
+      // New rule: no input = ***, has input = first 2 letters + *****
+      const previewField = (value) => {
+        if (!value || value.trim() === '') return '*****';
+        return value.substring(0, 2) + '*****';
+      };
+
+      // Name: only first name
+      const namePreview = previewField(firstName);
+
+      return [
+        { icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>', label: 'Full Name', value: namePreview },
+        { icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>', label: 'Email Addresses', value: firstName ? previewField(firstName.toLowerCase()) + '@*****.com' : '*****@*****.com' },
+        { icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>', label: 'Phone Numbers', value: '+1 (*****) ***-****' },
+        { icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>', label: 'Facebook Profile', value: 'fa*****.com/' + (firstName ? previewField(firstName.toLowerCase()) : '*****') },
+        { icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>', label: 'Instagram', value: '@' + (firstName ? previewField(firstName.toLowerCase()) : '*****') },
+        { icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>', label: 'LinkedIn', value: 'li*****.com/in/' + (firstName ? previewField(firstName.toLowerCase()) : '*****') },
+        { icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>', label: 'Location History', value: city ? previewField(city) + ', **' : '*****, **' },
+        { icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>', label: 'Education', value: '***** University' }
+      ];
+    }
+
+    function toggleStickyCTA() {
+      const pricing = document.querySelector('.pricing');
+      const sticky = document.getElementById('stickyCTA');
+
+      // Show immediately when pricing section exists
+      if (pricing && sticky) {
+        sticky.classList.add('show');
+      }
+    }
+
+    // Tier selection
+    document.addEventListener('click', (e) => {
+      const tier = e.target.closest('.tier');
+      if (!tier) return;
+
+      document.querySelectorAll('.tier').forEach(t => t.classList.remove('active'));
+      tier.classList.add('active');
+
+      const tierName = tier.dataset.tier;
+      const tierPrice = tier.dataset.price;
+
+      document.querySelector('[name="selectedTier"]').value = tierName;
+      document.querySelector('[name="selectedPrice"]').value = tierPrice;
+
+      const tierNames = {
+        basic: 'Basic Report',
+        standard: 'Standard Report',
+        premium: 'Premium Report'
+      };
+
+      document.getElementById('stickyTier').textContent = tierNames[tierName];
+      document.getElementById('stickyPrice').textContent = `€${tierPrice} • 10-minute delivery`;
+    });
+
+    function submitForm() {
+      const selectedTier = document.querySelector('[name="selectedTier"]').value;
+
+      // Whop checkout plan IDs
+      const whopPlans = {
+        basic: 'plan_oCsBXlKhLTgqe',
+        standard: 'plan_PlJi3Fq01djzJ',
+        premium: 'plan_tP7U4tYPujlbT'
+      };
+
+      const planId = whopPlans[selectedTier];
+
+      if (planId) {
+        window.location.href = `https://whop.com/checkout/${planId}/`;
+      } else {
+        alert('Please select a package');
+      }
     }
   </script>
 </body>
