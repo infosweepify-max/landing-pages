@@ -204,6 +204,14 @@
     .quick-icon {
       font-size: 28px;
       flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .quick-icon svg {
+      display: block;
+      margin: auto;
     }
 
     .quick-text {
@@ -927,8 +935,8 @@
             <input type="hidden" name="selectedPrice" value="14.99" />
 
             <div class="guarantee">
-              <strong>✓ Comprehensive Data Search</strong><br>
-              Professional background check services
+              <strong>✓ Trusted by 15,000+ Users</strong><br>
+              Professional background research powered by 500M+ public records
             </div>
           </div>
 
@@ -993,7 +1001,9 @@
       document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
       document.getElementById(`step${step}`).classList.add('active');
       currentStep = step;
-      window.scrollTo(0, 0);
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      document.body.scrollTop = 0;
+      document.documentElement.scrollTop = 0;
     }
 
     // Quick option selection
@@ -1084,12 +1094,12 @@
       const name = formData.firstName || 'user';
 
       const resultsInt = setInterval(() => {
-        if (results < 12) {
+        if (results < 19) {
           results += Math.floor(Math.random() * 2) + 1;
-          if (results > 12) results = 12;
+          if (results > 19) results = 19;
           document.getElementById('results').textContent = results;
         }
-      }, 1200);
+      }, 1500);
 
       const dbInt = setInterval(() => {
         databases += Math.floor(Math.random() * 3) + 1;
@@ -1102,8 +1112,10 @@
           clearInterval(resultsInt);
           clearInterval(dbInt);
 
+          document.getElementById('results').textContent = '20';
+
           setTimeout(() => {
-            document.getElementById('dataPoints').textContent = '12';
+            document.getElementById('dataPoints').textContent = '20';
             populatePreview();
             goToStep(5);
 
@@ -1136,8 +1148,10 @@
         return str.substring(0, 2) + '••••••';
       };
 
+      const namePreview = firstName ? firstName.substring(0, 2) + '***' : 'Jo***';
+
       const data = [
-        { icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>', label: 'Full Name', value: firstTwo(firstName) + ' ' + firstTwo(lastName) },
+        { icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>', label: 'Full Name', value: namePreview },
         { icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>', label: 'Email', value: firstTwo(firstName.toLowerCase()) + '••••@••••.com' },
         { icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>', label: 'Phone', value: '+1 (••••) •••-••••' },
         { icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>', label: 'Facebook', value: 'fa••••••.com/' + firstTwo(firstName.toLowerCase()) },
