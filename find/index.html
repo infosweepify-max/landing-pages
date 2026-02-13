@@ -1793,6 +1793,8 @@
         premium: 'premium_report'
       };
 
+      const reportType = reportTypeMap[selectedTier] || 'premium_report';
+
       // Determine primary social media alias
       let alias = '';
       let socialMedia = '';
@@ -1807,7 +1809,8 @@
         socialMedia = 'twitter';
       }
 
-      // Send data to Bubble FIRST
+      // Send data to Bubble and get access_code
+      let accessCode = '';
       try {
         const payload = {
           firstname: formData.firstName || '',
@@ -1818,7 +1821,7 @@
           age_range: formData.ageRange || '',
           alias: alias,
           social_media: socialMedia,
-          report_type: reportTypeMap[selectedTier] || 'premium_report',
+          report_type: reportType,
           which_lp: 'find-sweepify',
           from: 'direct',
           looking_for: 'general',
@@ -1826,7 +1829,7 @@
           gclid: new URLSearchParams(window.location.search).get('gclid') || ''
         };
 
-        await fetch('https://sweepify.io/api/1.1/wf/create_tracker_asterix', {
+        const response = await fetch('https://sweepify.io/api/1.1/wf/create_tracker_asterix', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1834,12 +1837,15 @@
           },
           body: JSON.stringify(payload)
         });
+
+        const data = await response.json();
+        accessCode = data.access_code || data.code || '';
       } catch (err) {
         console.error('Bubble sync failed:', err);
-        // Continue to checkout anyway
+        // Continue to checkout without code if it fails
       }
 
-      // Then redirect to Whop
+      // Build Whop checkout URL with access code
       const whopPlans = {
         basic: 'plan_oCsBXlKhLTgqe',
         standard: 'plan_PlJi3Fq01djzJ',
@@ -1847,7 +1853,22 @@
       };
 
       const planId = whopPlans[selectedTier];
-      window.location.href = `https://whop.com/checkout/${planId}/`;
+
+      if (accessCode) {
+        const redirectUrl = `https://sweepify.io/thank_you?code=${accessCode}&b=yes&report_type=${reportType}`;
+        const sourceUrl = `https://sweepify.io?code=${accessCode}&report_type=${reportType}`;
+        
+        const checkoutUrl = new URL(`https://whop.com/checkout/${planId}/`);
+        checkoutUrl.searchParams.set('redirect_url', redirectUrl);
+        checkoutUrl.searchParams.set('source_url', sourceUrl);
+        checkoutUrl.searchParams.set('metadata[mpc_code]', accessCode);
+        checkoutUrl.searchParams.set('metadata[report_type]', reportType);
+        
+        window.location.href = checkoutUrl.toString();
+      } else {
+        // Fallback: redirect without code
+        window.location.href = `https://whop.com/checkout/${planId}/`;
+      }
     }
   </script>
 </body>
