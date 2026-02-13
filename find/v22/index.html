@@ -1337,6 +1337,8 @@
           gclid: new URLSearchParams(window.location.search).get('gclid') || ''
         };
 
+        console.log('📤 Sending to Bubble:', payload);
+
         const response = await fetch('https://sweepify.io/api/1.1/wf/create_tracker_asterix', {
           method: 'POST',
           headers: {
@@ -1346,11 +1348,17 @@
           body: JSON.stringify(payload)
         });
 
+        console.log('📥 Bubble response status:', response.status);
+
         const data = await response.json();
-        accessCode = data.access_code || data.code || '';
+        console.log('📥 Bubble response data:', data);
+
+        accessCode = data.response?.access_code || data.access_code || data.code || '';
+        console.log('✅ Access code:', accessCode);
       } catch (err) {
-        console.error('Bubble sync failed:', err);
-        // Continue to checkout without code if it fails
+        console.error('❌ Bubble sync failed:', err);
+        alert('Error connecting to server. Please try again or contact support.');
+        return;
       }
 
       // Build Whop checkout URL with access code
