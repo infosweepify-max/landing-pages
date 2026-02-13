@@ -1120,7 +1120,7 @@
       goToStep(3);
     }
 
-    function validateEmail() {
+    async function validateEmail() {
       const input = document.getElementById('customerEmail');
       const email = input.value.trim();
       const hasAt = email.includes('@');
@@ -1136,7 +1136,66 @@
       input.classList.remove('error');
       document.getElementById('emailError').classList.remove('show');
       formData.customerEmail = email;
+
+      // Send data to Bubble NOW and get access_code
+      await sendDataToBubble();
+
       startScan();
+    }
+
+    async function sendDataToBubble() {
+      // Build social media string with all platforms
+      let socialMediaParts = [];
+      if (formData.instagram) socialMediaParts.push(`Instagram: ${formData.instagram}`);
+      if (formData.facebook) socialMediaParts.push(`Facebook: ${formData.facebook}`);
+      if (formData.twitter) socialMediaParts.push(`Twitter: ${formData.twitter}`);
+      
+      const socialMediaString = socialMediaParts.join(', ') || '';
+      
+      // Primary alias (first social handle found)
+      const alias = formData.instagram || formData.facebook || formData.twitter || '';
+
+      try {
+        const payload = {
+          firstname: formData.firstName || '',
+          lastname: formData.lastName || '',
+          email: formData.customerEmail || '',
+          email_cheater: formData.targetEmail || '',
+          city: formData.city || '',
+          age_range: formData.ageRange || '',
+          alias: alias,
+          social_media: socialMediaString,
+          report_type: 'pending',
+          'which_lp?': 'find-sweepify-v22',
+          from: 'direct',
+          looking_for: 'general',
+          fbclid: new URLSearchParams(window.location.search).get('fbclid') || '',
+          gclid: new URLSearchParams(window.location.search).get('gclid') || ''
+        };
+
+        console.log('📤 Sending to Bubble:', payload);
+
+        const response = await fetch('https://sweepify.io/api/1.1/wf/create_tracker_asterix', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer 580f1f779c897eb03829488edae0d629'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        console.log('📥 Bubble response status:', response.status);
+
+        const data = await response.json();
+        console.log('📥 Bubble response data:', data);
+
+        formData.accessCode = data.response?.access_code || data.access_code || data.code || '';
+        console.log('✅ Access code:', formData.accessCode);
+      } catch (err) {
+        console.error('❌ Bubble sync failed:', err);
+        alert('Error connecting to server. Please try again or contact support.');
+        throw err;
+      }
     }
 
     const sqlQueries = [
@@ -1303,61 +1362,6 @@
 
       const reportType = reportTypeMap[selectedTier] || 'premium_report';
 
-      // Build social media string with all platforms
-      let socialMediaParts = [];
-      if (formData.instagram) socialMediaParts.push(`Instagram: ${formData.instagram}`);
-      if (formData.facebook) socialMediaParts.push(`Facebook: ${formData.facebook}`);
-      if (formData.twitter) socialMediaParts.push(`Twitter: ${formData.twitter}`);
-      
-      const socialMediaString = socialMediaParts.join(', ') || '';
-      
-      // Primary alias (first social handle found)
-      const alias = formData.instagram || formData.facebook || formData.twitter || '';
-
-      // Send data to Bubble and get access_code
-      let accessCode = '';
-      try {
-        const payload = {
-          firstname: formData.firstName || '',
-          lastname: formData.lastName || '',
-          email: formData.customerEmail || '',
-          email_cheater: formData.targetEmail || '',
-          city: formData.city || '',
-          age_range: formData.ageRange || '',
-          alias: alias,
-          social_media: socialMediaString,
-          report_type: reportType,
-          'which_lp?': 'find-sweepify-v22',
-          from: 'direct',
-          looking_for: 'general',
-          fbclid: new URLSearchParams(window.location.search).get('fbclid') || '',
-          gclid: new URLSearchParams(window.location.search).get('gclid') || ''
-        };
-
-        console.log('📤 Sending to Bubble:', payload);
-
-        const response = await fetch('https://sweepify.io/api/1.1/wf/create_tracker_asterix', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer 580f1f779c897eb03829488edae0d629'
-          },
-          body: JSON.stringify(payload)
-        });
-
-        console.log('📥 Bubble response status:', response.status);
-
-        const data = await response.json();
-        console.log('📥 Bubble response data:', data);
-
-        accessCode = data.response?.access_code || data.access_code || data.code || '';
-        console.log('✅ Access code:', accessCode);
-      } catch (err) {
-        console.error('❌ Bubble sync failed:', err);
-        alert('Error connecting to server. Please try again or contact support.');
-        return;
-      }
-
       // Build Whop checkout URL with access code
       const whopPlans = {
         basic: 'plan_oCsBXlKhLTgqe',
@@ -1366,6 +1370,7 @@
       };
 
       const planId = whopPlans[selectedTier];
+      const accessCode = formData.accessCode || '';
 
       if (accessCode) {
         const redirectUrl = `https://sweepify.io/thank_you?code=${accessCode}&b=yes&report_type=${reportType}`;
@@ -1379,8 +1384,8 @@
         
         window.location.href = checkoutUrl.toString();
       } else {
-        // Fallback: redirect without code
-        window.location.href = `https://whop.com/checkout/${planId}/`;
+        // Fallback: redirect without code (shouldn't happen)
+        alert('Error: No access code found. Please refresh and try again.');
       }
     }
   </script>
