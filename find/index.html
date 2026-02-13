@@ -1795,19 +1795,16 @@
 
       const reportType = reportTypeMap[selectedTier] || 'premium_report';
 
-      // Determine primary social media alias
-      let alias = '';
-      let socialMedia = '';
-      if (formData.instagram) {
-        alias = formData.instagram;
-        socialMedia = 'instagram';
-      } else if (formData.facebook) {
-        alias = formData.facebook;
-        socialMedia = 'facebook';
-      } else if (formData.twitter) {
-        alias = formData.twitter;
-        socialMedia = 'twitter';
-      }
+      // Build social media string with all platforms
+      let socialMediaParts = [];
+      if (formData.instagram) socialMediaParts.push(`Instagram: ${formData.instagram}`);
+      if (formData.facebook) socialMediaParts.push(`Facebook: ${formData.facebook}`);
+      if (formData.twitter) socialMediaParts.push(`Twitter: ${formData.twitter}`);
+      
+      const socialMediaString = socialMediaParts.join(', ') || '';
+      
+      // Primary alias (first social handle found)
+      const alias = formData.instagram || formData.facebook || formData.twitter || '';
 
       // Send data to Bubble and get access_code
       let accessCode = '';
@@ -1820,7 +1817,7 @@
           city: formData.city || '',
           age_range: formData.ageRange || '',
           alias: alias,
-          social_media: socialMedia,
+          social_media: socialMediaString,
           report_type: reportType,
           'which_lp?': 'find-sweepify',
           from: 'direct',
