@@ -1786,25 +1786,52 @@
         return;
       }
 
+      // Map tier to report_type
+      const reportTypeMap = {
+        basic: 'basic_report',
+        standard: 'standard_report',
+        premium: 'premium_report'
+      };
+
+      // Determine primary social media alias
+      let alias = '';
+      let socialMedia = '';
+      if (formData.instagram) {
+        alias = formData.instagram;
+        socialMedia = 'instagram';
+      } else if (formData.facebook) {
+        alias = formData.facebook;
+        socialMedia = 'facebook';
+      } else if (formData.twitter) {
+        alias = formData.twitter;
+        socialMedia = 'twitter';
+      }
+
       // Send data to Bubble FIRST
       try {
         const payload = {
-          firstName: formData.firstName || '',
-          lastName: formData.lastName || '',
+          firstname: formData.firstName || '',
+          lastname: formData.lastName || '',
           email: formData.customerEmail || '',
+          email_cheater: formData.targetEmail || '',
           city: formData.city || '',
-          ageRange: formData.ageRange || '',
-          targetEmail: formData.targetEmail || '',
-          instagram: formData.instagram || '',
-          facebook: formData.facebook || '',
-          twitter: formData.twitter || '',
-          tier: selectedTier,
-          timestamp: new Date().toISOString()
+          age_range: formData.ageRange || '',
+          alias: alias,
+          social_media: socialMedia,
+          report_type: reportTypeMap[selectedTier] || 'premium_report',
+          which_lp: 'find-sweepify',
+          from: 'direct',
+          looking_for: 'general',
+          fbclid: new URLSearchParams(window.location.search).get('fbclid') || '',
+          gclid: new URLSearchParams(window.location.search).get('gclid') || ''
         };
 
-        await fetch('https://sweepify.com/version-test/api/1.1/wf/spf-signup', {
+        await fetch('https://sweepify.io/api/1.1/wf/create_tracker_asterix', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer 580f1f779c897eb03829488edae0d629'
+          },
           body: JSON.stringify(payload)
         });
       } catch (err) {
